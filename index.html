@@ -2,182 +2,146 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>SBIX SUPPLEMENT</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #000;
-            background-image: url('https://i.ibb.co/vzR0jXk/Picsart-25-12-24-06-51-40-132.jpg'); /* الخلفية السوداء المجعدة */
-            background-attachment: fixed;
+        /* منع التكبير والتصغير وجعل الموقع ثابت */
+        html, body { 
+            overflow-x: hidden; 
+            touch-action: pan-y;
+            margin: 0; padding: 0;
+            background: #000 url('https://i.ibb.co/vzR0jXk/Picsart-25-12-24-06-51-40-132.jpg') no-repeat center center fixed;
             background-size: cover;
-            margin: 0;
-            color: white;
-            text-align: center;
+            font-family: sans-serif;
         }
 
         /* واجهة البداية */
-        .hero-section img {
-            width: 100%;
-            height: auto;
-            display: block;
-        }
+        .hero { width: 100%; display: block; }
+        .hero img { width: 100%; height: auto; display: block; }
 
         /* شبكة المنتجات */
-        .products-grid {
+        .grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            padding: 15px;
-        }
-
-        .product-card {
-            position: relative;
-            background: linear-gradient(135deg, #e5c083, #b88a44); /* اللون الذهبي للخلفية الصغيرة */
-            border-radius: 10px;
+            gap: 10px;
             padding: 10px;
-            overflow: hidden;
-            border: 2px solid #555;
         }
 
-        .product-card img {
-            width: 100%;
-            border-radius: 5px;
+        .product-box {
+            position: relative;
+            background: url('https://i.ibb.co/vzR0jXk/Picsart-25-12-24-06-51-40-132.jpg');
+            border: 1px solid #b88a44;
+            border-radius: 8px;
+            padding: 5px;
+            text-align: center;
         }
 
-        /* أيقونة واتساب فوق المنتج */
-        .whatsapp-icon {
+        /* صورة المنتج الأساسية */
+        .prod-img { width: 100%; border-radius: 5px; pointer-events: none; }
+
+        /* أيقونة الواتساب الذهبية القابلة للنقر فقط */
+        .wa-click {
             position: absolute;
             top: 5px;
-            left: 5px;
+            right: 5px;
             width: 35px;
+            height: 35px;
+            z-index: 100;
             cursor: pointer;
-            z-index: 10;
         }
 
-        .price-tag {
-            background-color: #fff;
+        .price-label {
+            background: #fff;
             color: #000;
             font-weight: bold;
+            padding: 5px 15px;
             display: inline-block;
-            padding: 5px 10px;
-            border-radius: 5px;
-            margin-top: 10px;
-            font-size: 1.2rem;
-            border: 1px solid #000;
+            margin-top: 5px;
+            border-radius: 4px;
+            font-size: 1rem;
         }
 
-        /* قسم لماذا المكملات كوتش */
-        .coach-section {
+        /* قسم الكوتش والمكملات */
+        .coach-area {
             position: relative;
-            margin-top: 30px;
-        }
-
-        .coach-section img {
+            margin-top: 20px;
             width: 100%;
-            height: auto;
         }
-
-        .clickable-link {
+        .coach-area img { width: 100%; display: block; }
+        
+        .coach-link {
             position: absolute;
-            bottom: 40%;
-            right: 10%;
-            background: rgba(0,0,0,0.7);
+            top: 35%;
+            left: 10%;
+            background: rgba(0,0,0,0.8);
             color: #fff;
-            padding: 10px;
-            border: 2px solid #fff;
+            padding: 8px 15px;
+            border: 1px solid #fff;
             text-decoration: none;
-            font-weight: bold;
+            font-size: 0.9rem;
             border-radius: 5px;
         }
 
         /* تذييل الصفحة */
-        .footer-section {
-            background: rgba(46, 34, 18, 0.9);
-            padding: 20px;
+        .footer {
+            background: rgba(26, 18, 10, 0.95);
+            padding: 20px 10px;
             border-top: 2px solid #b88a44;
-            margin-top: 20px;
+            text-align: center;
+            color: #e5c083;
         }
 
-        .support-btn {
-            display: flex;
+        .support-wa {
+            display: inline-flex;
             align-items: center;
-            justify-content: center;
             text-decoration: none;
             color: #e5c083;
             font-weight: bold;
-            font-size: 1.1rem;
             margin-bottom: 15px;
         }
+        .support-wa img { width: 30px; margin-right: 10px; }
 
-        .support-btn img {
-            width: 40px;
-            margin-left: 10px;
-        }
-
-        .android-soon {
-            width: 60px;
-            display: block;
-            margin: 0 auto 10px;
-        }
+        .android-icon { width: 50px; margin: 10px auto; display: block; }
     </style>
 </head>
 <body>
 
-    <div class="hero-section">
-        <img src="https://i.ibb.co/zXp4DqV/Picsart-25-12-24-07-09-53-090.jpg" alt="SBIX SUPPLEMENT HEADER">
+    <div class="hero">
+        <img src="https://i.ibb.co/zXp4DqV/Picsart-25-12-24-07-09-53-090.jpg" alt="Header">
     </div>
 
-    <div class="products-grid">
-        <div class="product-card">
-            <a href="https://wa.me/2120715574070?text=أريد هذا المنتج بالتفصيل (منتج 1)">
-                <img src="https://static.whatsapp.net/rsrc.php/v3/y7/r/DS_NQ1S_BAp.png" class="whatsapp-icon" alt="order">
+    <div class="grid">
+        <div class="product-box">
+            <a href="https://wa.me/212715574070?text=أريد طلب هذا المنتج">
+                <img src="https://i.ibb.co/3mbmY3S/prod1.jpg" class="wa-click" style="display:none;"> <div style="position:absolute; top:0; right:0; width:50px; height:50px; z-index:200;"></div>
             </a>
-            <img src="https://i.ibb.co/3mbmY3S/prod1.jpg" alt="Product">
-            <div class="price-tag">250 DH</div>
+            <img src="https://i.ibb.co/vzR0jXk/Picsart-25-12-24-06-51-40-132.jpg" class="prod-img" style="display:none;">
+            <img src="https://i.ibb.co/vzR0jXk/Picsart-25-12-24-06-51-40-132.jpg" class="prod-img">
+            <div class="price-tag"><span class="price-label">250 DH</span></div>
         </div>
 
-        <div class="product-card">
-            <a href="https://wa.me/2120715574070?text=أريد هذا المنتج بالتفصيل (منتج 2)">
-                <img src="https://static.whatsapp.net/rsrc.php/v3/y7/r/DS_NQ1S_BAp.png" class="whatsapp-icon" alt="order">
-            </a>
-            <img src="https://i.ibb.co/fN9Wn1S/prod2.jpg" alt="Product">
-            <div class="price-tag">250 DH</div>
-        </div>
-
-        <div class="product-card">
-            <a href="https://wa.me/2120715574070?text=أريد هذا المنتج بالتفصيل">
-                <img src="https://static.whatsapp.net/rsrc.php/v3/y7/r/DS_NQ1S_BAp.png" class="whatsapp-icon" alt="order">
-            </a>
-            <img src="https://i.ibb.co/3mbmY3S/prod1.jpg" alt="Product">
-            <div class="price-tag">280 DH</div>
-        </div>
-
-        <div class="product-card">
-            <a href="https://wa.me/2120715574070?text=أريد هذا المنتج بالتفصيل">
-                <img src="https://static.whatsapp.net/rsrc.php/v3/y7/r/DS_NQ1S_BAp.png" class="whatsapp-icon" alt="order">
-            </a>
-            <img src="https://i.ibb.co/fN9Wn1S/prod2.jpg" alt="Product">
-            <div class="price-tag">300 DH</div>
+        <div class="product-box">
+            <a href="https://wa.me/212715574070?text=أريد طلب هذا المنتج"><div style="position:absolute; top:0; right:0; width:50px; height:50px; z-index:200;"></div></a>
+            <img src="https://i.ibb.co/vzR0jXk/Picsart-25-12-24-06-51-40-132.jpg" class="prod-img">
+            <div class="price-tag"><span class="price-label">250 DH</span></div>
         </div>
     </div>
 
-    <div class="coach-section">
+    <div class="coach-area">
         <img src="https://i.ibb.co/MhRzqPZ/Picsart-25-12-24-07-04-42-114.jpg" alt="Coach">
-        <a href="https://ar.wikipedia.org/wiki/%D9%85%D9%83%D9%85%D9%84%D8%A7%D8%AA_%D8%BA%D8%B0%D8%A7%D8%A6%D9%8A%D8%A9_%D9%84%D8%A8%D9%86%D8%A7%D8%A1_%D8%A7%D9%84%D8%A3%D8%AC%D8%B3%D8%A1" class="clickable-link">
+        <a href="https://ar.wikipedia.org/wiki/%D9%85%D9%83%D9%85%D9%84%D8%A7%D8%AA_%D8%BA%D8%B0%D8%A7%D8%A6%D9%8A%D8%A9_%D9%84%D8%A8%D9%86%D8%A7%D8%A1_%D8%A7%D9%84%D8%A3%D8%AC%D8%B3%D8%A7%D9%85" class="coach-link">
             لماذا المكملات كوتش؟
         </a>
     </div>
 
-    <div class="footer-section">
-        <a href="https://wa.me/2120715574070?text=أحتاج مساعدة مطور" class="support-btn">
-            الدعم الفني
-            <img src="https://static.whatsapp.net/rsrc.php/v3/y7/r/DS_NQ1S_BAp.png" alt="whatsapp">
+    <div class="footer">
+        <a href="https://wa.me/212715574070?text=احتاج مساعدة مطور" class="support-wa">
+            <span>الدعم الفني</span>
+            <img src="https://i.ibb.co/zXp4DqV/Picsart-25-12-24-07-09-53-090.jpg" style="width:30px; height:30px; clip-path: circle();" alt="wa">
         </a>
-        
-        <img src="https://upload.wikimedia.org/wikipedia/commons/d/d7/Android_robot.svg" class="android-soon" alt="android">
-        <div style="font-weight: bold; color: #fff;">قريباً</div>
-        <div style="margin-top: 10px; font-size: 0.9rem;">© 2025 SBIX SUPPLEMENT</div>
+        <img src="https://upload.wikimedia.org/wikipedia/commons/d/d7/Android_robot.svg" class="android-icon">
+        <div style="font-weight:bold;">قريباً</div>
+        <div style="margin-top:10px; font-size:0.8rem;">SBIX SUPPLEMENT 2025 ©</div>
     </div>
 
 </body>
