@@ -3,32 +3,54 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SBIX Background</title>
+    <title>SBIX - Dynamic Layout</title>
     <style>
-        /* إزالة أي مسافات افتراضية */
         body, html { 
             margin: 0; 
             padding: 0; 
             width: 100%; 
             height: 100%; 
-            overflow: hidden; /* يمنع ظهور أشرطة التمرير */
             background-color: #000; 
+            font-family: Arial, sans-serif;
+            overflow-x: hidden; /* منع التمرير الأفقي */
         }
 
-        /* حاوية الخلفية القوية */
+        /* طبقة الخلفية الثابتة - تشغل كامل الشاشة ولا تتحرك */
         #dynamic-background {
             position: fixed;
             top: 0;
             left: 0;
             width: 100vw;
             height: 100vh;
-            /* الإعدادات لضمان نفس مقاسات الصورة التي أرفقتها */
             background-size: 100% 100%; 
             background-position: center;
             background-repeat: no-repeat;
-            /* رابط افتراضي لحين جلب الرابط من الجدول */
-            background-image: url('https://i.ibb.co/vzR0jXk/Picsart-25-12-24-06-51-40-132.jpg');
-            transition: background-image 0.5s ease-in-out; /* انتقال ناعم عند التغيير */
+            z-index: -1; /* خلف كل المحتوى */
+            transition: background-image 0.5s ease-in-out;
+        }
+
+        /* حاوية المحتوى الذي يتحرك */
+        .content-wrapper {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* صورة المقدمة العلوية */
+        #top-header {
+            width: 100%; /* تأخذ عرض الشاشة بالكامل */
+            max-width: 100%;
+            height: auto; /* تحافظ على تناسق الأبعاد */
+            display: block;
+            box-shadow: 0px 4px 15px rgba(0,0,0,0.5); /* اختيارية: تعطي عمق للصورة */
+        }
+
+        /* مكان إضافي للمنتجات مستقبلاً */
+        .products-area {
+            padding: 20px;
+            color: white;
+            text-align: center;
         }
     </style>
 </head>
@@ -36,22 +58,41 @@
 
     <div id="dynamic-background"></div>
 
+    <div class="content-wrapper">
+        <img id="top-header" src="" alt="Header Image" style="display: none;">
+        
+        <div class="products-area">
+            </div>
+    </div>
+
     <script>
-        // ضع رابط الـ CSV الخاص بجدول بياناتك هنا
         const sheetCsvUrl = "https://docs.google.com/spreadsheets/d/1Gg5yHp9lbA16AVNY9Jz0yfHjBKkMCDCAap0Sz6C7Vkw/gviz/tq?tqx=out:csv";
 
-        async function getBgFromSheet() {
+        async function loadSiteData() {
             try {
                 const response = await fetch(sheetCsvUrl);
                 const data = await response.text();
                 
-                // سحب أول خلية في الجدول (التي تحتوي على الرابط)
+                // تقسيم البيانات إلى صفوف وأعمدة
                 const rows = data.split('\n');
                 if (rows.length > 0) {
-                    const bgUrl = rows[0].split(',')[0].replace(/"/g, "").trim();
+                    const columns = rows[0].split(',');
                     
+                    // الخلية A1 (index 0) للخلفية
+                    const bgUrl = columns[0].replace(/"/g, "").trim();
+                    // الخلية B1 (index 1) للمقدمة
+                    const headerUrl = columns[1].replace(/"/g, "").trim();
+                    
+                    // تحديث الخلفية
                     if (bgUrl.startsWith('http')) {
                         document.getElementById('dynamic-background').style.backgroundImage = `url('${bgUrl}')`;
+                    }
+
+                    // تحديث المقدمة
+                    const headerImg = document.getElementById('top-header');
+                    if (headerUrl.startsWith('http')) {
+                        headerImg.src = headerUrl;
+                        headerImg.style.display = 'block';
                     }
                 }
             } catch (error) {
@@ -59,8 +100,7 @@
             }
         }
 
-        // تنفيذ الجلب فور فتح الموقع
-        getBgFromSheet();
+        loadSiteData();
     </script>
 </body>
 </html>
