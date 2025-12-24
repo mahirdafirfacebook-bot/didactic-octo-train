@@ -5,41 +5,91 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>SBIX SUPPLEMENT - لوحة تحكم ذكية</title>
     <style>
-        * { box-sizing: border-box; }
-        body, html { margin: 0; padding: 0; width: 100%; background-color: #000; color: #fff; font-family: sans-serif; }
+        * { box-sizing: border-box; touch-action: manipulation; }
+        
+        body, html { 
+            margin: 0; 
+            padding: 0; 
+            width: 100%; 
+            height: 100%;
+            background-color: #000; 
+            color: #fff; 
+            font-family: sans-serif;
+            overflow-x: hidden; /* منع التحرك يميناً ويساراً */
+        }
+
         .main-container {
-            background-image: url('https://i.ibb.co/vzR0jXk/Picsart-25-12-24-06-51-40-132.jpg');
-            background-size: cover; background-attachment: fixed; min-height: 100vh; width: 100%;
+            /* سيتم وضع رابط الصورة هنا عبر الجافاسكربت أو يمكنك وضعه يدوياً */
+            background-image: url('https://raw.githubusercontent.com/username/repo/main/background.jpg'); 
+            background-size: 100% 100%; /* تملأ الشاشة تماماً بنفس أبعاد الصورة */
+            background-attachment: fixed; 
+            background-position: center;
+            background-repeat: no-repeat;
+            min-height: 100vh; 
+            width: 100%;
         }
+
         .header img { width: 100%; display: block; }
+        
         .products-grid {
-            display: grid; grid-template-columns: 1fr 1fr;
-            gap: 15px; padding: 15px;
+            display: grid; 
+            grid-template-columns: 1fr 1fr;
+            gap: 15px; 
+            padding: 15px;
         }
+
         .product-card {
-            background: rgba(0,0,0,0.7); border: 1px solid #b88a44;
-            border-radius: 12px; overflow: hidden; text-align: center;
-            position: relative; padding-bottom: 10px;
+            background: rgba(0,0,0,0.7); 
+            border: 1px solid #b88a44;
+            border-radius: 12px; 
+            overflow: hidden; 
+            text-align: center;
+            position: relative; 
+            padding-bottom: 10px;
         }
+
         .product-card img { width: 100%; display: block; height: 180px; object-fit: cover; }
+        
         .price-tag {
-            background: #fff; color: #000; font-weight: bold;
-            padding: 5px 15px; border-radius: 5px; display: inline-block;
-            margin-top: 10px; font-size: 1rem;
+            background: #fff; 
+            color: #000; 
+            font-weight: bold;
+            padding: 5px 15px; 
+            border-radius: 5px; 
+            display: inline-block;
+            margin-top: 10px; 
+            font-size: 1rem;
         }
+
         .wa-link {
-            position: absolute; top: 10px; left: 10px;
-            background: #25d366; color: white; border-radius: 50%;
-            width: 40px; height: 40px; display: flex; align-items: center;
-            justify-content: center; text-decoration: none; font-size: 20px;
+            position: absolute; 
+            top: 10px; 
+            left: 10px;
+            background: #25d366; 
+            color: white; 
+            border-radius: 50%;
+            width: 40px; 
+            height: 40px; 
+            display: flex; 
+            align-items: center;
+            justify-content: center; 
+            text-decoration: none; 
+            font-size: 20px;
             box-shadow: 0 2px 5px rgba(0,0,0,0.5);
         }
-        .footer { padding: 30px; text-align: center; color: #e5c083; font-weight: bold; border-top: 1px solid #b88a44; }
+
+        .footer { 
+            padding: 30px; 
+            text-align: center; 
+            color: #e5c083; 
+            font-weight: bold; 
+            border-top: 1px solid #b88a44; 
+        }
     </style>
 </head>
 <body>
 
-<div class="main-container">
+<div class="main-container" id="bg-target">
     <div class="header">
         <img src="https://i.ibb.co/zXp4DqV/Picsart-25-12-24-07-09-53-090.jpg">
     </div>
@@ -54,25 +104,31 @@
 </div>
 
 <script>
-    // رابط الجدول الخاص بك بصيغة CSV
     const sheetUrl = "https://docs.google.com/spreadsheets/d/1Gg5yHp9lbA16AVNY9Jz0yfHjBKkMCDCAap0Sz6C7Vkw/gviz/tq?tqx=out:csv";
 
     async function loadProducts() {
         try {
             const response = await fetch(sheetUrl);
             const data = await response.text();
-            const rows = data.split('\n').slice(1); // تجاهل الصف الأول (العناوين)
+            const rows = data.split('\n').slice(1);
             
             const container = document.getElementById('products-container');
-            container.innerHTML = ''; // مسح رسالة التحميل
+            const bgContainer = document.getElementById('bg-target');
+            container.innerHTML = ''; 
 
-            rows.forEach(row => {
+            rows.forEach((row, index) => {
                 const columns = row.split(',');
                 if (columns.length >= 4) {
                     const name = columns[0].replace(/"/g, "");
                     const price = columns[1].replace(/"/g, "");
                     const image = columns[2].replace(/"/g, "");
                     const link = columns[3].replace(/"/g, "");
+                    
+                    // إذا أردت سحب الخلفية من أول صف في العمود الخامس (مثلاً)
+                    if(index === 0 && columns[4]) {
+                        const bgUrl = columns[4].replace(/"/g, "");
+                        bgContainer.style.backgroundImage = `url('${bgUrl}')`;
+                    }
 
                     container.innerHTML += `
                         <div class="product-card">
