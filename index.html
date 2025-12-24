@@ -3,36 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SBIX Supplement</title>
+    <title>SBIX Layers</title>
     <style>
-        /* إعدادات أساسية لضمان الشفافية */
-        body, html { 
-            margin: 0; padding: 0; 
-            width: 100%; height: 100%; 
-            background: #000; /* لون خلفي فقط */
-            overflow-x: hidden;
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #000; /* لون احتياطي */
         }
 
-        /* طبقة الخلفية المجعدة - مثبتة في أبعد نقطة للخلف */
-        #dynamic-background {
+        /* الطبقة 1: الخلفية المجعدة (تملأ الشاشة وثابتة) */
+        #bg-layer {
             position: fixed;
-            top: 0; left: 0;
-            width: 100vw; height: 100vh;
-            background-size: 100% 100%; 
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1; /* الطبقة السفلى */
+            background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
-            z-index: -2; /* تأكد أنها تحت كل شيء */
         }
 
-        /* حاوية المحتوى - شفافة تماماً */
-        .content-container {
+        /* الطبقة 2: الحاوية العلوية (فوق الخلفية) */
+        #content-layer {
             position: relative;
-            z-index: 1;
+            z-index: 2; /* الطبقة العليا */
             width: 100%;
-            background: transparent; /* يمنع اللون الأسود من تغطية الخلفية */
         }
 
-        #header-content {
+        /* تنسيق الصورة العلوية */
+        #header-img {
             width: 100%;
             height: auto;
             display: block;
@@ -41,50 +43,47 @@
 </head>
 <body>
 
-    <div id="dynamic-background"></div>
+    <div id="bg-layer"></div>
 
-    <div class="content-container">
-        <div id="media-placeholder"></div>
+    <div id="content-layer">
+        <div id="media-box"></div>
     </div>
 
     <script>
-        const sheetCsvUrl = "https://docs.google.com/spreadsheets/d/1Gg5yHp9lbA16AVNY9Jz0yfHjBKkMCDCAap0Sz6C7Vkw/gviz/tq?tqx=out:csv";
+        const csvUrl = "https://docs.google.com/spreadsheets/d/1Gg5yHp9lbA16AVNY9Jz0yfHjBKkMCDCAap0Sz6C7Vkw/gviz/tq?tqx=out:csv";
 
-        async function refreshContent() {
+        async function loadLayers() {
             try {
-                const response = await fetch(sheetCsvUrl);
-                const data = await response.text();
-                const rows = data.split('\n');
-                
-                if (rows.length > 0) {
-                    const cols = rows[0].split(',');
-                    // تنظيف الرابط من العلامات الزائدة
-                    const bgUrl = cols[0].replace(/"/g, "").trim(); 
-                    const headerUrl = cols[1].replace(/"/g, "").trim(); 
+                const response = await fetch(csvUrl);
+                const text = await response.text();
+                const rows = text.split('\n');
+                const cells = rows[0].split(',');
 
-                    // تحديث الخلفية المجعدة (الخلية A1)
-                    if (bgUrl.startsWith('http')) {
-                        const bgDiv = document.getElementById('dynamic-background');
-                        bgDiv.style.backgroundImage = `url('${bgUrl}')`;
-                        console.log("تم تحميل الخلفية: " + bgUrl);
-                    }
+                // تنظيف الروابط
+                const bgLink = cells[0].replace(/"/g, "").trim();
+                const headerLink = cells[1].replace(/"/g, "").trim();
 
-                    // تحديث المقدمة (الخلية B1)
-                    if (headerUrl.startsWith('http')) {
-                        const placeholder = document.getElementById('media-placeholder');
-                        const isVideo = headerUrl.match(/\.(mp4|webm|ogg)$/i);
-                        if (isVideo) {
-                            placeholder.innerHTML = `<video id="header-content" autoplay muted loop playsinline src="${headerUrl}"></video>`;
-                        } else {
-                            placeholder.innerHTML = `<img id="header-content" src="${headerUrl}">`;
-                        }
+                // تطبيق الخلفية
+                if (bgLink) {
+                    document.getElementById('bg-layer').style.backgroundImage = `url('${bgLink}')`;
+                }
+
+                // تطبيق صورة المقدمة
+                if (headerLink) {
+                    const box = document.getElementById('media-box');
+                    // إذا كان فيديو
+                    if (headerLink.includes('.mp4')) {
+                        box.innerHTML = `<video id="header-img" autoplay muted loop playsinline src="${headerLink}"></video>`;
+                    } else {
+                        box.innerHTML = `<img id="header-img" src="${headerLink}">`;
                     }
                 }
-            } catch (error) {
-                console.error("Error loading data:", error);
+            } catch (err) {
+                console.error("خطأ في التحميل:", err);
             }
         }
-        refreshContent();
+
+        loadLayers();
     </script>
 </body>
 </html>
