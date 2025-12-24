@@ -3,32 +3,42 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SBIX Background</title>
+    <title>SBIX Background & Header</title>
     <style>
-        /* إزالة أي مسافات افتراضية */
         body, html { 
             margin: 0; 
             padding: 0; 
             width: 100%; 
             height: 100%; 
-            overflow: hidden; /* يمنع ظهور أشرطة التمرير */
             background-color: #000; 
+            overflow-x: hidden; /* السماح بالتمرير لأسفل فقط */
         }
 
-        /* حاوية الخلفية القوية */
+        /* حاوية الخلفية القوية الثابتة */
         #dynamic-background {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            /* الإعدادات لضمان نفس مقاسات الصورة التي أرفقتها */
+            top: 0; left: 0;
+            width: 100vw; height: 100vh;
             background-size: 100% 100%; 
             background-position: center;
             background-repeat: no-repeat;
-            /* رابط افتراضي لحين جلب الرابط من الجدول */
-            background-image: url('https://i.ibb.co/vzR0jXk/Picsart-25-12-24-06-51-40-132.jpg');
-            transition: background-image 0.5s ease-in-out; /* انتقال ناعم عند التغيير */
+            z-index: -1; /* خلف كل شيء */
+            transition: background-image 0.5s ease-in-out;
+        }
+
+        /* حاوية المقدمة (الصورة أو الفيديو في الأعلى) */
+        #header-container {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+        }
+
+        #header-content {
+            width: 100%;
+            max-width: 100%; /* لضمان أخذ عرض الشاشة بالكامل مثل الصورة */
+            height: auto;
+            display: block;
         }
     </style>
 </head>
@@ -36,31 +46,47 @@
 
     <div id="dynamic-background"></div>
 
+    <div id="header-container">
+        <div id="media-placeholder"></div>
+    </div>
+
     <script>
-        // ضع رابط الـ CSV الخاص بجدول بياناتك هنا
         const sheetCsvUrl = "https://docs.google.com/spreadsheets/d/1Gg5yHp9lbA16AVNY9Jz0yfHjBKkMCDCAap0Sz6C7Vkw/gviz/tq?tqx=out:csv";
 
-        async function getBgFromSheet() {
+        async function getMediaFromSheet() {
             try {
                 const response = await fetch(sheetCsvUrl);
                 const data = await response.text();
-                
-                // سحب أول خلية في الجدول (التي تحتوي على الرابط)
                 const rows = data.split('\n');
+                
                 if (rows.length > 0) {
-                    const bgUrl = rows[0].split(',')[0].replace(/"/g, "").trim();
-                    
+                    const cols = rows[0].split(',');
+                    const bgUrl = cols[0].replace(/"/g, "").trim(); // الخلية A1
+                    const headerUrl = cols[1].replace(/"/g, "").trim(); // الخلية B1
+
+                    // تحديث الخلفية
                     if (bgUrl.startsWith('http')) {
                         document.getElementById('dynamic-background').style.backgroundImage = `url('${bgUrl}')`;
                     }
+
+                    // تحديث المقدمة (فيديو أو صورة)
+                    if (headerUrl.startsWith('http')) {
+                        const placeholder = document.getElementById('media-placeholder');
+                        const isVideo = headerUrl.match(/\.(mp4|webm|ogg)$/i);
+
+                        if (isVideo) {
+                            placeholder.innerHTML = `<video id="header-content" autoplay muted loop playsinline src="${headerUrl}"></video>`;
+                        } else {
+                            placeholder.innerHTML = `<img id="header-content" src="${headerUrl}">`;
+                        }
+                    }
                 }
             } catch (error) {
-                console.error("خطأ في الاتصال بالجدول:", error);
+                console.error("خطأ في جلب البيانات:", error);
             }
         }
 
-        // تنفيذ الجلب فور فتح الموقع
-        getBgFromSheet();
+        getMediaFromSheet();
     </script>
 </body>
 </html>
