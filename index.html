@@ -1,152 +1,66 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="ar">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SBIX SUPPLEMENT - لوحة تحكم ذكية</title>
+    <title>SBIX Background</title>
     <style>
-        * { box-sizing: border-box; touch-action: manipulation; }
-        
+        /* إزالة أي مسافات افتراضية */
         body, html { 
             margin: 0; 
             padding: 0; 
             width: 100%; 
-            height: 100%;
+            height: 100%; 
+            overflow: hidden; /* يمنع ظهور أشرطة التمرير */
             background-color: #000; 
-            color: #fff; 
-            font-family: sans-serif;
-            overflow-x: hidden; /* منع التحرك يميناً ويساراً */
         }
 
-        .main-container {
-            /* سيتم وضع رابط الصورة هنا عبر الجافاسكربت أو يمكنك وضعه يدوياً */
-            background-image: url('https://raw.githubusercontent.com/username/repo/main/background.jpg'); 
-            background-size: 100% 100%; /* تملأ الشاشة تماماً بنفس أبعاد الصورة */
-            background-attachment: fixed; 
+        /* حاوية الخلفية القوية */
+        #dynamic-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            /* الإعدادات لضمان نفس مقاسات الصورة التي أرفقتها */
+            background-size: 100% 100%; 
             background-position: center;
             background-repeat: no-repeat;
-            min-height: 100vh; 
-            width: 100%;
-        }
-
-        .header img { width: 100%; display: block; }
-        
-        .products-grid {
-            display: grid; 
-            grid-template-columns: 1fr 1fr;
-            gap: 15px; 
-            padding: 15px;
-        }
-
-        .product-card {
-            background: rgba(0,0,0,0.7); 
-            border: 1px solid #b88a44;
-            border-radius: 12px; 
-            overflow: hidden; 
-            text-align: center;
-            position: relative; 
-            padding-bottom: 10px;
-        }
-
-        .product-card img { width: 100%; display: block; height: 180px; object-fit: cover; }
-        
-        .price-tag {
-            background: #fff; 
-            color: #000; 
-            font-weight: bold;
-            padding: 5px 15px; 
-            border-radius: 5px; 
-            display: inline-block;
-            margin-top: 10px; 
-            font-size: 1rem;
-        }
-
-        .wa-link {
-            position: absolute; 
-            top: 10px; 
-            left: 10px;
-            background: #25d366; 
-            color: white; 
-            border-radius: 50%;
-            width: 40px; 
-            height: 40px; 
-            display: flex; 
-            align-items: center;
-            justify-content: center; 
-            text-decoration: none; 
-            font-size: 20px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.5);
-        }
-
-        .footer { 
-            padding: 30px; 
-            text-align: center; 
-            color: #e5c083; 
-            font-weight: bold; 
-            border-top: 1px solid #b88a44; 
+            /* رابط افتراضي لحين جلب الرابط من الجدول */
+            background-image: url('https://i.ibb.co/vzR0jXk/Picsart-25-12-24-06-51-40-132.jpg');
+            transition: background-image 0.5s ease-in-out; /* انتقال ناعم عند التغيير */
         }
     </style>
 </head>
 <body>
 
-<div class="main-container" id="bg-target">
-    <div class="header">
-        <img src="https://i.ibb.co/zXp4DqV/Picsart-25-12-24-07-09-53-090.jpg">
-    </div>
+    <div id="dynamic-background"></div>
 
-    <div class="products-grid" id="products-container">
-        <p style="text-align:center; grid-column: 1/3;">جاري تحميل المنتجات...</p>
-    </div>
+    <script>
+        // ضع رابط الـ CSV الخاص بجدول بياناتك هنا
+        const sheetCsvUrl = "https://docs.google.com/spreadsheets/d/1Gg5yHp9lbA16AVNY9Jz0yfHjBKkMCDCAap0Sz6C7Vkw/gviz/tq?tqx=out:csv";
 
-    <div class="footer">
-        SBIX SUPPLEMENT 2025 ©
-    </div>
-</div>
-
-<script>
-    const sheetUrl = "https://docs.google.com/spreadsheets/d/1Gg5yHp9lbA16AVNY9Jz0yfHjBKkMCDCAap0Sz6C7Vkw/gviz/tq?tqx=out:csv";
-
-    async function loadProducts() {
-        try {
-            const response = await fetch(sheetUrl);
-            const data = await response.text();
-            const rows = data.split('\n').slice(1);
-            
-            const container = document.getElementById('products-container');
-            const bgContainer = document.getElementById('bg-target');
-            container.innerHTML = ''; 
-
-            rows.forEach((row, index) => {
-                const columns = row.split(',');
-                if (columns.length >= 4) {
-                    const name = columns[0].replace(/"/g, "");
-                    const price = columns[1].replace(/"/g, "");
-                    const image = columns[2].replace(/"/g, "");
-                    const link = columns[3].replace(/"/g, "");
+        async function getBgFromSheet() {
+            try {
+                const response = await fetch(sheetCsvUrl);
+                const data = await response.text();
+                
+                // سحب أول خلية في الجدول (التي تحتوي على الرابط)
+                const rows = data.split('\n');
+                if (rows.length > 0) {
+                    const bgUrl = rows[0].split(',')[0].replace(/"/g, "").trim();
                     
-                    // إذا أردت سحب الخلفية من أول صف في العمود الخامس (مثلاً)
-                    if(index === 0 && columns[4]) {
-                        const bgUrl = columns[4].replace(/"/g, "");
-                        bgContainer.style.backgroundImage = `url('${bgUrl}')`;
+                    if (bgUrl.startsWith('http')) {
+                        document.getElementById('dynamic-background').style.backgroundImage = `url('${bgUrl}')`;
                     }
-
-                    container.innerHTML += `
-                        <div class="product-card">
-                            <a href="${link}" class="wa-link">💬</a>
-                            <img src="${image}" onerror="this.src='https://via.placeholder.com/150?text=Error+Image'">
-                            <div style="padding: 5px; font-weight: bold;">${name}</div>
-                            <div class="price-tag">${price}</div>
-                        </div>
-                    `;
                 }
-            });
-        } catch (error) {
-            console.error("خطأ في تحميل البيانات:", error);
+            } catch (error) {
+                console.error("خطأ في الاتصال بالجدول:", error);
+            }
         }
-    }
 
-    loadProducts();
-</script>
-
+        // تنفيذ الجلب فور فتح الموقع
+        getBgFromSheet();
+    </script>
 </body>
 </html>
