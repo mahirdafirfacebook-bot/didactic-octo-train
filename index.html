@@ -1,180 +1,66 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="ar">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SBIX SUPPLEMENT - المتجر الذهبي</title>
+    <title>SBIX Background</title>
     <style>
-        /* إعدادات عامة لمنع الزوم وتثبيت الأبعاد */
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        
+        /* إزالة أي مسافات افتراضية */
         body, html { 
-            margin: 0; padding: 0; width: 100%; height: 100%;
-            background-color: #000; color: #fff; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0; 
+            padding: 0; 
+            width: 100%; 
+            height: 100%; 
+            overflow: hidden; /* يمنع ظهور أشرطة التمرير */
+            background-color: #000; 
         }
 
-        /* الخلفية السوداء المجعدة الثابتة */
-        #main-bg {
+        /* حاوية الخلفية القوية */
+        #dynamic-background {
             position: fixed;
-            top: 0; left: 0;
-            width: 100vw; height: 100vh;
-            z-index: -1;
-            background-image: url('https://raw.githubusercontent.com/اسم-حسابك/المستودع/main/Picsart_25-12-24_09-05-37-523.jpg'); /* رابط افتراضي */
-            background-size: 100% 100%;
-            background-attachment: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            /* الإعدادات لضمان نفس مقاسات الصورة التي أرفقتها */
+            background-size: 100% 100%; 
+            background-position: center;
             background-repeat: no-repeat;
-        }
-
-        .container {
-            width: 100%;
-            max-width: 500px; /* ليظهر كأنه تطبيق موبايل */
-            margin: 0 auto;
-            position: relative;
-        }
-
-        /* صورة الهيدر العلوي */
-        .header-img {
-            width: 100%;
-            display: block;
-            border-bottom: 2px solid #b88a44;
-        }
-
-        /* شبكة المنتجات (الأيقونات الذهبية) */
-        .products-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr; /* صفين */
-            gap: 15px;
-            padding: 20px;
-        }
-
-        /* تصميم الكارت الذهبي */
-        .gold-card {
-            background: linear-gradient(135deg, #e5c083 0%, #b88a44 100%);
-            border-radius: 10px;
-            padding: 5px; /* الإطار الذهبي */
-            position: relative;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.5);
-            transition: transform 0.2s;
-        }
-        
-        .gold-card:active { transform: scale(0.95); }
-
-        .card-inner {
-            background: #000; /* محتوى الكارت أسود ليبرز الإطار الذهبي */
-            border-radius: 8px;
-            overflow: hidden;
-            text-align: center;
-        }
-
-        .product-img {
-            width: 100%;
-            height: 150px;
-            object-fit: cover;
-            display: block;
-        }
-
-        /* أيقونة الواتساب الذهبية داخل الكارت */
-        .wa-btn {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            width: 30px;
-            height: 30px;
-            background: #000;
-            border: 1px solid #e5c083;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-decoration: none;
-            font-size: 16px;
-        }
-
-        .price-tag {
-            background: #fff;
-            color: #000;
-            font-weight: bold;
-            padding: 5px 10px;
-            border-radius: 5px;
-            margin: 10px auto;
-            display: inline-block;
-        }
-
-        .footer {
-            text-align: center;
-            padding: 30px;
-            background: rgba(0,0,0,0.8);
-            color: #b88a44;
-            font-weight: bold;
+            /* رابط افتراضي لحين جلب الرابط من الجدول */
+            background-image: url('https://i.ibb.co/vzR0jXk/Picsart-25-12-24-06-51-40-132.jpg');
+            transition: background-image 0.5s ease-in-out; /* انتقال ناعم عند التغيير */
         }
     </style>
 </head>
 <body>
 
-    <div id="main-bg"></div>
-
-    <div class="container">
-        <img id="top-banner" src="" class="header-img" style="display: none;">
-
-        <div id="grid-container" class="products-grid">
-            <p style="text-align:center; grid-column: 1/3;">جاري تحميل المتجر الذهبي...</p>
-        </div>
-
-        <div class="footer">
-            SBIX SUPPLEMENT 2025 ©
-        </div>
-    </div>
+    <div id="dynamic-background"></div>
 
     <script>
-        const sheetUrl = "https://docs.google.com/spreadsheets/d/1Gg5yHp9lbA16AVNY9Jz0yfHjBKkMCDCAap0Sz6C7Vkw/gviz/tq?tqx=out:csv";
+        // ضع رابط الـ CSV الخاص بجدول بياناتك هنا
+        const sheetCsvUrl = "https://docs.google.com/spreadsheets/d/1Gg5yHp9lbA16AVNY9Jz0yfHjBKkMCDCAap0Sz6C7Vkw/gviz/tq?tqx=out:csv";
 
-        async function initApp() {
+        async function getBgFromSheet() {
             try {
-                const response = await fetch(sheetUrl);
+                const response = await fetch(sheetCsvUrl);
                 const data = await response.text();
+                
+                // سحب أول خلية في الجدول (التي تحتوي على الرابط)
                 const rows = data.split('\n');
-                
-                const grid = document.getElementById('grid-container');
-                const bg = document.getElementById('main-bg');
-                const banner = document.getElementById('top-banner');
-                
-                grid.innerHTML = '';
-
-                // قراءة الصف الأول (الإعدادات)
-                const settings = rows[0].split(',');
-                const bgUrl = settings[0].replace(/"/g, "").trim();
-                const headerUrl = settings[1].replace(/"/g, "").trim();
-
-                if(bgUrl) bg.style.backgroundImage = `url('${bgUrl}')`;
-                if(headerUrl) { banner.src = headerUrl; banner.style.display = 'block'; }
-
-                // قراءة المنتجات من الصفوف التالية
-                rows.slice(1).forEach(row => {
-                    const cols = row.split(',');
-                    if (cols.length >= 3) {
-                        const name = cols[0].replace(/"/g, "");
-                        const price = cols[1].replace(/"/g, "");
-                        const img = cols[2].replace(/"/g, "");
-                        const link = cols[3] ? cols[3].replace(/"/g, "") : "#";
-
-                        grid.innerHTML += `
-                            <div class="gold-card">
-                                <a href="${link}" class="wa-btn">📞</a>
-                                <div class="card-inner">
-                                    <img src="${img}" class="product-img">
-                                    <div style="padding:10px;">
-                                        <div style="font-size:14px; margin-bottom:5px;">${name}</div>
-                                        <div class="price-tag">${price}</div>
-                                    </div>
-                                </div>
-                            </div>
-                        `;
+                if (rows.length > 0) {
+                    const bgUrl = rows[0].split(',')[0].replace(/"/g, "").trim();
+                    
+                    if (bgUrl.startsWith('http')) {
+                        document.getElementById('dynamic-background').style.backgroundImage = `url('${bgUrl}')`;
                     }
-                });
-            } catch (e) { console.error("Error:", e); }
+                }
+            } catch (error) {
+                console.error("خطأ في الاتصال بالجدول:", error);
+            }
         }
 
-        initApp();
+        // تنفيذ الجلب فور فتح الموقع
+        getBgFromSheet();
     </script>
 </body>
 </html>
