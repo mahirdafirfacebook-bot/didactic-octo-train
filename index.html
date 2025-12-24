@@ -5,51 +5,37 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>SBIX Supplement</title>
     <style>
-        /* إعدادات الصفحة الأساسية */
+        /* إعدادات أساسية لضمان الشفافية */
         body, html { 
-            margin: 0; 
-            padding: 0; 
-            width: 100%; 
-            height: 100%; 
-            background-color: #000; /* لون احتياطي خلف الصورة */
+            margin: 0; padding: 0; 
+            width: 100%; height: 100%; 
+            background: #000; /* لون خلفي فقط */
             overflow-x: hidden;
         }
 
-        /* حاوية الخلفية المجعدة الثابتة */
+        /* طبقة الخلفية المجعدة - مثبتة في أبعد نقطة للخلف */
         #dynamic-background {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
+            top: 0; left: 0;
+            width: 100vw; height: 100vh;
             background-size: 100% 100%; 
             background-position: center;
             background-repeat: no-repeat;
-            z-index: -1; /* تجعلها دائماً في الخلف */
-            transition: background-image 0.5s ease-in-out;
+            z-index: -2; /* تأكد أنها تحت كل شيء */
         }
 
-        /* حاوية المحتوى العلوي */
+        /* حاوية المحتوى - شفافة تماماً */
         .content-container {
             position: relative;
-            z-index: 1; /* فوق الخلفية */
+            z-index: 1;
             width: 100%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+            background: transparent; /* يمنع اللون الأسود من تغطية الخلفية */
         }
 
-        /* تنسيق الصورة العلوية أو الفيديو لضمان عدم حجب الخلفية بالكامل */
         #header-content {
             width: 100%;
             height: auto;
             display: block;
-            /* إضافة ظل خفيف لتبدو الصورة مدمجة مع الخلفية المجعدة */
-            box-shadow: 0px 5px 15px rgba(0,0,0,0.8);
-        }
-
-        #media-placeholder {
-            width: 100%;
         }
     </style>
 </head>
@@ -64,7 +50,7 @@
     <script>
         const sheetCsvUrl = "https://docs.google.com/spreadsheets/d/1Gg5yHp9lbA16AVNY9Jz0yfHjBKkMCDCAap0Sz6C7Vkw/gviz/tq?tqx=out:csv";
 
-        async function updateSiteContent() {
+        async function refreshContent() {
             try {
                 const response = await fetch(sheetCsvUrl);
                 const data = await response.text();
@@ -72,20 +58,21 @@
                 
                 if (rows.length > 0) {
                     const cols = rows[0].split(',');
-                    // تأكد أن A1 هو رابط الصورة المجعدة و B1 هو رابط الصورة العلوية
+                    // تنظيف الرابط من العلامات الزائدة
                     const bgUrl = cols[0].replace(/"/g, "").trim(); 
                     const headerUrl = cols[1].replace(/"/g, "").trim(); 
 
-                    // 1. تحديث الخلفية المجعدة
+                    // تحديث الخلفية المجعدة (الخلية A1)
                     if (bgUrl.startsWith('http')) {
-                        document.getElementById('dynamic-background').style.backgroundImage = `url('${bgUrl}')`;
+                        const bgDiv = document.getElementById('dynamic-background');
+                        bgDiv.style.backgroundImage = `url('${bgUrl}')`;
+                        console.log("تم تحميل الخلفية: " + bgUrl);
                     }
 
-                    // 2. تحديث صورة المقدمة أو الفيديو
+                    // تحديث المقدمة (الخلية B1)
                     if (headerUrl.startsWith('http')) {
                         const placeholder = document.getElementById('media-placeholder');
                         const isVideo = headerUrl.match(/\.(mp4|webm|ogg)$/i);
-
                         if (isVideo) {
                             placeholder.innerHTML = `<video id="header-content" autoplay muted loop playsinline src="${headerUrl}"></video>`;
                         } else {
@@ -94,11 +81,10 @@
                     }
                 }
             } catch (error) {
-                console.error("خطأ في جلب البيانات:", error);
+                console.error("Error loading data:", error);
             }
         }
-
-        updateSiteContent();
+        refreshContent();
     </script>
 </body>
 </html>
