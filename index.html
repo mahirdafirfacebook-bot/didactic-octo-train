@@ -3,38 +3,55 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SBIX Layers</title>
+    <title>SBIX Layers & Footer</title>
     <style>
         body, html {
             margin: 0;
             padding: 0;
             width: 100%;
             height: 100%;
-            background-color: #000; /* لون احتياطي */
+            background-color: #000;
         }
 
-        /* الطبقة 1: الخلفية المجعدة (تملأ الشاشة وثابتة) */
+        /* الطبقة 1: الخلفية المجعدة الثابتة */
         #bg-layer {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            z-index: 1; /* الطبقة السفلى */
+            z-index: 1;
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
         }
 
-        /* الطبقة 2: الحاوية العلوية (فوق الخلفية) */
+        /* الطبقة 2: الحاوية العامة */
         #content-layer {
             position: relative;
-            z-index: 2; /* الطبقة العليا */
+            z-index: 2;
             width: 100%;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between; /* لضمان بقاء الفوتر في الأسفل */
         }
 
-        /* تنسيق الصورة العلوية */
+        /* تنسيق الهيدر (صورة أو فيديو) */
         #header-img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        /* تنسيق الفوتر السفلي (نفس مقاس الصورة بظبط) */
+        #footer-container {
+            width: 100%;
+            position: relative; /* يمكن تغييره لـ fixed إذا أردته ثابتاً دائماً */
+            bottom: 0;
+        }
+
+        #footer-img {
             width: 100%;
             height: auto;
             display: block;
@@ -47,6 +64,10 @@
 
     <div id="content-layer">
         <div id="media-box"></div>
+
+        <div id="footer-container">
+            <div id="footer-box"></div>
+        </div>
     </div>
 
     <script>
@@ -59,25 +80,34 @@
                 const rows = text.split('\n');
                 const cells = rows[0].split(',');
 
-                // تنظيف الروابط
+                // 1. رابط الخلفية (A1)
                 const bgLink = cells[0].replace(/"/g, "").trim();
+                // 2. رابط الهيدر (B1)
                 const headerLink = cells[1].replace(/"/g, "").trim();
+                // 3. رابط الفوتر الجديد (C1)
+                const footerLink = cells[2] ? cells[2].replace(/"/g, "").trim() : "";
 
                 // تطبيق الخلفية
                 if (bgLink) {
                     document.getElementById('bg-layer').style.backgroundImage = `url('${bgLink}')`;
                 }
 
-                // تطبيق صورة المقدمة
+                // تطبيق الهيدر
                 if (headerLink) {
-                    const box = document.getElementById('media-box');
-                    // إذا كان فيديو
+                    const headerBox = document.getElementById('media-box');
                     if (headerLink.includes('.mp4')) {
-                        box.innerHTML = `<video id="header-img" autoplay muted loop playsinline src="${headerLink}"></video>`;
+                        headerBox.innerHTML = `<video id="header-img" autoplay muted loop playsinline src="${headerLink}"></video>`;
                     } else {
-                        box.innerHTML = `<img id="header-img" src="${headerLink}">`;
+                        headerBox.innerHTML = `<img id="header-img" src="${headerLink}">`;
                     }
                 }
+
+                // تطبيق الفوتر (الذي يحتوي على أندرويد ودعم فني)
+                if (footerLink) {
+                    const footerBox = document.getElementById('footer-box');
+                    footerBox.innerHTML = `<img id="footer-img" src="${footerLink}">`;
+                }
+
             } catch (err) {
                 console.error("خطأ في التحميل:", err);
             }
