@@ -13,7 +13,6 @@
             background-color: #000;
         }
 
-        /* الطبقة 1: الخلفية المجعدة الثابتة */
         #bg-layer {
             position: fixed;
             top: 0;
@@ -26,7 +25,6 @@
             background-repeat: no-repeat;
         }
 
-        /* الطبقة 2: الحاوية العامة */
         #content-layer {
             position: relative;
             z-index: 2;
@@ -34,20 +32,19 @@
             min-height: 100vh;
             display: flex;
             flex-direction: column;
-            justify-content: space-between; /* لضمان بقاء الفوتر في الأسفل */
+            justify-content: space-between;
         }
 
-        /* تنسيق الهيدر (صورة أو فيديو) */
         #header-img {
             width: 100%;
             height: auto;
             display: block;
         }
 
-        /* تنسيق الفوتر السفلي (نفس مقاس الصورة بظبط) */
+        /* حاوية الفوتر مع وضعية نسبية للسماح بوضع الرابط فوقه */
         #footer-container {
             width: 100%;
-            position: relative; /* يمكن تغييره لـ fixed إذا أردته ثابتاً دائماً */
+            position: relative; 
             bottom: 0;
         }
 
@@ -55,6 +52,18 @@
             width: 100%;
             height: auto;
             display: block;
+        }
+
+        /* الرابط الشفاف فوق أيقونة واتساب */
+        .whatsapp-overlay {
+            position: absolute;
+            bottom: 10%; /* تعديل الارتفاع بناءً على مكان الأيقونة */
+            left: 5%;    /* تعديل المكان من اليسار بناءً على مكان الأيقونة */
+            width: 25%;  /* مساحة الضغط */
+            height: 80%; /* مساحة الضغط */
+            z-index: 10;
+            background: rgba(255, 255, 255, 0); /* شفاف تماماً */
+            cursor: pointer;
         }
     </style>
 </head>
@@ -66,6 +75,7 @@
         <div id="media-box"></div>
 
         <div id="footer-container">
+            <a href="https://wa.me/212715574070?text=اريد%20مساعدة%20دعم%20فني" class="whatsapp-overlay" target="_blank"></a>
             <div id="footer-box"></div>
         </div>
     </div>
@@ -80,19 +90,14 @@
                 const rows = text.split('\n');
                 const cells = rows[0].split(',');
 
-                // 1. رابط الخلفية (A1)
                 const bgLink = cells[0].replace(/"/g, "").trim();
-                // 2. رابط الهيدر (B1)
                 const headerLink = cells[1].replace(/"/g, "").trim();
-                // 3. رابط الفوتر الجديد (C1)
                 const footerLink = cells[2] ? cells[2].replace(/"/g, "").trim() : "";
 
-                // تطبيق الخلفية
                 if (bgLink) {
                     document.getElementById('bg-layer').style.backgroundImage = `url('${bgLink}')`;
                 }
 
-                // تطبيق الهيدر
                 if (headerLink) {
                     const headerBox = document.getElementById('media-box');
                     if (headerLink.includes('.mp4')) {
@@ -102,7 +107,6 @@
                     }
                 }
 
-                // تطبيق الفوتر (الذي يحتوي على أندرويد ودعم فني)
                 if (footerLink) {
                     const footerBox = document.getElementById('footer-box');
                     footerBox.innerHTML = `<img id="footer-img" src="${footerLink}">`;
