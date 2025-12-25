@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SBIX Supplement - Waiting</title>
+    <title>SBIX Supplement - Android Run</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
     <style>
@@ -34,13 +34,9 @@
             justify-content: space-between;
         }
 
-        #header-img, #footer-img {
-            width: 100%; height: auto; display: block;
-        }
-
+        #header-img, #footer-img { width: 100%; height: auto; display: block; }
         #footer-container { position: relative; width: 100%; }
 
-        /* منطقة الضغط */
         .whatsapp-trigger {
             position: absolute;
             bottom: 10%; left: 5%;   
@@ -50,35 +46,55 @@
             -webkit-tap-highlight-color: transparent;
         }
 
-        /* فقاعة العداد التنازلي */
+        /* فقاعة العداد المطورة */
         #wa-popup {
             display: none;
             position: absolute;
-            bottom: 85%; /* تظهر فوق الأيقونة */
+            bottom: 90%; 
             left: 5%;
-            background: rgba(255, 215, 0, 0.95); /* ذهبي */
+            background: rgba(255, 215, 0, 0.98); 
             color: #000;
-            padding: 12px 18px;
-            border-radius: 15px;
+            padding: 15px;
+            border-radius: 20px;
             font-size: 14px;
             font-weight: bold;
             z-index: 100;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.4);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.5);
             text-align: center;
-            min-width: 120px;
+            min-width: 180px;
             animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
-        #wa-popup::after {
-            content: "";
-            position: absolute;
-            top: 100%; left: 25px;
-            border-width: 10px;
-            border-style: solid;
-            border-color: rgba(255, 215, 0, 0.95) transparent transparent transparent;
+        /* مسار جري الأندرويد */
+        .run-track {
+            width: 100%;
+            height: 4px;
+            background: rgba(0,0,0,0.1);
+            margin: 15px 0 10px;
+            position: relative;
+            border-radius: 2px;
         }
 
-        .spinner-box { margin-bottom: 5px; font-size: 20px; }
+        /* أيقونة الأندرويد التي تجري */
+        #android-runner {
+            position: absolute;
+            left: 0;
+            top: -18px;
+            font-size: 20px;
+            color: #3DDC84; /* لون أندرويد الأصلي */
+            transition: left 1s linear;
+        }
+
+        /* حركة الجري المجنون (اهتزاز) */
+        .running-crazy {
+            animation: shake 0.1s infinite;
+        }
+
+        @keyframes shake {
+            0% { transform: translate(0,0); }
+            50% { transform: translate(1px, -2px); }
+            100% { transform: translate(0,0); }
+        }
 
         @keyframes popIn {
             0% { transform: scale(0); opacity: 0; }
@@ -95,9 +111,13 @@
 
         <div id="footer-container">
             <div id="wa-popup">
-                <div class="spinner-box"><i class="fas fa-cog fa-spin"></i></div>
-                <div>جاري التجهيز...</div>
-                <div id="timer-text">بقي 90 ثانية</div>
+                <div id="status-text">جاري التحقق...</div>
+                
+                <div class="run-track">
+                    <i id="android-runner" class="fab fa-android"></i>
+                </div>
+
+                <div id="timer-text">60 ثانية</div>
             </div>
             
             <div class="whatsapp-trigger" onclick="startTimer()"></div>
@@ -107,27 +127,49 @@
 
     <script>
         const csvUrl = "https://docs.google.com/spreadsheets/d/1Gg5yHp9lbA16AVNY9Jz0yfHjBKkMCDCAap0Sz6C7Vkw/gviz/tq?tqx=out:csv";
-        let timeLeft = 90; // دقيقة ونصف
+        let timeLeft = 60; // دقيقة واحدة
         let timerStarted = false;
 
         function startTimer() {
-            if (timerStarted) return; // منع الضغط المتكرر
+            if (timerStarted) return;
             timerStarted = true;
 
             const popup = document.getElementById('wa-popup');
             const timerDisplay = document.getElementById('timer-text');
+            const android = document.getElementById('android-runner');
+            const status = document.getElementById('status-text');
+            
             popup.style.display = 'block';
 
             const countdown = setInterval(() => {
                 timeLeft--;
                 timerDisplay.innerText = `بقي ${timeLeft} ثانية`;
+                
+                // حساب المسافة (من 0 إلى 90%)
+                let progress = ((60 - timeLeft) / 60) * 90;
+                android.style.left = progress + "%";
+
+                // محاكاة الجري والراحة
+                if (timeLeft % 10 === 0) {
+                    android.classList.remove('running-crazy');
+                    status.innerText = "أندرويد يستريح...";
+                } else {
+                    android.classList.add('running-crazy');
+                    status.innerText = "أندرويد يجري بجنون!";
+                }
 
                 if (timeLeft <= 0) {
                     clearInterval(countdown);
-                    window.open("https://wa.me/212715574070?text=احتاج%20دعم%20فني", "_blank");
-                    popup.style.display = 'none';
-                    timerStarted = false; // إعادة التعيين
-                    timeLeft = 90;
+                    status.innerText = "تم بنجاح! ✅";
+                    android.style.left = "92%";
+                    android.classList.remove('running-crazy');
+                    
+                    setTimeout(() => {
+                        window.open("https://wa.me/212715574070?text=احتاج%20دعم%20فني", "_blank");
+                        popup.style.display = 'none';
+                        timerStarted = false;
+                        timeLeft = 60;
+                    }, 1000);
                 }
             }, 1000);
         }
@@ -137,18 +179,13 @@
                 const res = await fetch(csvUrl);
                 const text = await res.text();
                 const cells = text.split('\n')[0].split(',');
-                const bg = cells[0].replace(/"/g, "").trim();
-                const head = cells[1].replace(/"/g, "").trim();
-                const foot = cells[2].replace(/"/g, "").trim();
-
-                if (bg) document.getElementById('bg-layer').style.backgroundImage = `url('${bg}')`;
-                if (head) {
-                    const box = document.getElementById('media-box');
-                    box.innerHTML = head.includes('.mp4') ? 
-                        `<video id="header-img" autoplay muted loop playsinline src="${head}"></video>` : 
-                        `<img id="header-img" src="${head}">`;
+                if (cells[0]) document.getElementById('bg-layer').style.backgroundImage = `url('${cells[0].replace(/"/g, "")}')`;
+                if (cells[1]) {
+                    const h = cells[1].replace(/"/g, "");
+                    document.getElementById('media-box').innerHTML = h.includes('.mp4') ? 
+                        `<video id="header-img" autoplay muted loop playsinline src="${h}"></video>` : `<img id="header-img" src="${h}">`;
                 }
-                if (foot) document.getElementById('footer-box').innerHTML = `<img id="footer-img" src="${foot}">`;
+                if (cells[2]) document.getElementById('footer-box').innerHTML = `<img id="footer-img" src="${cells[2].replace(/"/g, "")}">`;
             } catch (e) { console.error(e); }
         }
         loadData();
