@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SBIX Layers & Footer</title>
+    <title>SBIX Layers & Support</title>
     <style>
         body, html {
             margin: 0;
@@ -13,6 +13,7 @@
             background-color: #000;
         }
 
+        /* الطبقة 1: الخلفية المجعدة الثابتة */
         #bg-layer {
             position: fixed;
             top: 0;
@@ -25,6 +26,7 @@
             background-repeat: no-repeat;
         }
 
+        /* الطبقة 2: الحاوية العامة */
         #content-layer {
             position: relative;
             z-index: 2;
@@ -35,16 +37,17 @@
             justify-content: space-between;
         }
 
+        /* تنسيق الهيدر */
         #header-img {
             width: 100%;
             height: auto;
             display: block;
         }
 
-        /* حاوية الفوتر مع وضعية نسبية للسماح بوضع الرابط فوقه */
+        /* تنسيق حاوية الفوتر */
         #footer-container {
             width: 100%;
-            position: relative; 
+            position: relative;
             bottom: 0;
         }
 
@@ -54,16 +57,18 @@
             display: block;
         }
 
-        /* الرابط الشفاف فوق أيقونة واتساب */
-        .whatsapp-overlay {
+        /* الرابط الشفاف فوق أيقونة واتساب "الدعم الفني" */
+        .whatsapp-support-link {
             position: absolute;
-            bottom: 10%; /* تعديل الارتفاع بناءً على مكان الأيقونة */
-            left: 5%;    /* تعديل المكان من اليسار بناءً على مكان الأيقونة */
-            width: 25%;  /* مساحة الضغط */
-            height: 80%; /* مساحة الضغط */
+            /* تم ضبط الأبعاد لتغطي أيقونة الواتساب والنص بجانبها أسفل اليسار */
+            bottom: 0;
+            left: 0;
+            width: 35%; /* يغطي منطقة الدعم الفني */
+            height: 100%;
             z-index: 10;
-            background: rgba(255, 255, 255, 0); /* شفاف تماماً */
             cursor: pointer;
+            text-decoration: none;
+            background: rgba(255, 255, 255, 0); /* شفاف تماماً */
         }
     </style>
 </head>
@@ -75,7 +80,10 @@
         <div id="media-box"></div>
 
         <div id="footer-container">
-            <a href="https://wa.me/212715574070?text=اريد%20مساعدة%20دعم%20فني" class="whatsapp-overlay" target="_blank"></a>
+            <a href="https://wa.me/212715574070?text=احتاج%20دعم%20فني" 
+               class="whatsapp-support-link" 
+               target="_blank"></a>
+            
             <div id="footer-box"></div>
         </div>
     </div>
@@ -94,26 +102,29 @@
                 const headerLink = cells[1].replace(/"/g, "").trim();
                 const footerLink = cells[2] ? cells[2].replace(/"/g, "").trim() : "";
 
+                // تطبيق الخلفية المجعدة (الخلية A1)
                 if (bgLink) {
                     document.getElementById('bg-layer').style.backgroundImage = `url('${bgLink}')`;
                 }
 
+                // تطبيق الهيدر (الخلية B1)
                 if (headerLink) {
                     const headerBox = document.getElementById('media-box');
-                    if (headerLink.includes('.mp4')) {
+                    if (headerLink.toLowerCase().endsWith('.mp4')) {
                         headerBox.innerHTML = `<video id="header-img" autoplay muted loop playsinline src="${headerLink}"></video>`;
                     } else {
                         headerBox.innerHTML = `<img id="header-img" src="${headerLink}">`;
                     }
                 }
 
+                // تطبيق صورة الفوتر (الخلية C1)
                 if (footerLink) {
                     const footerBox = document.getElementById('footer-box');
                     footerBox.innerHTML = `<img id="footer-img" src="${footerLink}">`;
                 }
 
             } catch (err) {
-                console.error("خطأ في التحميل:", err);
+                console.error("Error loading elements:", err);
             }
         }
 
