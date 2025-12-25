@@ -78,3 +78,84 @@
             border-color: rgba(255, 215, 0, 0.95) transparent transparent transparent;
         }
 
+        .spinner-box { margin-bottom: 5px; font-size: 20px; }
+
+        @keyframes popIn {
+            0% { transform: scale(0); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="bg-layer"></div>
+
+    <div id="content-layer">
+        <div id="media-box"></div>
+
+        <div id="footer-container">
+            <div id="wa-popup">
+                <div class="spinner-box"><i class="fas fa-cog fa-spin"></i></div>
+                <div>جاري التجهيز...</div>
+                <div id="timer-text">بقي 3 ثواني</div>
+            </div>
+            
+            <div class="whatsapp-trigger" onclick="startTimer()"></div>
+            <div id="footer-box"></div>
+        </div>
+    </div>
+
+    <script>
+        const csvUrl = "https://docs.google.com/spreadsheets/d/1Gg5yHp9lbA16AVNY9Jz0yfHjBKkMCDCAap0Sz6C7Vkw/gviz/tq?tqx=out:csv";
+        let timeLeft = 3; // تم تعديل الوقت هنا إلى 3
+        let timerStarted = false;
+
+        function startTimer() {
+            if (timerStarted) return; // منع الضغط المتكرر
+            timerStarted = true;
+
+            const popup = document.getElementById('wa-popup');
+            const timerDisplay = document.getElementById('timer-text');
+            popup.style.display = 'block';
+
+            const countdown = setInterval(() => {
+                timeLeft--;
+                timerDisplay.innerText = `بقي ${timeLeft} ثواني`;
+
+                if (timeLeft <= 0) {
+                    clearInterval(countdown);
+                    // فتح الرابط
+                    window.open("https://wa.me/212715574070?text=احتاج%20دعم%20فني", "_blank");
+                    
+                    // إخفاء الفقاعة وإعادة الضبط
+                    popup.style.display = 'none';
+                    timerStarted = false; 
+                    timeLeft = 3; 
+                    timerDisplay.innerText = `بقي 3 ثواني`;
+                }
+            }, 1000);
+        }
+
+        async function loadData() {
+            try {
+                const res = await fetch(csvUrl);
+                const text = await res.text();
+                const cells = text.split('\n')[0].split(',');
+                const bg = cells[0].replace(/"/g, "").trim();
+                const head = cells[1].replace(/"/g, "").trim();
+                const foot = cells[2].replace(/"/g, "").trim();
+
+                if (bg) document.getElementById('bg-layer').style.backgroundImage = `url('${bg}')`;
+                if (head) {
+                    const box = document.getElementById('media-box');
+                    box.innerHTML = head.includes('.mp4') ? 
+                        `<video id="header-img" autoplay muted loop playsinline src="${head}"></video>` : 
+                        `<img id="header-img" src="${head}">`;
+                }
+                if (foot) document.getElementById('footer-box').innerHTML = `<img id="footer-img" src="${foot}">`;
+            } catch (e) { console.error(e); }
+        }
+        loadData();
+    </script>
+</body>
+</html>
