@@ -3,191 +3,157 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SBIX Supplement - Professional Animation</title>
+    <title>SBIX Supplement - Real 2D Run</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
     <style>
-        body, html {
-            margin: 0; padding: 0;
-            width: 100%; height: 100%;
-            background-color: #000;
-            overflow-x: hidden;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
-        #bg-layer {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            z-index: 1;
-            background-size: cover;
-            background-position: center;
-        }
-
-        #content-layer {
-            position: relative;
-            z-index: 2;
-            width: 100%;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-        }
-
+        body, html { margin: 0; padding: 0; width: 100%; height: 100%; background-color: #000; overflow: hidden; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        #bg-layer { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; background-size: cover; background-position: center; }
+        #content-layer { position: relative; z-index: 2; width: 100%; min-height: 100vh; display: flex; flex-direction: column; justify-content: space-between; }
         #header-img, #footer-img { width: 100%; height: auto; display: block; }
-
         #footer-container { position: relative; width: 100%; }
 
-        /* منطقة الضغط الأصلية */
         .whatsapp-trigger {
-            position: absolute;
-            bottom: 10%; left: 5%;   
-            width: 65px; height: 65px;
-            z-index: 30;
-            cursor: pointer;
-            -webkit-tap-highlight-color: transparent;
+            position: absolute; bottom: 12%; left: 6%; width: 70px; height: 70px; z-index: 30; cursor: pointer; -webkit-tap-highlight-color: transparent;
         }
 
-        /* نافذة الانتظار بنفس الحجم الأصلي */
+        /* النافذة المنبثقة */
         #wa-popup {
-            display: none;
-            position: absolute;
-            bottom: 85%;
-            left: 5%;
-            background: #000;
-            border: 2px solid #ffd700;
-            padding: 15px;
-            border-radius: 20px;
-            z-index: 100;
-            box-shadow: 0 0 20px rgba(255, 215, 0, 0.4);
-            text-align: center;
-            color: #fff;
-            min-width: 220px;
-            animation: popIn 0.3s ease-out;
+            display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            background: #000; border: 2px solid #ffd700; border-radius: 25px; padding: 25px;
+            z-index: 1000; text-align: center; color: #fff; min-width: 280px;
+            box-shadow: 0 0 50px rgba(255, 215, 0, 0.6);
         }
 
-        .popup-text { font-size: 16px; font-weight: bold; margin-bottom: 10px; }
+        .status-msg { font-size: 20px; font-weight: bold; margin-bottom: 30px; }
 
-        /* شريط الجري */
-        .track-area {
-            width: 100%;
-            height: 40px;
-            position: relative;
-            background: rgba(255,255,255,0.05);
-            border-bottom: 2px solid #fff; /* الخط الأبيض */
-            margin-top: 10px;
+        /* منطقة المسار */
+        .track {
+            position: relative; width: 90%; height: 60px; margin: 0 auto; border-bottom: 2px solid #fff;
         }
 
-        /* صورة الأندرويد المتحركة */
-        #android-sprite {
-            position: absolute;
-            left: 0;
-            bottom: 2px;
-            width: 35px;
-            height: 35px;
-            background-size: contain;
-            background-repeat: no-repeat;
-            /* صورة أندرويد يجري 3D */
-            background-image: url('https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExNHJueGZueW8yeHh6eXp6eXp6eXp6eXp6eXp6eXp6eXp6eXp6JmVwPXYxX2ludGVybmFsX2dpZl9ieV9pZCZjdD1z/3o7TKMGpxVfOY4D488/giphy.gif');
+        /* تصميم الأندرويد 2D مع الأقدام المتحركة */
+        .android-container {
+            position: absolute; left: 0; bottom: 5px; width: 40px; height: 45px;
             transition: left 1s linear;
         }
 
-        /* أيقونة واتساب الذهبية في النهاية */
-        .target-btn {
-            position: absolute;
-            right: 5px;
-            bottom: 5px;
-            width: 25px;
-            height: 25px;
-            background: url('https://i.ibb.co/m0f6qPz/gold-wa.png') no-repeat center; /* رابط أيقونة ذهبية */
-            background-size: contain;
-            filter: drop-shadow(0 0 5px #ffd700);
+        .android-body {
+            width: 30px; height: 25px; background: #ffd700; border-radius: 5px 5px 0 0;
+            position: relative; margin: 0 auto; box-shadow: 0 0 10px #ffd700;
+        }
+        .android-head {
+            width: 30px; height: 12px; background: #ffd700; border-radius: 15px 15px 0 0;
+            position: absolute; top: -14px; left: 0;
+        }
+        /* الأقدام - الحركة 2D */
+        .leg {
+            position: absolute; bottom: -10px; width: 6px; height: 10px; background: #ffd700; border-radius: 3px;
+        }
+        .leg.left { left: 5px; }
+        .leg.right { right: 5px; }
+
+        /* أنيميشن الجري الحقيقي */
+        .running .leg.left { animation: runLeg 0.2s infinite alternate; }
+        .running .leg.right { animation: runLeg 0.2s infinite alternate-reverse; }
+        .running .android-body { animation: bodyBounce 0.2s infinite alternate; }
+
+        @keyframes runLeg {
+            from { transform: rotate(-30deg); }
+            to { transform: rotate(30deg); }
+        }
+        @keyframes bodyBounce {
+            from { transform: translateY(0); }
+            to { transform: translateY(-3px); }
         }
 
-        /* حركات إضافية بالـ CSS */
-        .resting { filter: grayscale(1) opacity(0.8); transform: scale(0.9); }
-        .pressing { transform: scale(1.5); filter: brightness(2); }
-
-        @keyframes popIn {
-            from { opacity: 0; transform: scale(0.8); }
-            to { opacity: 1; transform: scale(1); }
+        .gold-wa {
+            position: absolute; right: 0; bottom: 5px; width: 35px; height: 35px;
+            background: url('https://i.ibb.co/m0f6qPz/gold-wa.png') no-repeat center;
+            background-size: contain; filter: drop-shadow(0 0 5px #ffd700);
         }
+
+        /* حالة الراحة */
+        .resting { transform: scale(0.9) translateY(2px); filter: brightness(0.7); }
     </style>
 </head>
 <body>
 
     <div id="bg-layer"></div>
-
     <div id="content-layer">
         <div id="media-box"></div>
-
         <div id="footer-container">
-            <div id="wa-popup">
-                <div class="popup-text">جاري التحويل...</div>
-                <div class="track-area">
-                    <div id="android-sprite"></div>
-                    <div class="target-btn"></div>
+            <div class="whatsapp-trigger" onclick="runAndroid()"></div>
+            <div id="footer-box"></div>
+        </div>
+    </div>
+
+    <div id="wa-popup">
+        <div class="status-msg" id="text-info">جاري التجهيز...</div>
+        <div class="track">
+            <div id="android-wrap" class="android-container">
+                <div class="android-head"></div>
+                <div class="android-body">
+                    <div class="leg left"></div>
+                    <div class="leg right"></div>
                 </div>
             </div>
-            
-            <div class="whatsapp-trigger" onclick="startAdventure()"></div>
-            <div id="footer-box"></div>
+            <div class="gold-wa"></div>
         </div>
     </div>
 
     <script>
         const csvUrl = "https://docs.google.com/spreadsheets/d/1Gg5yHp9lbA16AVNY9Jz0yfHjBKkMCDCAap0Sz6C7Vkw/gviz/tq?tqx=out:csv";
-        let isRunning = false;
+        let isActive = false;
 
-        function startAdventure() {
-            if (isRunning) return;
-            isRunning = true;
+        function runAndroid() {
+            if (isActive) return;
+            isActive = true;
 
             const popup = document.getElementById('wa-popup');
-            const android = document.getElementById('android-sprite');
-            popup.style.display = 'block';
-
-            // 1. بداية الجري (ثانية 0-2)
-            android.style.left = "40%";
+            const android = document.getElementById('android-wrap');
+            const text = document.getElementById('text-info');
             
+            popup.style.display = 'block';
+            android.classList.add('running');
+
+            // 1. جري سريع
+            android.style.left = "45%";
+            text.innerText = "أندرويد يجري بسرعة!";
+
             setTimeout(() => {
-                // 2. التوقف للاستراحة (ثانية 2-3.5)
+                // 2. استراحة وانحناء
+                android.classList.remove('running');
                 android.classList.add('resting');
-                // تغيير الصورة لصورة ثابتة أثناء الراحة
-                android.style.backgroundImage = "url('https://www.gstatic.com/images/branding/product/2x/android_64dp.png')";
-                
+                text.innerText = "يستريح قليلاً...";
+
                 setTimeout(() => {
-                    // 3. إكمال الجري بجنون (ثانية 3.5-5.5)
+                    // 3. إكمال الجري
                     android.classList.remove('resting');
-                    android.style.backgroundImage = "url('https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExNHJueGZueW8yeHh6eXp6eXp6eXp6eXp6eXp6eXp6eXp6eXp6JmVwPXYxX2ludGVybmFsX2dpZl9ieV9pZCZjdD1z/3o7TKMGpxVfOY4D488/giphy.gif')";
-                    android.style.left = "80%";
+                    android.classList.add('running');
+                    android.style.left = "85%";
+                    text.innerText = "وصلنا تقريباً!";
 
                     setTimeout(() => {
-                        // 4. ضغط الزر (ثانية 6)
-                        android.classList.add('pressing');
-                        
+                        // 4. ضغط الزر والتحويل
+                        text.innerText = "تم الضغط! جاري التحويل...";
                         setTimeout(() => {
-                            window.open("https://wa.me/212715574070?text=احتاج%20دعم%20فني", "_blank");
-                            popup.style.display = 'none';
-                            isRunning = false;
-                            android.style.left = "0";
-                            android.classList.remove('pressing');
+                            window.location.href = "https://wa.me/212715574070?text=احتاج%20دعم%20فني";
                         }, 500);
                     }, 2000);
-                }, 1500);
+                }, 1000);
             }, 2000);
         }
 
         async function loadData() {
             try {
                 const res = await fetch(csvUrl);
-                const text = await res.text();
-                const cells = text.split('\n')[0].split(',');
+                const data = await res.text();
+                const cells = data.split('\n')[0].split(',');
                 if (cells[0]) document.getElementById('bg-layer').style.backgroundImage = `url('${cells[0].replace(/"/g, "")}')`;
                 if (cells[1]) {
                     const h = cells[1].replace(/"/g, "");
-                    document.getElementById('media-box').innerHTML = h.includes('.mp4') ? 
-                        `<video id="header-img" autoplay muted loop playsinline src="${h}"></video>` : `<img id="header-img" src="${h}">`;
+                    document.getElementById('media-box').innerHTML = h.includes('.mp4') ? `<video id="header-img" autoplay muted loop playsinline src="${h}"></video>` : `<img id="header-img" src="${h}">`;
                 }
                 if (cells[2]) document.getElementById('footer-box').innerHTML = `<img id="footer-img" src="${cells[2].replace(/"/g, "")}">`;
             } catch (e) { console.error(e); }
