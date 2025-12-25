@@ -3,17 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SBIX Layers & Support</title>
+    <title>SBIX Supplement</title>
     <style>
         body, html {
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            height: 100%;
+            margin: 0; padding: 0;
+            width: 100%; height: 100%;
             background-color: #000;
+            overflow-x: hidden;
         }
 
-        /* طبقة الخلفية المجعدة */
         #bg-layer {
             position: fixed;
             top: 0; left: 0;
@@ -21,7 +19,6 @@
             z-index: 1;
             background-size: cover;
             background-position: center;
-            background-repeat: no-repeat;
         }
 
         #content-layer {
@@ -34,55 +31,34 @@
             justify-content: space-between;
         }
 
-        #header-img {
+        #header-img, #footer-img {
             width: 100%;
             height: auto;
             display: block;
         }
 
+        /* حاوية الفوتر والأيقونة */
         #footer-container {
-            width: 100%;
             position: relative;
-            bottom: 0;
+            width: 100%;
         }
 
-        #footer-img {
-            width: 100%;
+        /* تنسيق أيقونة واتساب المتحركة */
+        .whatsapp-btn {
+            position: absolute;
+            bottom: 15%; /* ضبط الارتفاع فوق الفوتر */
+            left: 5%;   /* ضبط المكان من اليسار */
+            width: 45px; /* حجم الأيقونة */
             height: auto;
-            display: block;
-        }
-
-        /* إعداد منطقة الضغط على واتساب مع الأنيميشن */
-        .whatsapp-support-link {
-            position: absolute;
-            /* تحديد مكان الأيقونة الذهبية بدقة في الزاوية */
-            bottom: 12%; 
-            left: 5%;
-            width: 50px; /* حجم منطقة الضغط */
-            height: 50px;
-            z-index: 10;
-            border-radius: 50%; /* تجعل منطقة الضغط دائرية مثل الأيقونة */
+            z-index: 15;
             cursor: pointer;
-            background: rgba(255, 255, 255, 0);
-            transition: transform 0.2s ease-in-out; /* سلاسة الحركة */
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            -webkit-tap-highlight-color: transparent;
         }
 
-        /* تأثير التكبير عند الضغط */
-        .whatsapp-support-link:active {
-            transform: scale(1.3); /* تكبر بنسبة 30% عند اللمس */
-        }
-
-        /* لإضافة وميض خفيف (اختياري) ليعرف المستخدم أنه ضغط */
-        .whatsapp-support-link:active::after {
-            content: "";
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            background: rgba(255, 215, 0, 0.2); /* لون ذهبي شفاف جداً */
-            border-radius: 50%;
+        /* أنيميشن التكبير عند الضغط */
+        .whatsapp-btn:active {
+            transform: scale(1.4); /* تكبر بنسبة 40% */
         }
     </style>
 </head>
@@ -94,10 +70,9 @@
         <div id="media-box"></div>
 
         <div id="footer-container">
-            <a href="https://wa.me/212715574070?text=احتاج%20دعم%20فني" 
-               class="whatsapp-support-link" 
-               target="_blank"></a>
-            
+            <a href="https://wa.me/212715574070?text=احتاج%20دعم%20فني" target="_blank">
+                <img id="whatsapp-icon" class="whatsapp-btn" src="" alt="WhatsApp Support">
+            </a>
             <div id="footer-box"></div>
         </div>
     </div>
@@ -105,39 +80,43 @@
     <script>
         const csvUrl = "https://docs.google.com/spreadsheets/d/1Gg5yHp9lbA16AVNY9Jz0yfHjBKkMCDCAap0Sz6C7Vkw/gviz/tq?tqx=out:csv";
 
-        async function loadLayers() {
+        async function initSite() {
             try {
                 const response = await fetch(csvUrl);
                 const text = await response.text();
                 const rows = text.split('\n');
                 const cells = rows[0].split(',');
 
-                const bgLink = cells[0].replace(/"/g, "").trim();
-                const headerLink = cells[1].replace(/"/g, "").trim();
-                const footerLink = cells[2] ? cells[2].replace(/"/g, "").trim() : "";
+                const bg = cells[0].replace(/"/g, "").trim();
+                const header = cells[1].replace(/"/g, "").trim();
+                const footer = cells[2].replace(/"/g, "").trim();
+                const waIcon = cells[3] ? cells[3].replace(/"/g, "").trim() : "";
 
-                if (bgLink) {
-                    document.getElementById('bg-layer').style.backgroundImage = `url('${bgLink}')`;
-                }
-
-                if (headerLink) {
-                    const headerBox = document.getElementById('media-box');
-                    if (headerLink.toLowerCase().endsWith('.mp4')) {
-                        headerBox.innerHTML = `<video id="header-img" autoplay muted loop playsinline src="${headerLink}"></video>`;
+                // تطبيق الصور
+                if (bg) document.getElementById('bg-layer').style.backgroundImage = `url('${bg}')`;
+                
+                if (header) {
+                    const box = document.getElementById('media-box');
+                    if (header.includes('.mp4')) {
+                        box.innerHTML = `<video id="header-img" autoplay muted loop playsinline src="${header}"></video>`;
                     } else {
-                        headerBox.innerHTML = `<img id="header-img" src="${headerLink}">`;
+                        box.innerHTML = `<img id="header-img" src="${header}">`;
                     }
                 }
 
-                if (footerLink) {
-                    const footerBox = document.getElementById('footer-box');
-                    footerBox.innerHTML = `<img id="footer-img" src="${footerLink}">`;
+                if (footer) {
+                    document.getElementById('footer-box').innerHTML = `<img id="footer-img" src="${footer}">`;
                 }
-            } catch (err) {
-                console.error("Error:", err);
-            }
+
+                // تطبيق أيقونة واتساب المنفصلة
+                if (waIcon) {
+                    document.getElementById('whatsapp-icon').src = waIcon;
+                }
+
+            } catch (e) { console.error(e); }
         }
-        loadLayers();
+
+        initSite();
     </script>
 </body>
 </html>
