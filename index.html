@@ -13,20 +13,17 @@
             background-color: #000;
         }
 
-        /* الطبقة 1: الخلفية المجعدة الثابتة */
+        /* طبقة الخلفية المجعدة */
         #bg-layer {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
             z-index: 1;
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
         }
 
-        /* الطبقة 2: الحاوية العامة */
         #content-layer {
             position: relative;
             z-index: 2;
@@ -37,14 +34,12 @@
             justify-content: space-between;
         }
 
-        /* تنسيق الهيدر */
         #header-img {
             width: 100%;
             height: auto;
             display: block;
         }
 
-        /* تنسيق حاوية الفوتر */
         #footer-container {
             width: 100%;
             position: relative;
@@ -57,18 +52,37 @@
             display: block;
         }
 
-        /* الرابط الشفاف فوق أيقونة واتساب "الدعم الفني" */
+        /* إعداد منطقة الضغط على واتساب مع الأنيميشن */
         .whatsapp-support-link {
             position: absolute;
-            /* تم ضبط الأبعاد لتغطي أيقونة الواتساب والنص بجانبها أسفل اليسار */
-            bottom: 0;
-            left: 0;
-            width: 35%; /* يغطي منطقة الدعم الفني */
-            height: 100%;
+            /* تحديد مكان الأيقونة الذهبية بدقة في الزاوية */
+            bottom: 12%; 
+            left: 5%;
+            width: 50px; /* حجم منطقة الضغط */
+            height: 50px;
             z-index: 10;
+            border-radius: 50%; /* تجعل منطقة الضغط دائرية مثل الأيقونة */
             cursor: pointer;
-            text-decoration: none;
-            background: rgba(255, 255, 255, 0); /* شفاف تماماً */
+            background: rgba(255, 255, 255, 0);
+            transition: transform 0.2s ease-in-out; /* سلاسة الحركة */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* تأثير التكبير عند الضغط */
+        .whatsapp-support-link:active {
+            transform: scale(1.3); /* تكبر بنسبة 30% عند اللمس */
+        }
+
+        /* لإضافة وميض خفيف (اختياري) ليعرف المستخدم أنه ضغط */
+        .whatsapp-support-link:active::after {
+            content: "";
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 215, 0, 0.2); /* لون ذهبي شفاف جداً */
+            border-radius: 50%;
         }
     </style>
 </head>
@@ -102,12 +116,10 @@
                 const headerLink = cells[1].replace(/"/g, "").trim();
                 const footerLink = cells[2] ? cells[2].replace(/"/g, "").trim() : "";
 
-                // تطبيق الخلفية المجعدة (الخلية A1)
                 if (bgLink) {
                     document.getElementById('bg-layer').style.backgroundImage = `url('${bgLink}')`;
                 }
 
-                // تطبيق الهيدر (الخلية B1)
                 if (headerLink) {
                     const headerBox = document.getElementById('media-box');
                     if (headerLink.toLowerCase().endsWith('.mp4')) {
@@ -117,17 +129,14 @@
                     }
                 }
 
-                // تطبيق صورة الفوتر (الخلية C1)
                 if (footerLink) {
                     const footerBox = document.getElementById('footer-box');
                     footerBox.innerHTML = `<img id="footer-img" src="${footerLink}">`;
                 }
-
             } catch (err) {
-                console.error("Error loading elements:", err);
+                console.error("Error:", err);
             }
         }
-
         loadLayers();
     </script>
 </body>
