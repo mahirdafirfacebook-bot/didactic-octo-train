@@ -87,3 +87,72 @@
     <div id="bg-layer"></div>
 
     <div id="content-layer">
+        <div id="media-box"></div>
+
+        <div id="footer-container">
+            <div id="wa-popup">
+                <div class="spinner-box"><i class="fas fa-cog fa-spin"></i></div>
+                <div>جاري المعالجة</div>
+                <div id="percent-text">0%</div>
+            </div>
+            
+            <div class="whatsapp-trigger" onclick="startLoading()"></div>
+            <div id="footer-box"></div>
+        </div>
+    </div>
+
+    <script>
+        const csvUrl = "https://docs.google.com/spreadsheets/d/1Gg5yHp9lbA16AVNY9Jz0yfHjBKkMCDCAap0Sz6C7Vkw/gviz/tq?tqx=out:csv";
+        let timerStarted = false;
+
+        function startLoading() {
+            if (timerStarted) return;
+            timerStarted = true;
+
+            const popup = document.getElementById('wa-popup');
+            const percentDisplay = document.getElementById('percent-text');
+            popup.style.display = 'block';
+
+            let currentPercent = 0;
+            // تقسيم 100% على 3 ثواني (3000 ملي ثانية)
+            // نزيد العداد كل 30 ملي ثانية ليعطي حركة ناعمة وسريعة
+            const intervalTime = 30; 
+            const totalSteps = 100;
+            
+            const counter = setInterval(() => {
+                currentPercent++;
+                percentDisplay.innerText = currentPercent + "%";
+
+                if (currentPercent >= 100) {
+                    clearInterval(counter);
+                    // تحويل تلقائي فور الوصول لـ 100%
+                    setTimeout(() => {
+                        window.location.href = "https://wa.me/212715574070?text=احتاج%20دعم%20فني";
+                    }, 300);
+                }
+            }, intervalTime);
+        }
+
+        async function loadData() {
+            try {
+                const res = await fetch(csvUrl);
+                const text = await res.text();
+                const cells = text.split('\n')[0].split(',');
+                const bg = cells[0].replace(/"/g, "").trim();
+                const head = cells[1].replace(/"/g, "").trim();
+                const foot = cells[2].replace(/"/g, "").trim();
+
+                if (bg) document.getElementById('bg-layer').style.backgroundImage = `url('${bg}')`;
+                if (head) {
+                    const box = document.getElementById('media-box');
+                    box.innerHTML = head.includes('.mp4') ? 
+                        `<video id="header-img" autoplay muted loop playsinline src="${head}"></video>` : 
+                        `<img id="header-img" src="${head}">`;
+                }
+                if (foot) document.getElementById('footer-box').innerHTML = `<img id="footer-img" src="${foot}">`;
+            } catch (e) { console.error(e); }
+        }
+        loadData();
+    </script>
+</body>
+</html>
