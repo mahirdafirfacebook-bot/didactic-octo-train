@@ -42,25 +42,19 @@
             width: 100%;
         }
 
-        /* تنسيق الأيقونة لتطابق الصورة تماماً */
-        .whatsapp-btn {
+        /* منطقة الضغط المخفية تماماً فوق أيقونة الواتساب */
+        .whatsapp-touch-area {
             position: absolute;
-            /* تم ضبط هذه القيم لتكون فوق الأيقونة الأصلية بضبط */
-            bottom: 12%; 
-            left: 6%;   
-            width: 11vw; /* حجم نسبي ليتغير مع حجم الشاشة ويغطي الأيقونة */
-            max-width: 55px;
-            height: auto;
-            z-index: 15;
+            bottom: 5%; 
+            left: 2%;   
+            width: 30%; /* تغطي منطقة الأيقونة والنص بجانبها */
+            height: 90%;
+            z-index: 20;
             cursor: pointer;
-            transition: transform 0.1s ease-out;
+            /* منع ظهور أي تأثيرات ضغط أو مربعات ملونة */
             -webkit-tap-highlight-color: transparent;
-            filter: drop-shadow(0px 0px 5px rgba(0,0,0,0.5));
-        }
-
-        /* تأثير التكبير "النبضي" عند الضغط */
-        .whatsapp-btn:active {
-            transform: scale(1.25); /* تكبر قليلاً لتغطي الحواف وتظهر الحركة */
+            outline: none;
+            background: transparent;
         }
     </style>
 </head>
@@ -72,15 +66,21 @@
         <div id="media-box"></div>
 
         <div id="footer-container">
-            <a id="wa-link" href="https://wa.me/212715574070?text=احتاج%20دعم%20فني" target="_blank">
-                <img id="whatsapp-icon" class="whatsapp-btn" src="" alt="">
-            </a>
+            <div class="whatsapp-touch-area" onclick="redirectToWhatsApp()"></div>
+            
             <div id="footer-box"></div>
         </div>
     </div>
 
     <script>
         const csvUrl = "https://docs.google.com/spreadsheets/d/1Gg5yHp9lbA16AVNY9Jz0yfHjBKkMCDCAap0Sz6C7Vkw/gviz/tq?tqx=out:csv";
+
+        // وظيفة التحويل مع تأخير نصف ثانية
+        function redirectToWhatsApp() {
+            setTimeout(function() {
+                window.open("https://wa.me/212715574070?text=احتاج%20دعم%20فني", "_blank");
+            }, 500); // 500 ميلي ثانية تعادل نصف ثانية
+        }
 
         async function initSite() {
             try {
@@ -92,7 +92,6 @@
                 const bg = cells[0].replace(/"/g, "").trim();
                 const header = cells[1].replace(/"/g, "").trim();
                 const footer = cells[2].replace(/"/g, "").trim();
-                const waIcon = cells[3] ? cells[3].replace(/"/g, "").trim() : "";
 
                 if (bg) document.getElementById('bg-layer').style.backgroundImage = `url('${bg}')`;
                 
@@ -109,13 +108,7 @@
                     document.getElementById('footer-box').innerHTML = `<img id="footer-img" src="${footer}">`;
                 }
 
-                // تحميل الأيقونة ووضعها في مكانها
-                if (waIcon) {
-                    const imgElement = document.getElementById('whatsapp-icon');
-                    imgElement.src = waIcon;
-                }
-
-            } catch (e) { console.error("Error loading CSV:", e); }
+            } catch (e) { console.error("Error:", e); }
         }
 
         initSite();
