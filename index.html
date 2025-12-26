@@ -131,9 +131,9 @@
         <div class="modal-content" style="max-width:750px">
             <h2 style="color:var(--primary)">إضافة فيديو جديد</h2>
             <div style="background:#1a1a1a; padding:15px; border-radius:15px; border:2px dashed var(--primary); margin-bottom:25px">
-                <input type="text" id="new-title" placeholder="عنوان الفيديو / الصورة">
-                <input type="text" id="new-url" placeholder="رابط المحتوى (يوتيوب أو مباشر)">
-                <textarea id="new-desc" rows="3" placeholder="وصف الفيديو (الروابط هنا تصبح قابلة للضغط)"></textarea>
+                <input type="text" id="new-title" placeholder="عنوان الفيديو">
+                <input type="text" id="new-url" placeholder="رابط الفيديو (يوتيوب)">
+                <textarea id="new-desc" rows="3" placeholder="الوصف"></textarea>
                 <button class="btn-action" onclick="App.addNewItem()">إضافة إلى المنصة الآن</button>
             </div>
             <h3 style="margin-bottom:15px">تعديل المحتوى الحالي</h3>
@@ -187,7 +187,7 @@
                 news: { active: true, text: 'أهلاً بكم في المنصة المحدثة', link: '#' },
                 social: { facebook: '#', tiktok: '#', instagram: '#', whatsapp: '#' },
                 items: [
-                    { t: 'فيديو ترحيبي للمنصة', u: 'https://www.w3schools.com/html/mov_bbb.mp4', d: 'أهلاً بك. يمكنك تغيير هذا المحتوى من الإدارة.', type: 'video' }
+                    { t: 'فيديو ترحيبي للمنصة', u: 'https://www.youtube.com/watch?v=ScMzIvxBSi4', d: 'أهلاً بك يا ماهر.', type: 'video' }
                 ]
             },
 
@@ -197,36 +197,34 @@
                 this.render();
             },
 
-            // وظيفة استخراج صورة اليوتيوب (الحل للمشكلة)
-            getYoutubeThumb(url) {
-                if (url.includes('youtube.com') || url.includes('youtu.be')) {
+            // استخراج صورة اليوتيوب تلقائياً
+            getThumb(url) {
+                if(url.includes('youtube.com') || url.includes('youtu.be')) {
                     const id = url.includes('v=') ? url.split('v=')[1].split('&')[0] : url.split('/').pop();
                     return `https://img.youtube.com/vi/${id}/mqdefault.jpg`;
                 }
+                // إذا كان رابط صورة مباشر
+                if(url.match(/\.(jpg|jpeg|png|webp|gif)$/i)) return url;
+                // صورة افتراضية للفيديوهات المباشرة
                 return 'https://via.placeholder.com/400x225/222/fff?text=VIDEO';
             },
 
             render() {
                 document.getElementById('ui-site-name').innerText = this.db.siteName;
                 document.getElementById('ui-avatar').src = this.db.avatar;
-                
                 const n = document.getElementById('news-container');
                 n.style.display = this.db.news.active ? 'block' : 'none';
                 document.getElementById('ui-news-text').innerText = this.db.news.text;
 
                 const grid = document.getElementById('video-grid');
-                grid.innerHTML = this.db.items.map((it, i) => {
-                    // تحديد الصورة بناءً على نوع الرابط
-                    let thumb = it.type === 'image' ? it.u : this.getYoutubeThumb(it.u);
-                    
-                    return `
+                grid.innerHTML = this.db.items.map((it, i) => `
                     <div class="thumb-item" onclick="App.load(${i})">
                         <div class="thumb-img-wrapper">
-                            <img src="${thumb}" class="thumb-img" onerror="this.src='https://via.placeholder.com/400x225/222/fff?text=Error'">
+                            <img src="${this.getThumb(it.u)}" class="thumb-img">
                         </div>
                         <div class="thumb-text">${it.t}</div>
                     </div>
-                `}).join('');
+                `).join('');
 
                 if(this.db.items.length > 0) this.load(0);
                 this.syncInputs();
@@ -254,33 +252,27 @@
                 const t = document.getElementById('new-title').value;
                 const u = document.getElementById('new-url').value;
                 const d = document.getElementById('new-desc').value;
-                if(!t || !u) return alert("الرجاء إدخال العنوان والرابط");
-                const isImg = u.match(/\.(jpg|jpeg|png|webp|gif)$/i);
-                this.db.items.unshift({ t, u, d, type: isImg?'image':'video' });
-                this.save();
-                this.render();
-                this.renderManageList();
+                if(!t || !u) return alert("أدخل البيانات");
+                this.db.items.unshift({ t, u, d, type: 'video' });
+                this.save(); this.render(); this.renderManageList();
                 document.getElementById('new-title').value = '';
                 document.getElementById('new-url').value = '';
                 document.getElementById('new-desc').value = '';
-                alert("تمت الإضافة بنجاح!");
             },
 
             renderManageList() {
                 const list = document.getElementById('manage-list');
                 list.innerHTML = this.db.items.map((it, i) => `
                     <div class="item-manager-card">
-                        <input type="text" value="${it.t}" onchange="App.editItem(${i}, 't', this.value)" placeholder="تعديل العنوان">
-                        <input type="text" value="${it.u}" onchange="App.editItem(${i}, 'u', this.value)" placeholder="تعديل الرابط">
-                        <textarea onchange="App.editItem(${i}, 'd', this.value)" placeholder="تعديل الوصف">${it.d}</textarea>
-                        <button class="btn-action" style="background:#555; font-size:12px; padding:5px" onclick="App.deleteItem(${i})">حذف هذا المحتوى</button>
+                        <input type="text" value="${it.t}" onchange="App.editItem(${i}, 't', this.value)">
+                        <input type="text" value="${it.u}" onchange="App.editItem(${i}, 'u', this.value)">
+                        <button class="btn-action" style="background:#555" onclick="App.deleteItem(${i})">حذف</button>
                     </div>
                 `).join('');
             },
 
-            editItem(i, key, val) { this.db.items[i][key] = val; this.save(); this.render(); },
-            deleteItem(i) { if(confirm("حذف الفيديو؟")) { this.db.items.splice(i,1); this.save(); this.render(); this.renderManageList(); } },
-
+            editItem(i, k, v) { this.db.items[i][k] = v; this.save(); this.render(); },
+            deleteItem(i) { this.db.items.splice(i,1); this.save(); this.render(); this.renderManageList(); },
             saveSettings() {
                 this.db.auth.user = document.getElementById('adm-user').value || this.db.auth.user;
                 this.db.auth.pass = document.getElementById('adm-pass').value || this.db.auth.pass;
@@ -293,11 +285,10 @@
                 this.db.social.tiktok = document.getElementById('adm-tk').value;
                 this.db.social.instagram = document.getElementById('adm-ig').value;
                 this.db.social.whatsapp = document.getElementById('adm-wa').value;
-                this.save(); this.render(); this.closeModals(); alert("تم الحفظ!");
+                this.save(); this.render(); this.closeModals(); alert("تم الحفظ");
             },
 
             save() { localStorage.setItem('MAHER_PRO_DATA_V4', JSON.stringify(this.db)); },
-            
             syncInputs() {
                 document.getElementById('adm-user').value = this.db.auth.user;
                 document.getElementById('adm-name').value = this.db.siteName;
@@ -309,14 +300,12 @@
                 document.getElementById('adm-ig').value = this.db.social.instagram;
                 document.getElementById('adm-wa').value = this.db.social.whatsapp;
             },
-
             showAuth() { this.toggleMenu(); document.getElementById('auth-screen').style.display = 'flex'; },
             checkAuth() {
                 if(document.getElementById('login-user').value === this.db.auth.user && 
                    document.getElementById('login-pass').value === this.db.auth.pass) {
-                    this.closeModals();
-                    document.getElementById('admin-screen').style.display = 'flex';
-                } else alert("البيانات خاطئة!");
+                    this.closeModals(); document.getElementById('admin-screen').style.display = 'flex';
+                } else alert("خطأ");
             },
             openManager() { document.getElementById('admin-screen').style.display = 'none'; document.getElementById('manager-screen').style.display = 'flex'; this.renderManageList(); },
             backToAdmin() { document.getElementById('manager-screen').style.display = 'none'; document.getElementById('admin-screen').style.display = 'flex'; },
@@ -324,15 +313,7 @@
             closeModals() { document.querySelectorAll('.full-modal').forEach(m => m.style.display = 'none'); },
             toggleDesc() { const d = document.getElementById('desc-panel'); d.style.display = d.style.display==='block' ? 'none' : 'block'; },
             toggleTheme() { document.body.setAttribute('data-theme', document.body.getAttribute('data-theme')==='dark'?'light':'dark'); },
-            social(p) {
-                const l = document.getElementById('redir-layer');
-                const t = document.getElementById('timer');
-                let c = 3; l.style.display='flex';
-                const iv = setInterval(() => {
-                    c--; t.innerText = c;
-                    if(c<=0) { clearInterval(iv); window.location.href = this.db.social[p]; }
-                }, 1000);
-            },
+            social(p) { window.location.href = this.db.social[p]; },
             switchLang() {
                 const h = document.getElementById('main-html');
                 h.dir = h.dir === 'rtl' ? 'ltr' : 'rtl';
@@ -340,9 +321,7 @@
             },
             newsClick() { if(this.db.news.link !== '#') window.location.href = this.db.news.link; }
         };
-
         window.onload = () => App.init();
-        window.onclick = (e) => { if(e.target.id === 'sidebar') App.toggleMenu(); }
     </script>
 </body>
 </html>
