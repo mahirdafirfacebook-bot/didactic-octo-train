@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>MAHER SUPREME SYSTEM</title>
+    <title>SMART PLATFORM PRO</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -19,45 +19,62 @@
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Cairo', sans-serif; touch-action: manipulation; }
         body { background: var(--bg); color: var(--text); transition: 0.5s; overflow-x: hidden; width: 100vw; }
 
-        /* الهيدر */
         header {
             height: 70px; background: var(--surface); display: flex; align-items: center;
             justify-content: space-between; padding: 0 5%; position: sticky; top: 0; z-index: 1000;
-            box-shadow: 0 2px 15px rgba(0,0,0,0.5);
         }
-        .header-left { display: flex; align-items: center; gap: 15px; }
-        .admin-avatar { width: 35px; height: 35px; border-radius: 50%; object-fit: cover; border: 2px solid var(--primary); }
 
-        /* القائمة الجانبية */
         .sidebar {
             position: fixed; right: -100%; top: 0; bottom: 0; width: 280px;
             background: var(--surface); z-index: 2000; transition: 0.4s cubic-bezier(0.7, 0, 0.3, 1);
-            padding: 30px 20px; box-shadow: -10px 0 30px rgba(0,0,0,0.8);
+            padding: 25px; box-shadow: -10px 0 30px rgba(0,0,0,0.8);
         }
         .sidebar.active { right: 0; }
-        .nav-link { padding: 12px; border-radius: 10px; display: flex; align-items: center; gap: 12px; cursor: pointer; margin-bottom: 5px; font-weight: 700; transition: 0.2s; }
+        .nav-link { padding: 12px; border-radius: 10px; display: flex; align-items: center; gap: 12px; cursor: pointer; margin-bottom: 5px; font-weight: 700; }
 
-        /* الميديا والوصف */
-        .main-container { max-width: 1000px; margin: 20px auto; padding: 0 10px; }
+        /* أيقونة المسؤول المربع الكبير */
+        .admin-banner {
+            width: 100%; aspect-ratio: 1/1; border-radius: 15px; margin-top: 20px;
+            object-fit: cover; border: 2px solid var(--primary); display: block;
+        }
+
+        /* شريط الخبر العاجل المتحرك */
+        #news-container {
+            background: var(--primary); color: #fff; padding: 10px 0; overflow: hidden;
+            white-space: nowrap; display: none; cursor: pointer; font-weight: bold;
+            position: relative; z-index: 100;
+        }
+        .marquee { 
+            display: inline-block; 
+            padding-right: 100%; 
+            animation: marquee 20s linear infinite; 
+        }
+        @keyframes marquee { 
+            0% { transform: translate(0, 0); } 
+            100% { transform: translate(100%, 0); } 
+        }
+
+        .main-container { max-width: 1000px; margin: 10px auto; padding: 0 10px; }
         .video-box { width: 100%; aspect-ratio: 16/9; background: #000; border-radius: var(--radius); overflow: hidden; position: relative; }
         iframe, video, img { width: 100%; height: 100%; object-fit: contain; border: none; }
-        .video-info { margin-top: 15px; cursor: pointer; }
-        #desc-panel { background: rgba(255,255,255,0.05); padding: 15px; border-radius: 12px; margin-top: 10px; display: none; line-height: 1.6; }
 
-        /* شاشات منبثقة (الدخول والتحكم) */
+        .video-info { margin-top: 15px; cursor: pointer; }
+        #desc-panel { background: rgba(255,255,255,0.05); padding: 15px; border-radius: 12px; margin-top: 10px; display: none; }
+
+        /* شاشات منبثقة */
         .full-modal {
             position: fixed; inset: 0; background: rgba(0,0,0,0.95); backdrop-filter: blur(10px);
             z-index: 5000; display: none; align-items: center; justify-content: center; padding: 20px;
         }
-        .modal-content { background: var(--surface); width: 100%; max-width: 500px; border-radius: 20px; padding: 30px; border: 1px solid #333; max-height: 90vh; overflow-y: auto; }
+        .modal-content { background: var(--surface); width: 100%; max-width: 500px; border-radius: 20px; padding: 25px; border: 1px solid #333; max-height: 90vh; overflow-y: auto; }
 
-        input, textarea, select { width: 100%; padding: 12px; background: #222; border: 1px solid #444; color: #fff; border-radius: 10px; margin-bottom: 15px; }
-        .btn-action { background: var(--primary); color: #fff; padding: 15px; border: none; border-radius: 10px; width: 100%; font-weight: 900; cursor: pointer; }
+        input, textarea, select { width: 100%; padding: 12px; background: #222; border: 1px solid #444; color: #fff; border-radius: 10px; margin-bottom: 12px; font-size: 14px; }
+        .btn-action { background: var(--primary); color: #fff; padding: 15px; border: none; border-radius: 10px; width: 100%; font-weight: 900; cursor: pointer; transition: 0.3s; }
+        .btn-action:active { transform: scale(0.95); }
 
-        .suggestions { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 15px; margin-top: 30px; }
-        .thumb { width: 100%; aspect-ratio: 16/9; object-fit: cover; border-radius: 10px; cursor: pointer; border: 1px solid rgba(255,255,255,0.1); }
-
-        #news-bar { background: var(--primary); color: #fff; padding: 10px; border-radius: 10px; margin-bottom: 20px; display: none; text-align: center; cursor: pointer; }
+        .suggestions { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 12px; margin-top: 20px; }
+        .thumb { width: 100%; aspect-ratio: 16/9; object-fit: cover; border-radius: 10px; cursor: pointer; transition: 0.2s; border: 1px solid rgba(255,255,255,0.05); }
+        .thumb:hover { transform: scale(1.05); border: 2px solid var(--primary); }
 
         .redir-screen { position: fixed; inset: 0; background: #000; z-index: 9999; display: none; flex-direction: column; align-items: center; justify-content: center; }
     </style>
@@ -65,76 +82,86 @@
 <body data-theme="dark">
 
     <div id="redir-layer" class="redir-screen">
-        <h2 id="redir-text" style="color:var(--primary)">جاري التحويل...</h2>
-        <div style="font-size: 40px; margin-top: 20px;" id="timer">3</div>
+        <h2 style="color:var(--primary)">جاري التحويل...</h2>
+        <div style="font-size:40px; margin-top:20px" id="timer">3</div>
     </div>
 
     <div id="auth-screen" class="full-modal">
-        <div class="modal-content animate-in">
-            <h2 style="text-align: center; margin-bottom: 25px;"><i class="fas fa-user-shield"></i> بوابة المسؤول</h2>
+        <div class="modal-content">
+            <h2 style="text-align:center; margin-bottom:20px;"><i class="fas fa-lock"></i> دخول المسؤول</h2>
             <input type="text" id="login-user" placeholder="اسم المستخدم">
             <input type="password" id="login-pass" placeholder="الرقم السري">
-            <button class="btn-action" onclick="App.checkAuth()">دخول النظام</button>
-            <p onclick="App.closeModals()" style="text-align: center; margin-top: 15px; color: gray; cursor: pointer;">إلغاء</p>
+            <button class="btn-action" onclick="App.checkAuth()">تأكيد الدخول</button>
+            <p onclick="App.closeModals()" style="text-align:center; margin-top:15px; cursor:pointer; color:gray">إلغاء</p>
         </div>
     </div>
 
     <div id="admin-screen" class="full-modal">
         <div class="modal-content">
             <h2 style="color:var(--primary)">إعدادات المنصة</h2>
-            <hr style="margin: 15px 0; opacity: 0.1;">
+            <hr style="margin:10px 0; opacity:0.1">
             
-            <h4>1. بيانات الدخول</h4>
+            <label>بيانات الدخول</label>
             <input type="text" id="adm-set-user" placeholder="تعديل اسم المستخدم">
             <input type="password" id="adm-set-pass" placeholder="تعديل الرقم السري">
 
-            <h4>2. روابط التواصل</h4>
+            <label>السوشيال ميديا</label>
             <input type="text" id="adm-link-fb" placeholder="رابط Facebook">
             <input type="text" id="adm-link-tk" placeholder="رابط TikTok">
             <input type="text" id="adm-link-ig" placeholder="رابط Instagram">
             <input type="text" id="adm-link-wa" placeholder="رابط WhatsApp">
 
-            <h4>3. المظهر والهوية</h4>
+            <label>الهوية (الاسم والصورة الكبيرة)</label>
             <input type="text" id="adm-site-name" placeholder="اسم المنصة">
-            <input type="text" id="adm-avatar-url" placeholder="رابط صورة شعارك بجانب الهلال">
+            <input type="text" id="adm-avatar-url" placeholder="رابط صورة المربع في القائمة">
 
-            <h4>4. إضافة محتوى</h4>
-            <input type="text" id="adm-item-t" placeholder="عنوان الفيديو/الصورة">
+            <label style="color:var(--primary); font-weight:bold;">التحكم في الخبر العاجل</label>
+            <select id="adm-news-s">
+                <option value="off">إيقاف (إخفاء الخبر)</option>
+                <option value="on">تفعيل (إظهار الخبر)</option>
+            </select>
+            <input type="text" id="adm-news-t" placeholder="نص الخبر العاجل">
+            <input type="text" id="adm-news-l" placeholder="رابط الخبر (اختياري)">
+
+            <label>إضافة محتوى جديد</label>
+            <input type="text" id="adm-item-t" placeholder="عنوان الفيديو">
             <input type="text" id="adm-item-u" placeholder="رابط الميديا">
-            <textarea id="adm-item-d" rows="3" placeholder="الوصف والروابط"></textarea>
+            <textarea id="adm-item-d" rows="2" placeholder="الوصف والروابط"></textarea>
 
-            <button class="btn-action" onclick="App.saveAll()">حفظ التغييرات ونشر المحتوى 💾</button>
-            <button class="btn-action" style="background:#333; margin-top:10px;" onclick="App.closeModals()">إغلاق</button>
+            <button class="btn-action" onclick="App.saveAll()">حفظ كافة التغييرات 💾</button>
+            <button class="btn-action" style="background:#333; margin-top:10px" onclick="App.closeModals()">إغلاق</button>
         </div>
     </div>
 
     <header>
         <div style="display:flex; align-items:center; gap:12px">
-            <i class="fas fa-bars" style="font-size: 22px; cursor: pointer;" onclick="App.toggleMenu(event)"></i>
-            <span style="font-weight:900; font-size: 1.1rem;" id="ui-site-name">منصة ماهر</span>
+            <i class="fas fa-bars" style="font-size:22px; cursor:pointer;" onclick="App.toggleMenu(event)"></i>
+            <span style="font-weight:900; font-size:1.1rem" id="ui-site-name">المنصة الذكية</span>
         </div>
-        <div class="header-left">
-            <img src="https://via.placeholder.com/50" class="admin-avatar" id="ui-avatar">
-            <div id="theme-btn" onclick="App.toggleTheme()" style="cursor:pointer; font-size:20px;"><i class="fas fa-moon"></i></div>
-        </div>
+        <div id="theme-btn" onclick="App.toggleTheme()" style="cursor:pointer; font-size:20px;"><i class="fas fa-adjust"></i></div>
     </header>
 
+    <div id="news-container" onclick="App.newsClick()">
+        <div class="marquee" id="ui-news-text"></div>
+    </div>
+
     <nav class="sidebar" id="sidebar">
-        <h3 style="margin-bottom:20px; border-bottom:1px solid #333; padding-bottom:10px;">القائمة</h3>
+        <h3 style="margin-bottom:15px">القائمة</h3>
         <div class="nav-link" onclick="App.redirect('facebook')"><i class="fab fa-facebook" style="color:#1877F2"></i> Facebook</div>
         <div class="nav-link" onclick="App.redirect('tiktok')"><i class="fab fa-tiktok"></i> TikTok</div>
         <div class="nav-link" onclick="App.redirect('instagram')"><i class="fab fa-instagram" style="color:#E1306C"></i> Instagram</div>
         <div class="nav-link" onclick="App.redirect('whatsapp')"><i class="fab fa-whatsapp" style="color:#25D366"></i> WhatsApp</div>
         <hr style="opacity:0.1; margin:10px 0">
         <div class="nav-link" onclick="App.switchLang()"><i class="fas fa-language"></i> <span id="lang-btn">English</span></div>
-        <div class="nav-link" style="color:var(--primary)" onclick="App.showAuth()"><i class="fas fa-user-lock"></i> إدارة المحتوى</div>
+        <div class="nav-link" style="color:var(--primary)" onclick="App.showAuth()"><i class="fas fa-user-shield"></i> إدارة المحتوى</div>
+        
+        <img src="https://via.placeholder.com/300" class="admin-banner" id="ui-avatar">
     </nav>
 
     <main class="main-container">
-        <div id="news-bar" onclick="App.newsClick()"></div>
         <div class="video-box" id="main-viewer"></div>
         <div class="video-info" onclick="App.toggleDesc()">
-            <h1 class="video-title" id="active-title">عنوان الفيديو</h1>
+            <h1 class="video-title" id="active-title">تحميل...</h1>
             <div id="desc-panel"></div>
         </div>
         <div class="suggestions" id="suggestion-grid"></div>
@@ -142,20 +169,18 @@
 
     <script>
         const App = {
-            // بيانات افتراضية ستتحدث من الذاكرة
             db: {
                 auth: { user: 'mahir', pass: '1234' },
-                siteName: 'منصة ماهر',
-                avatar: 'https://via.placeholder.com/50',
+                siteName: 'المنصة الذكية',
+                avatar: 'https://via.placeholder.com/300',
+                news: { active: false, text: 'أهلاً بك في منصتك الخاصة!', link: '' },
                 links: { facebook: '#', tiktok: '#', instagram: '#', whatsapp: '#' },
-                items: [{ t: 'فيديو ترحيبي', u: 'https://www.w3schools.com/html/mov_bbb.mp4', d: 'هذا محتوى تجريبي.', type: 'video' }]
+                items: [{ t: 'محتوى ترحيبي', u: 'https://www.w3schools.com/html/mov_bbb.mp4', d: 'هذا محتوى تجريبي يمكنك تغييره.', type: 'video' }]
             },
 
             init() {
-                // استعادة البيانات من الذاكرة المحفوظة
-                const savedData = localStorage.getItem('MAHER_DATA');
-                if(savedData) this.db = JSON.parse(savedData);
-                
+                const saved = localStorage.getItem('MAHER_SECURE_STORAGE');
+                if(saved) this.db = JSON.parse(saved);
                 this.render();
                 document.addEventListener('touchstart', (e) => { if (e.touches.length > 1) e.preventDefault(); }, { passive: false });
             },
@@ -164,35 +189,39 @@
                 document.getElementById('ui-site-name').innerText = this.db.siteName;
                 document.getElementById('ui-avatar').src = this.db.avatar;
                 
+                // التحكم في الخبر العاجل
+                const nContainer = document.getElementById('news-container');
+                if(this.db.news.active) {
+                    nContainer.style.display = 'block';
+                    document.getElementById('ui-news-text').innerText = this.db.news.text;
+                } else {
+                    nContainer.style.display = 'none';
+                }
+
                 const grid = document.getElementById('suggestion-grid');
                 grid.innerHTML = this.db.items.map((it, i) => `
                     <img src="${it.type==='image'?it.u:'https://via.placeholder.com/400x225/222/fff?text=VIDEO'}" class="thumb" onclick="App.loadMedia(${i})">
                 `).join('');
 
                 this.loadMedia(0);
-                this.syncAdminInputs();
+                this.syncInputs();
             },
 
             loadMedia(idx) {
                 const it = this.db.items[idx];
-                const viewer = document.getElementById('main-viewer');
+                const v = document.getElementById('main-viewer');
                 document.getElementById('active-title').innerText = it.t;
                 document.getElementById('desc-panel').innerText = it.d;
 
                 if(it.u.includes('youtube.com') || it.u.includes('youtu.be')) {
                     let id = it.u.includes('v=') ? it.u.split('v=')[1].split('&')[0] : it.u.split('/').pop();
-                    viewer.innerHTML = `<iframe src="https://www.youtube.com/embed/${id}"></iframe>`;
-                } else if(it.u.match(/\.(mp4|webm|ogg)$/i) || it.type === 'video') {
-                    viewer.innerHTML = `<video controls><source src="${it.u}"></video>`;
+                    v.innerHTML = `<iframe src="https://www.youtube.com/embed/${id}"></iframe>`;
                 } else {
-                    viewer.innerHTML = `<img src="${it.u}">`;
+                    v.innerHTML = it.type === 'video' ? `<video controls><source src="${it.u}"></video>` : `<img src="${it.u}">`;
                 }
             },
 
-            showAuth() { 
-                this.toggleMenu(); 
-                document.getElementById('auth-screen').style.display = 'flex'; 
-            },
+            showAuth() { this.toggleMenu(); document.getElementById('auth-screen').style.display = 'flex'; },
 
             checkAuth() {
                 const u = document.getElementById('login-user').value;
@@ -200,59 +229,70 @@
                 if(u === this.db.auth.user && p === this.db.auth.pass) {
                     document.getElementById('auth-screen').style.display = 'none';
                     document.getElementById('admin-screen').style.display = 'flex';
-                } else { alert("❌ خطأ في المعلومات!"); }
+                } else { alert("⚠️ خطأ في بيانات الدخول!"); }
             },
 
             saveAll() {
-                // تحديث البيانات من المدخلات
+                // حفظ البيانات الأساسية
                 this.db.auth.user = document.getElementById('adm-set-user').value || this.db.auth.user;
                 this.db.auth.pass = document.getElementById('adm-set-pass').value || this.db.auth.pass;
                 this.db.siteName = document.getElementById('adm-site-name').value || this.db.siteName;
                 this.db.avatar = document.getElementById('adm-avatar-url').value || this.db.avatar;
                 
+                // التحكم في الخبر العاجل
+                this.db.news.active = document.getElementById('adm-news-s').value === 'on';
+                this.db.news.text = document.getElementById('adm-news-t').value;
+                this.db.news.link = document.getElementById('adm-news-l').value;
+                
+                // السوشيال ميديا
                 this.db.links.facebook = document.getElementById('adm-link-fb').value;
                 this.db.links.tiktok = document.getElementById('adm-link-tk').value;
                 this.db.links.instagram = document.getElementById('adm-link-ig').value;
                 this.db.links.whatsapp = document.getElementById('adm-link-wa').value;
 
+                // إضافة ميديا جديدة
                 const nt = document.getElementById('adm-item-t').value;
                 const nu = document.getElementById('adm-item-u').value;
                 if(nt && nu) {
-                    this.db.items.unshift({ t: nt, u: nu, d: document.getElementById('adm-item-d').value, type: nu.match(/\.(jpg|jpeg|png|webp)$/i)?'image':'video' });
+                    const type = nu.match(/\.(jpg|jpeg|png|webp)$/i) ? 'image' : 'video';
+                    this.db.items.unshift({ t: nt, u: nu, d: document.getElementById('adm-item-d').value, type: type });
                 }
 
-                // الحفظ النهائي في الذاكرة
-                localStorage.setItem('MAHER_DATA', JSON.stringify(this.db));
+                localStorage.setItem('MAHER_SECURE_STORAGE', JSON.stringify(this.db));
                 this.render();
                 this.closeModals();
-                alert("✅ تم الحفظ بنجاح!");
+                alert("✅ تم الحفظ وتحديث النظام!");
             },
 
-            syncAdminInputs() {
+            syncInputs() {
                 document.getElementById('adm-set-user').value = this.db.auth.user;
+                document.getElementById('adm-site-name').value = this.db.siteName;
+                document.getElementById('adm-avatar-url').value = this.db.avatar;
+                document.getElementById('adm-news-t').value = this.db.news.text;
+                document.getElementById('adm-news-l').value = this.db.news.link;
+                document.getElementById('adm-news-s').value = this.db.news.active ? 'on' : 'off';
                 document.getElementById('adm-link-fb').value = this.db.links.facebook;
                 document.getElementById('adm-link-tk').value = this.db.links.tiktok;
                 document.getElementById('adm-link-ig').value = this.db.links.instagram;
                 document.getElementById('adm-link-wa').value = this.db.links.whatsapp;
-                document.getElementById('adm-site-name').value = this.db.siteName;
-                document.getElementById('adm-avatar-url').value = this.db.avatar;
-            },
-
-            redirect(p) {
-                const l = document.getElementById('redir-layer');
-                const t = document.getElementById('timer');
-                let c = 3;
-                l.style.display = 'flex';
-                const iv = setInterval(() => {
-                    c--; t.innerText = c;
-                    if(c <= 0) { clearInterval(iv); window.location.href = this.db.links[p]; }
-                }, 1000);
             },
 
             toggleMenu(e) { if(e) e.stopPropagation(); document.getElementById('sidebar').classList.toggle('active'); },
             closeModals() { document.querySelectorAll('.full-modal').forEach(m => m.style.display = 'none'); },
             toggleDesc() { const d = document.getElementById('desc-panel'); d.style.display = d.style.display === 'block' ? 'none' : 'block'; },
             toggleTheme() { document.body.setAttribute('data-theme', document.body.getAttribute('data-theme')==='dark' ? 'light' : 'dark'); },
+            newsClick() { if(this.db.news.link) window.location.href = this.db.news.link; },
+            
+            redirect(p) {
+                const l = document.getElementById('redir-layer');
+                const t = document.getElementById('timer');
+                let c = 3; l.style.display = 'flex';
+                const iv = setInterval(() => {
+                    c--; t.innerText = c;
+                    if(c <= 0) { clearInterval(iv); window.location.href = this.db.links[p]; }
+                }, 1000);
+            },
+
             switchLang() { 
                 this.lang = this.lang === 'ar' ? 'en' : 'ar';
                 document.getElementById('main-html').dir = this.lang === 'ar' ? 'rtl' : 'ltr';
