@@ -3,308 +3,357 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>MAHIR OS - Ultimate Platform</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;700&display=swap" rel="stylesheet">
+    <title>MAHIR HYPER-OS v2.0</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
     <style>
         :root {
-            --primary: #1877f2; /* Facebook Blue */
-            --yt-red: #ff0000;
-            --wa-green: #25d366;
-            --bg: #18191a;
-            --card-bg: #242526;
-            --text: #e4e6eb;
+            --primary: #00a2ff;
+            --accent: #ff0055;
+            --glass: rgba(20, 20, 20, 0.7);
+            --win-border: rgba(255, 255, 255, 0.1);
+            --bg-blur: blur(15px);
         }
 
-        body {
-            margin: 0; padding: 0; font-family: 'Cairo', sans-serif;
-            background: var(--bg); color: var(--text); overflow-x: hidden;
+        * { box-sizing: border-box; outline: none; }
+
+        body, html { 
+            margin: 0; padding: 0; height: 100%; width: 100%; 
+            font-family: 'Cairo', sans-serif; background: #000; color: #fff;
+            overflow: hidden; user-select: none;
         }
 
-        /* --- شريط جوجل العلوي --- */
-        header {
-            height: 60px; background: var(--card-bg); display: flex;
-            align-items: center; justify-content: space-between;
-            padding: 0 20px; position: fixed; width: 100%; z-index: 1000;
-            border-bottom: 1px solid #3e4042;
+        /* --- شاشة التحميل --- */
+        #boot-screen {
+            position: fixed; inset: 0; background: #000; z-index: 20000;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            transition: 1s ease;
         }
 
-        .search-container {
-            background: #3a3b3c; border-radius: 50px;
-            display: flex; align-items: center; padding: 5px 15px; width: 30%;
+        .loader { width: 50px; height: 50px; border: 5px solid #333; border-top-color: var(--primary); border-radius: 50%; animation: spin 1s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* --- سطح المكتب --- */
+        #desktop {
+            width: 100vw; height: 100vh;
+            background: url('https://images.unsplash.com/photo-1477346611705-65d1883cee1e?q=80&w=2070') center/cover no-repeat;
+            position: relative; transition: 0.5s;
         }
 
-        .search-container input {
-            background: transparent; border: none; color: white; width: 100%; padding: 5px; outline: none;
+        /* --- شريط المهام المطور --- */
+        #taskbar {
+            position: fixed; bottom: 0; width: 100%; height: 55px;
+            background: var(--glass); backdrop-filter: var(--bg-blur);
+            display: flex; align-items: center; padding: 0 15px; z-index: 10000;
+            border-top: 1px solid var(--win-border); justify-content: space-between;
         }
 
-        /* --- الهيكل العام --- */
-        .wrapper { display: flex; margin-top: 60px; }
+        .taskbar-left { display: flex; align-items: center; gap: 10px; }
+        .start-btn { 
+            background: var(--primary); border: none; color: white; width: 40px; height: 40px;
+            border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+            font-size: 20px; transition: 0.3s;
+        }
+        .start-btn:hover { transform: scale(1.1); box-shadow: 0 0 15px var(--primary); }
 
-        /* --- القائمة الجانبية (مثل فيسبوك/يوتيوب) --- */
-        aside {
-            width: 280px; height: calc(100vh - 60px); position: fixed;
-            background: var(--bg); padding: 10px; overflow-y: auto;
+        /* --- النوافذ (Advanced Windows) --- */
+        .window {
+            position: absolute; width: 600px; height: 400px;
+            background: var(--glass); backdrop-filter: var(--bg-blur);
+            border-radius: 12px; box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+            display: flex; flex-direction: column; border: 1px solid var(--win-border);
+            z-index: 10; animation: windowOpen 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            overflow: hidden;
         }
 
-        .menu-item {
-            padding: 10px; border-radius: 10px; display: flex; align-items: center;
-            cursor: pointer; transition: 0.3s;
+        @keyframes windowOpen { from { opacity: 0; transform: scale(0.95) translateY(20px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+
+        .win-header {
+            padding: 12px; background: rgba(255,255,255,0.05);
+            display: flex; justify-content: space-between; align-items: center; cursor: move;
         }
 
-        .menu-item:hover { background: #3a3b3c; }
-        .menu-item i { width: 40px; font-size: 20px; color: var(--primary); }
+        .win-title { display: flex; align-items: center; gap: 8px; font-weight: 600; font-size: 14px; }
+        .win-btns { display: flex; gap: 8px; }
+        .win-dot { width: 12px; height: 12px; border-radius: 50%; cursor: pointer; }
+        .dot-close { background: #ff5f56; }
+        .dot-max { background: #febc2e; }
+        .dot-min { background: #28c840; }
 
-        /* --- ساحة المحتوى (مثل News Feed) --- */
-        main {
-            margin-right: 280px; width: calc(100% - 600px); padding: 20px;
+        .win-body { flex: 1; padding: 15px; overflow: auto; position: relative; }
+
+        /* --- قائمة ابدأ --- */
+        #start-menu {
+            position: fixed; bottom: -600px; right: 15px; width: 400px; height: 500px;
+            background: var(--glass); backdrop-filter: var(--bg-blur);
+            border-radius: 15px; border: 1px solid var(--win-border);
+            transition: 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55); z-index: 9999;
+            padding: 20px;
+        }
+        #start-menu.active { bottom: 65px; }
+
+        /* --- أيقونات سطح المكتب --- */
+        .desktop-grid {
+            display: grid; grid-template-columns: repeat(auto-fill, 90px);
+            grid-template-rows: repeat(auto-fill, 100px);
+            gap: 15px; padding: 20px; height: 90vh;
+        }
+        .icon {
+            display: flex; flex-direction: column; align-items: center;
+            text-align: center; cursor: pointer; padding: 10px; border-radius: 8px;
+            transition: 0.2s;
+        }
+        .icon:hover { background: rgba(255,255,255,0.1); }
+        .icon i { font-size: 45px; margin-bottom: 8px; filter: drop-shadow(0 5px 10px rgba(0,0,0,0.3)); }
+        .icon span { font-size: 13px; text-shadow: 0 2px 4px #000; }
+
+        /* --- واجهة الدخول --- */
+        #login-screen {
+            position: fixed; inset: 0; background: url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072') center/cover;
+            z-index: 15000; display: flex; justify-content: center; align-items: center;
+        }
+        .login-box {
+            background: rgba(0,0,0,0.6); backdrop-filter: blur(20px);
+            padding: 40px; border-radius: 25px; border: 1px solid var(--win-border);
+            text-align: center; width: 380px; box-shadow: 0 50px 100px rgba(0,0,0,0.8);
         }
 
-        /* القصص (Stories) */
-        .stories { display: flex; gap: 10px; margin-bottom: 20px; overflow-x: auto; padding-bottom: 10px; }
-        .story {
-            width: 110px; height: 180px; background-size: cover; background-position: center;
-            border-radius: 12px; position: relative; cursor: pointer; flex-shrink: 0;
-            border: 2px solid var(--primary);
-        }
+        /* --- أدوات الإدارة --- */
+        .admin-field { background: #333; color: white; border: 1px solid #444; padding: 12px; width: 100%; border-radius: 8px; margin-bottom: 10px; }
+        .btn-action { background: var(--primary); color: white; border: none; padding: 12px 20px; border-radius: 8px; cursor: pointer; width: 100%; font-weight: bold; }
 
-        /* المنشورات (Posts) */
-        .post {
-            background: var(--card-bg); border-radius: 12px; padding: 15px; margin-bottom: 20px;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.2);
-        }
-
-        .post-header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
-        .post-header img { width: 40px; height: 40px; border-radius: 50%; }
-
-        .post-media img, .post-media video {
-            width: 100%; border-radius: 8px; margin-top: 10px;
-        }
-
-        .post-actions {
-            display: flex; justify-content: space-around; border-top: 1px solid #3e4042;
-            margin-top: 10px; padding-top: 10px;
-        }
-
-        .action { cursor: pointer; color: #b0b3b8; font-weight: bold; }
-        .action:hover { color: var(--primary); }
-
-        /* --- نظام المحادثة الجانبي (WhatsApp Style) --- */
-        .chat-sidebar {
-            width: 320px; height: calc(100vh - 60px); position: fixed; left: 0;
-            background: var(--card-bg); border-right: 1px solid #3e4042; padding: 10px;
-        }
-
-        .chat-box {
-            height: 70%; overflow-y: auto; border-bottom: 1px solid #3e4042;
-        }
-
-        .msg { background: #3a3b3c; padding: 8px 12px; border-radius: 15px; margin: 5px 0; width: fit-content; }
-        .msg.me { background: var(--primary); margin-right: auto; }
-
-        /* --- لوحة الإدارة المخفية --- */
-        #admin-modal {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.9); z-index: 9999; display: none;
-            justify-content: center; align-items: center;
-        }
-
-        .admin-content {
-            background: #242526; width: 80%; max-height: 90%; border-radius: 15px;
-            padding: 30px; overflow-y: auto; position: relative;
-        }
-
-        .admin-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-
-        input, textarea, select {
-            width: 100%; padding: 12px; margin: 10px 0; background: #3a3b3c;
-            border: none; border-radius: 8px; color: white;
-        }
-
-        .btn-gold { background: linear-gradient(45deg, #f39c12, #f1c40f); color: black; font-weight: bold; border: none; padding: 15px; border-radius: 8px; cursor: pointer; }
+        /* --- الإشعارات --- */
+        #notif-container { position: fixed; top: 20px; left: 20px; z-index: 30000; }
+        .notif { background: var(--glass); backdrop-filter: blur(10px); padding: 15px 25px; border-radius: 10px; margin-bottom: 10px; border-right: 4px solid var(--primary); animation: slideIn 0.3s ease; }
+        @keyframes slideIn { from { transform: translateX(-100%); } to { transform: translateX(0); } }
 
     </style>
 </head>
 <body>
 
-    <header>
-        <div style="display: flex; align-items: center; gap: 10px;">
-            <i class="fab fa-facebook" style="font-size: 40px; color: var(--primary);"></i>
-            <div class="search-container">
-                <i class="fas fa-search"></i>
-                <input type="text" placeholder="بحث في Mahir OS...">
-            </div>
+    <div id="boot-screen">
+        <div class="loader"></div>
+        <h2 style="margin-top:20px; letter-spacing: 2px;">MAHIR HYPER-OS</h2>
+    </div>
+
+    <div id="login-screen" style="display:none;">
+        <div class="login-box">
+            <img src="https://i.pravatar.cc/100?u=mahir" style="border-radius:50%; border: 3px solid var(--primary); margin-bottom:20px;">
+            <h2>مرحباً بك مجدداً</h2>
+            <input type="text" id="user-input" class="admin-field" placeholder="اسم المستخدم">
+            <input type="password" id="pass-input" class="admin-field" placeholder="كلمة السر">
+            <button class="btn-action" onclick="login()">دخول النظام</button>
+            <p style="margin-top:15px; font-size:12px; color:#aaa;">المسؤول الافتراضي: mahir / 1234</p>
         </div>
-        <div class="nav-icons">
-            <button class="btn-gold" onclick="openAdmin()">لوحة التحكم (Admin)</button>
-        </div>
-    </header>
+    </div>
 
-    <div class="wrapper">
-        <aside>
-            <div class="menu-item"><i class="fas fa-user-circle"></i> <span>ماهر (Mahir)</span></div>
-            <div class="menu-item"><i class="fas fa-users"></i> <span>الأصدقاء</span></div>
-            <div class="menu-item"><i class="fas fa-video" style="color: var(--yt-red);"></i> <span>Watch (يوتيوب)</span></div>
-            <div class="menu-item"><i class="fas fa-store"></i> <span>الماركت</span></div>
-            <hr>
-            <h3>اختصاراتك</h3>
-            <div class="menu-item"><i class="fas fa-gamepad"></i> <span>الألعاب</span></div>
-        </aside>
-
-        <main>
-            <div class="stories" id="stories-container">
-                </div>
-
-            <div class="post">
-                <div class="post-header">
-                    <img src="https://i.pravatar.cc/150?u=mahir" alt="">
-                    <input type="text" placeholder="بماذا تفكر يا ماهر؟" style="border-radius: 20px; background: #3a3b3c; border: none; padding: 10px; width: 80%; color: white;">
-                </div>
+    <div id="desktop">
+        <div class="desktop-grid">
+            <div class="icon" onclick="openWindow('my-pc', 'هذا الكمبيوتر', 'fas fa-desktop', '#00a2ff')">
+                <i class="fas fa-desktop" style="color:#00a2ff"></i><span>جهازي</span>
             </div>
-
-            <div id="feed-container">
-                </div>
-        </main>
-
-        <div class="chat-sidebar">
-            <h3>المحادثات (WhatsApp)</h3>
-            <div class="chat-box" id="chat-msgs">
-                <div class="msg">أهلاً بك في نظام المراسلة!</div>
-                <div class="msg me">هذا رائع جداً!</div>
+            <div class="icon" onclick="openWindow('browser', 'متصفح الإنترنت', 'fas fa-globe', '#28c840')">
+                <i class="fas fa-globe" style="color:#28c840"></i><span>المتصفح</span>
             </div>
-            <div style="display: flex; gap: 5px; margin-top: 10px;">
-                <input type="text" id="chat-input" placeholder="اكتب رسالة...">
-                <button onclick="sendMsg()" style="background: var(--wa-green); border: none; border-radius: 5px; padding: 10px;"><i class="fas fa-paper-plane"></i></button>
+            <div class="icon" onclick="openWindow('youtube', 'يوتيوب ميوزك', 'fab fa-youtube', '#ff0000')">
+                <i class="fab fa-youtube" style="color:#ff0000"></i><span>يوتيوب</span>
+            </div>
+            <div class="icon" onclick="openWindow('messages', 'مركز الرسائل', 'fas fa-comments', '#ff9f00')">
+                <i class="fas fa-comments" style="color:#ff9f00"></i><span>الرسائل</span>
+            </div>
+            <div class="icon" onclick="openWindow('admin-panel', 'الإدارة المركزية', 'fas fa-user-shield', '#f1c40f')">
+                <i class="fas fa-user-shield" style="color:#f1c40f"></i><span>الإدارة</span>
             </div>
         </div>
     </div>
 
-    <div id="admin-modal">
-        <div class="admin-content">
-            <span style="position: absolute; left: 20px; top: 20px; cursor: pointer; font-size: 30px;" onclick="closeAdmin()">&times;</span>
-            <h1>لوحة تحكم المدير <span style="color: gold;">Mahir</span></h1>
-            
-            <div class="admin-grid">
-                <div>
-                    <h3>إضافة منشور جديد (صورة/فيديو)</h3>
-                    <input type="text" id="adm-name" placeholder="اسم الناشر">
-                    <input type="text" id="adm-img" placeholder="رابط الصورة أو الفيديو">
-                    <textarea id="adm-text" placeholder="نص المنشور..."></textarea>
-                    <button class="btn-gold" onclick="createPost()">نشر المنشور فوراً</button>
-                </div>
-                <div>
-                    <h3>إعدادات النظام</h3>
-                    <label>تغيير اسم المستخدم:</label>
-                    <input type="text" id="adm-new-user" placeholder="الاسم الجديد">
-                    <label>تغيير كلمة السر:</label>
-                    <input type="password" id="adm-new-pass" placeholder="كلمة السر الجديدة">
-                    <button class="btn-gold" onclick="saveSettings()" style="background: #2ecc71;">حفظ الإعدادات</button>
-                </div>
+    <div id="start-menu">
+        <div style="display:flex; align-items:center; gap:15px; border-bottom:1px solid #444; padding-bottom:15px;">
+            <img src="https://i.pravatar.cc/50?u=mahir" id="user-avatar" style="border-radius:50%;">
+            <div>
+                <h4 id="display-username" style="margin:0;">Mahir Admin</h4>
+                <small style="color:#888;">مسؤول النظام</small>
             </div>
-            <hr>
-            <button class="btn-gold" onclick="clearAll()" style="background: #e74c3c; width: 100%;">مسح كل بيانات الموقع</button>
+        </div>
+        <div style="margin-top:20px; display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+            <button class="btn-action" style="background:#444;" onclick="changeWallpaper()">تغيير الخلفية</button>
+            <button class="btn-action" style="background:#e74c3c;" onclick="location.reload()">إعادة التشغيل</button>
         </div>
     </div>
+
+    <div id="taskbar">
+        <div class="taskbar-left">
+            <button class="start-btn" onclick="toggleStart()"><i class="fas fa-th-large"></i></button>
+            <div id="active-apps" style="display:flex; gap:5px;"></div>
+        </div>
+        <div id="clock" style="font-weight:600; font-size:14px; padding-left:10px;">00:00:00</div>
+    </div>
+
+    <div id="notif-container"></div>
 
     <script>
-        // --- البيانات الأساسية ونظام الحفظ ---
-        let adminName = localStorage.getItem('adminName') || 'mahir';
-        let adminPass = localStorage.getItem('adminPass') || '1234';
-        
-        let posts = JSON.parse(localStorage.getItem('posts')) || [
-            { name: 'يوتيوب بالعربي', text: 'شاهد أفضل الفيديوهات التعليمية هنا.', media: 'https://images.unsplash.com/photo-1611162617474-5b21e879e113', type: 'img' },
-            { name: 'أخبار التقنية', text: 'إطلاق هاتف جديد اليوم بمواصفات خيالية!', media: 'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9', type: 'img' }
-        ];
+        let currentUser = "mahir";
+        let isAdmin = false;
 
-        // --- نظام الإدارة ---
-        function openAdmin() {
-            const user = prompt("أدخل اسم المستخدم:");
-            const pass = prompt("أدخل كلمة السر:");
-            if(user === adminName && pass === adminPass) {
-                document.getElementById('admin-modal').style.display = 'flex';
+        // --- 1. تشغيل النظام ---
+        window.onload = () => {
+            setTimeout(() => {
+                document.getElementById('boot-screen').style.opacity = '0';
+                setTimeout(() => {
+                    document.getElementById('boot-screen').style.display = 'none';
+                    document.getElementById('login-screen').style.display = 'flex';
+                }, 1000);
+            }, 2000);
+            updateClock();
+            setInterval(updateClock, 1000);
+        };
+
+        function updateClock() {
+            const now = new Date();
+            document.getElementById('clock').innerText = now.toLocaleTimeString('ar-EG');
+        }
+
+        // --- 2. التحقق والدخول ---
+        function login() {
+            const u = document.getElementById('user-input').value;
+            const p = document.getElementById('pass-input').value;
+
+            if(u === "mahir" && p === "1234") {
+                isAdmin = true;
+                currentUser = "Mahir";
+                enterDesktop();
+            } else if(u.length > 2) {
+                isAdmin = false;
+                currentUser = u;
+                enterDesktop();
             } else {
-                alert("بيانات الدخول خاطئة!");
+                showNotif("فشل الدخول: بيانات غير كافية");
             }
         }
 
-        function closeAdmin() { document.getElementById('admin-modal').style.display = 'none'; }
-
-        function createPost() {
-            const newPost = {
-                name: document.getElementById('adm-name').value || 'Mahir',
-                text: document.getElementById('adm-text').value,
-                media: document.getElementById('adm-img').value || 'https://via.placeholder.com/600',
-                type: 'img'
-            };
-            posts.unshift(newPost);
-            saveAndRender();
-            closeAdmin();
+        function enterDesktop() {
+            document.getElementById('login-screen').style.transition = '0.5s';
+            document.getElementById('login-screen').style.opacity = '0';
+            document.getElementById('display-username').innerText = currentUser;
+            setTimeout(() => { document.getElementById('login-screen').style.display = 'none'; }, 500);
+            showNotif(`مرحباً بك ${currentUser} في نظام التشغيل`);
         }
 
-        function saveSettings() {
-            const u = document.getElementById('adm-new-user').value;
-            const p = document.getElementById('adm-new-pass').value;
-            if(u) { adminName = u; localStorage.setItem('adminName', u); }
-            if(p) { adminPass = p; localStorage.setItem('adminPass', p); }
-            alert("تم التحديث!");
-        }
-
-        // --- نظام المحادثة ---
-        function sendMsg() {
-            const inp = document.getElementById('chat-input');
-            if(inp.value) {
-                const chat = document.getElementById('chat-msgs');
-                chat.innerHTML += `<div class="msg me">${inp.value}</div>`;
-                inp.value = '';
-                chat.scrollTop = chat.scrollHeight;
-            }
-        }
-
-        // --- العرض (Rendering) ---
-        function render() {
-            // رندر القصص
-            const storyCont = document.getElementById('stories-container');
-            storyCont.innerHTML = '';
-            for(let i=0; i<6; i++) {
-                storyCont.innerHTML += `<div class="story" style="background-image: url('https://picsum.photos/200/300?sig=${i}')"></div>`;
+        // --- 3. نظام إدارة النوافذ الشامل ---
+        function openWindow(id, title, iconClass, color) {
+            if(document.getElementById('win-' + id)) {
+                focusWindow(document.getElementById('win-' + id));
+                return;
             }
 
-            // رندر المنشورات
-            const feed = document.getElementById('feed-container');
-            feed.innerHTML = '';
-            posts.forEach(p => {
-                feed.innerHTML += `
-                    <div class="post">
-                        <div class="post-header">
-                            <img src="https://i.pravatar.cc/150?u=${p.name}">
-                            <div><strong>${p.name}</strong><br><small>منذ قليل</small></div>
-                        </div>
-                        <p>${p.text}</p>
-                        <div class="post-media">
-                            <img src="${p.media}">
-                        </div>
-                        <div class="post-actions">
-                            <div class="action" onclick="this.style.color='#1877f2'"><i class="far fa-thumbs-up"></i> أعجبني</div>
-                            <div class="action"><i class="far fa-comment"></i> تعليق</div>
-                            <div class="action"><i class="fas fa-share"></i> مشاركة</div>
-                        </div>
+            const win = document.createElement('div');
+            win.id = 'win-' + id;
+            win.className = 'window';
+            win.style.top = "15%"; win.style.left = "25%";
+
+            let bodyContent = "";
+            if(id === 'browser') {
+                bodyContent = `<iframe src="https://www.bing.com" style="width:100%; height:100%; border:none; background:white;"></iframe>`;
+            } else if(id === 'messages') {
+                bodyContent = `<div id="chat-area" style="height:80%; overflow:auto; margin-bottom:10px;"></div>
+                               <div style="display:flex; gap:5px;"><input id="chat-in" class="admin-field" placeholder="اكتب رسالة..."><button onclick="sendChat()" style="width:60px; height:45px;" class="btn-action">📧</button></div>`;
+            } else if(id === 'admin-panel') {
+                if(!isAdmin) {
+                    bodyContent = `<div style="text-align:center; padding:50px;"><i class="fas fa-lock" style="font-size:50px; color:red;"></i><h3>صلاحيات محدودة</h3></div>`;
+                } else {
+                    bodyContent = `<h4>الإعدادات المتقدمة</h4>
+                                   <p>تغيير الثيم:</p><input type="color" onchange="document.documentElement.style.setProperty('--primary', this.value)" style="width:100%; height:40px; cursor:pointer;">
+                                   <p>تغيير الباسورد:</p><input id="new-p" class="admin-field"><button class="btn-action" onclick="showNotif('تم التغيير')">حفظ</button>`;
+                }
+            } else {
+                bodyContent = `<div style="padding:20px; text-align:center;"><i class="${iconClass}" style="font-size:80px; color:${color}"></i><h2>${title}</h2><p>هذا تطبيق محاكي داخل نظام MAHIR OS.</p></div>`;
+            }
+
+            win.innerHTML = `
+                <div class="win-header" onmousedown="dragWindow(this.parentElement)">
+                    <div class="win-title"><i class="${iconClass}" style="color:${color}"></i> ${title}</div>
+                    <div class="win-btns">
+                        <div class="win-dot dot-min"></div>
+                        <div class="win-dot dot-max" onclick="toggleFull(this.parentElement.parentElement.parentElement)"></div>
+                        <div class="win-dot dot-close" onclick="closeWindow('${id}')"></div>
                     </div>
-                `;
-            });
+                </div>
+                <div class="win-body">${bodyContent}</div>
+            `;
+
+            document.getElementById('desktop').appendChild(win);
+            makeDraggable(win);
         }
 
-        function saveAndRender() {
-            localStorage.setItem('posts', JSON.stringify(posts));
-            render();
+        function closeWindow(id) {
+            const win = document.getElementById('win-' + id);
+            win.style.transform = "scale(0.9) translateY(20px)";
+            win.style.opacity = "0";
+            setTimeout(() => win.remove(), 300);
         }
 
-        function clearAll() {
-            localStorage.clear();
-            location.reload();
+        function focusWindow(win) {
+            document.querySelectorAll('.window').forEach(w => w.style.zIndex = "10");
+            win.style.zIndex = "100";
         }
 
-        // بدء التشغيل
-        render();
+        // --- 4. وظائف السحب المتطورة ---
+        function makeDraggable(win) {
+            let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+            const header = win.querySelector('.win-header');
+            
+            header.onmousedown = (e) => {
+                focusWindow(win);
+                pos3 = e.clientX; pos4 = e.clientY;
+                document.onmouseup = () => { document.onmousemove = null; document.onmouseup = null; };
+                document.onmousemove = (e) => {
+                    pos1 = pos3 - e.clientX; pos2 = pos4 - e.clientY;
+                    pos3 = e.clientX; pos4 = e.clientY;
+                    win.style.top = (win.offsetTop - pos2) + "px";
+                    win.style.left = (win.offsetLeft - pos1) + "px";
+                };
+            };
+        }
+
+        function toggleFull(win) {
+            if(win.style.width === "100%") {
+                win.style.width = "600px"; win.style.height = "400px";
+                win.style.top = "15%"; win.style.left = "25%";
+            } else {
+                win.style.width = "100%"; win.style.height = "calc(100vh - 55px)";
+                win.style.top = "0"; win.style.left = "0";
+            }
+        }
+
+        // --- 5. وظائف إضافية ---
+        function toggleStart() { document.getElementById('start-menu').classList.toggle('active'); }
+        
+        function showNotif(msg) {
+            const container = document.getElementById('notif-container');
+            const n = document.createElement('div');
+            n.className = 'notif';
+            n.innerHTML = `<i class="fas fa-info-circle"></i> ${msg}`;
+            container.appendChild(n);
+            setTimeout(() => { n.style.opacity = '0'; setTimeout(() => n.remove(), 500); }, 3000);
+        }
+
+        function changeWallpaper() {
+            const url = prompt("أدخل رابط الصورة الجديدة:");
+            if(url) {
+                document.getElementById('desktop').style.backgroundImage = `url('${url}')`;
+                showNotif("تم تحديث الخلفية بنجاح");
+            }
+        }
+
+        function sendChat() {
+            const inp = document.getElementById('chat-in');
+            const area = document.getElementById('chat-area');
+            if(inp.value) {
+                area.innerHTML += `<div style="background:rgba(255,255,255,0.1); padding:8px; border-radius:8px; margin-bottom:5px;"><b>${currentUser}:</b> ${inp.value}</div>`;
+                inp.value = "";
+                area.scrollTop = area.scrollHeight;
+            }
+        }
     </script>
 </body>
-</html>
+    </html>
