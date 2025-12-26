@@ -54,4 +54,315 @@
         
         .theater-mode { position: sticky; top: 80px; z-index: 900; background: var(--bg); padding-bottom: 15px; }
         .video-box { width: 100%; aspect-ratio: 16/9; background: #000; border-radius: var(--radius); overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        iframe, video, img { width: 100%; height: 100%; object-fit: contain; border: none;
+        iframe, video, img { width: 100%; height: 100%; object-fit: contain; border: none; }
+
+        .video-info { margin-top: 15px; cursor: pointer; background: var(--surface); padding: 15px; border-radius: var(--radius); }
+        .video-title { font-size: 1.2rem; font-weight: 900; color: var(--text); }
+        #desc-panel { margin-top: 12px; color: var(--sub); display: none; font-size: 0.95rem; line-height: 1.6; border-top: 1px solid #333; padding-top: 10px; }
+
+        .section-label { margin: 25px 0 15px; font-weight: 900; font-size: 1.3rem; display: flex; align-items: center; gap: 10px; }
+        .section-label::before { content: ''; width: 5px; height: 25px; background: var(--primary); display: inline-block; border-radius: 10px; }
+        
+        .suggestions { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px; padding-bottom: 50px; }
+        .thumb-item { cursor: pointer; transition: 0.3s; position: relative; }
+        .thumb-item:hover { transform: translateY(-5px); }
+        .thumb-img { width: 100%; aspect-ratio: 16/9; object-fit: cover; border-radius: 12px; border: 1px solid #222; }
+        .thumb-text { margin-top: 8px; font-weight: 700; font-size: 0.9rem; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+
+        .full-modal {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.95); backdrop-filter: blur(10px);
+            z-index: 5000; display: none; align-items: center; justify-content: center; padding: 20px;
+        }
+        .modal-content { background: var(--surface); width: 100%; max-width: 600px; border-radius: 20px; padding: 30px; border: 1px solid #333; max-height: 90vh; overflow-y: auto; position: relative; }
+        
+        /* زر الزائد الجديد */
+        .btn-plus {
+            background: var(--primary); width: 60px; height: 60px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center; font-size: 25px;
+            color: white; cursor: pointer; margin: 20px auto; transition: 0.3s;
+        }
+        .btn-plus:hover { transform: rotate(90deg); scale: 1.1; }
+
+        /* إدارة المحتوى المباشرة */
+        .content-manager-list { margin-top: 20px; border-top: 2px solid #333; padding-top: 20px; }
+        .item-row { 
+            background: #222; padding: 10px; border-radius: 10px; margin-bottom: 10px;
+            display: flex; align-items: center; gap: 10px; justify-content: space-between;
+        }
+        .item-row input { margin-bottom: 0; padding: 8px; font-size: 12px; }
+
+        label { display: block; margin-bottom: 5px; font-weight: bold; font-size: 0.85rem; color: var(--primary); }
+        input, textarea, select { width: 100%; padding: 12px; background: #222; border: 1px solid #444; color: #fff; border-radius: 10px; margin-bottom: 15px; }
+        .btn-action { background: var(--primary); color: #fff; padding: 15px; border: none; border-radius: 10px; width: 100%; font-weight: 900; cursor: pointer; transition: 0.3s; margin-bottom: 10px; }
+        
+        .redir-screen { position: fixed; inset: 0; background: #000; z-index: 9999; display: none; flex-direction: column; align-items: center; justify-content: center; }
+    </style>
+</head>
+<body data-theme="dark">
+
+    <div id="redir-layer" class="redir-screen">
+        <h2 style="color:var(--primary)">جاري التحويل...</h2>
+        <div style="font-size:40px; margin-top:20px" id="timer">3</div>
+    </div>
+
+    <div id="auth-screen" class="full-modal">
+        <div class="modal-content">
+            <h2 style="text-align:center; margin-bottom:20px;"><i class="fas fa-lock"></i> منطقة محظورة</h2>
+            <input type="text" id="login-user" placeholder="اسم المسؤول">
+            <input type="password" id="login-pass" placeholder="كلمة المرور">
+            <button class="btn-action" onclick="App.checkAuth()">تأكيد الهوية</button>
+            <p onclick="App.closeModals()" style="text-align:center; cursor:pointer; color:gray">إلغاء</p>
+        </div>
+    </div>
+
+    <div id="admin-screen" class="full-modal">
+        <div class="modal-content">
+            <h2 style="color:var(--primary); text-align:center;">لوحة التحكم الإدارية</h2>
+            <div class="btn-plus" onclick="App.showContentManager()" title="إدارة الفيديوهات والمحتوى">
+                <i class="fas fa-plus"></i>
+            </div>
+            <p style="text-align:center; font-size:12px; margin-bottom:20px; color:var(--sub)">اضغط على الزر أعلاه لإضافة أو تعديل الفيديوهات</p>
+            
+            <hr style="opacity:0.1; margin:20px 0">
+            
+            <label>إعدادات الحساب</label>
+            <input type="text" id="adm-set-user" placeholder="تغيير اسم المستخدم">
+            <input type="password" id="adm-set-pass" placeholder="تغيير كلمة المرور">
+
+            <label>هوية المنصة</label>
+            <input type="text" id="adm-site-name" placeholder="اسم المنصة">
+            <input type="text" id="adm-avatar-url" placeholder="رابط صورة المسؤول">
+
+            <label>الروابط الاجتماعية</label>
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px">
+                <input type="text" id="adm-link-fb" placeholder="Facebook">
+                <input type="text" id="adm-link-tk" placeholder="TikTok">
+            </div>
+
+            <button class="btn-action" onclick="App.saveSettings()">حفظ الإعدادات العامة</button>
+            <button class="btn-action" style="background:#333;" onclick="App.closeModals()">إغلاق</button>
+        </div>
+    </div>
+
+    <div id="content-manager-screen" class="full-modal">
+        <div class="modal-content" style="max-width: 700px;">
+            <h2 style="color:var(--primary);"><i class="fas fa-video"></i> إدارة محتوى المنصة</h2>
+            <p style="font-size:13px; margin-bottom:20px;">هنا يمكنك إضافة فيديو جديد أو تعديل الفيديوهات الحالية مباشرة.</p>
+            
+            <div style="background: #1a1a1a; padding: 15px; border-radius: 15px; border: 1px dashed var(--primary); margin-bottom: 20px;">
+                <label>إضافة فيديو/صورة جديد</label>
+                <input type="text" id="new-item-t" placeholder="عنوان الفيديو">
+                <input type="text" id="new-item-u" placeholder="رابط الفيديو (YouTube/Direct)">
+                <textarea id="new-item-d" rows="2" placeholder="الوصف (اختياري)"></textarea>
+                <button class="btn-action" onclick="App.addNewItem()">إضافة إلى المنصة +</button>
+            </div>
+
+            <label>الفيديوهات الحالية (تعديل مباشر)</label>
+            <div id="manage-list" class="content-manager-list">
+                </div>
+
+            <button class="btn-action" style="background:#333;" onclick="App.backToAdmin()">العودة للوحة الرئيسية</button>
+        </div>
+    </div>
+
+    <header>
+        <div style="display:flex; align-items:center; gap:12px">
+            <i class="fas fa-bars" style="font-size:22px; cursor:pointer;" onclick="App.toggleMenu(event)"></i>
+            <span style="font-weight:900; font-size:1.2rem; letter-spacing:1px" id="ui-site-name">...</span>
+        </div>
+        <div onclick="App.toggleTheme()" style="cursor:pointer; font-size:20px;"><i class="fas fa-adjust"></i></div>
+    </header>
+
+    <div id="news-container" onclick="App.newsClick()">
+        <div class="marquee" id="ui-news-text"></div>
+    </div>
+
+    <nav class="sidebar" id="sidebar">
+        <h3 style="margin-bottom:20px; border-bottom:1px solid #333; padding-bottom:10px">القائمة الرئيسية</h3>
+        <div class="nav-link" onclick="App.redirect('facebook')"><i class="fab fa-facebook" style="color:#1877F2"></i> Facebook</div>
+        <div class="nav-link" onclick="App.redirect('tiktok')"><i class="fab fa-tiktok"></i> TikTok</div>
+        <hr style="opacity:0.1; margin:15px 0">
+        <div class="nav-link" style="color:var(--primary)" onclick="App.showAuth()"><i class="fas fa-user-cog"></i> لوحة الإدارة</div>
+        
+        <div class="admin-box-container">
+            <img src="" class="admin-banner" id="ui-avatar">
+        </div>
+    </nav>
+
+    <main class="main-container">
+        <section class="theater-mode">
+            <div class="video-box" id="main-viewer"></div>
+            <div class="video-info" onclick="App.toggleDesc()">
+                <h1 class="video-title" id="active-title">...</h1>
+                <div id="desc-panel"></div>
+            </div>
+        </section>
+
+        <h2 class="section-label">جميع الفيديوهات</h2>
+        <div class="suggestions" id="suggestion-grid"></div>
+    </main>
+
+    <script>
+        const App = {
+            db: {
+                auth: { user: 'mahir', pass: '1234' },
+                siteName: 'SMART PLATFORM PRO',
+                avatar: 'https://via.placeholder.com/180',
+                news: { active: false, text: '', link: '' },
+                links: { facebook: '#', tiktok: '#' },
+                items: [
+                    { t: 'مرحباً بك', u: 'https://www.w3schools.com/html/mov_bbb.mp4', d: 'فيديو افتراضي', type: 'video' }
+                ]
+            },
+
+            init() {
+                const saved = localStorage.getItem('MAHER_ULTRA_DB_PRO');
+                if(saved) this.db = JSON.parse(saved);
+                this.render();
+                document.addEventListener('touchstart', (e) => { if (e.touches.length > 1) e.preventDefault(); }, { passive: false });
+            },
+
+            render() {
+                document.getElementById('ui-site-name').innerText = this.db.siteName;
+                document.getElementById('ui-avatar').src = this.db.avatar;
+                
+                const grid = document.getElementById('suggestion-grid');
+                grid.innerHTML = this.db.items.map((it, i) => `
+                    <div class="thumb-item" onclick="App.loadMedia(${i})">
+                        <img src="${it.type==='image'?it.u:'https://via.placeholder.com/400x225/222/fff?text=▶'}" class="thumb-img">
+                        <div class="thumb-text">${it.t}</div>
+                    </div>
+                `).join('');
+
+                if(this.db.items.length > 0) this.loadMedia(0);
+                this.syncInputs();
+            },
+
+            loadMedia(idx) {
+                const it = this.db.items[idx];
+                if(!it) return;
+                const v = document.getElementById('main-viewer');
+                document.getElementById('active-title').innerText = it.t;
+                document.getElementById('desc-panel').innerText = it.d;
+
+                if(it.u.includes('youtube.com') || it.u.includes('youtu.be')) {
+                    let id = it.u.includes('v=') ? it.u.split('v=')[1].split('&')[0] : it.u.split('/').pop();
+                    v.innerHTML = `<iframe src="https://www.youtube.com/embed/${id}" allowfullscreen></iframe>`;
+                } else {
+                    v.innerHTML = it.type === 'video' ? `<video controls autoplay><source src="${it.u}"></video>` : `<img src="${it.u}">`;
+                }
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            },
+
+            // إدارة الجلسة والدخول
+            showAuth() { this.toggleMenu(); document.getElementById('auth-screen').style.display = 'flex'; },
+            checkAuth() {
+                const u = document.getElementById('login-user').value;
+                const p = document.getElementById('login-pass').value;
+                if(u === this.db.auth.user && p === this.db.auth.pass) {
+                    this.closeModals();
+                    document.getElementById('admin-screen').style.display = 'flex';
+                } else alert("بيانات الدخول غير صحيحة!");
+            },
+
+            // صفحة إدارة الفيديوهات
+            showContentManager() {
+                document.getElementById('admin-screen').style.display = 'none';
+                document.getElementById('content-manager-screen').style.display = 'flex';
+                this.renderManageList();
+            },
+
+            backToAdmin() {
+                document.getElementById('content-manager-screen').style.display = 'none';
+                document.getElementById('admin-screen').style.display = 'flex';
+            },
+
+            renderManageList() {
+                const list = document.getElementById('manage-list');
+                list.innerHTML = this.db.items.map((it, i) => `
+                    <div class="item-row">
+                        <div style="flex:1">
+                            <input type="text" value="${it.t}" onchange="App.updateItem(${i}, 't', this.value)" placeholder="العنوان">
+                            <input type="text" value="${it.u}" onchange="App.updateItem(${i}, 'u', this.value)" placeholder="الرابط">
+                        </div>
+                        <button onclick="App.deleteItem(${i})" style="background:none; border:none; color:#ff4444; padding:10px; cursor:pointer">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                `).join('');
+            },
+
+            addNewItem() {
+                const t = document.getElementById('new-item-t').value;
+                const u = document.getElementById('new-item-u').value;
+                const d = document.getElementById('new-item-d').value;
+                if(!t || !u) return alert("يرجى إدخال العنوان والرابط");
+
+                const isImg = u.match(/\.(jpg|jpeg|png|webp|gif)$/i);
+                this.db.items.unshift({ t, u, d, type: isImg?'image':'video' });
+                this.saveToDisk();
+                this.renderManageList();
+                document.getElementById('new-item-t').value = '';
+                document.getElementById('new-item-u').value = '';
+                alert("تمت الإضافة بنجاح!");
+            },
+
+            updateItem(i, field, value) {
+                this.db.items[i][field] = value;
+                this.saveToDisk();
+            },
+
+            deleteItem(i) {
+                if(confirm("هل أنت متأكد من حذف هذا المحتوى؟")) {
+                    this.db.items.splice(i, 1);
+                    this.saveToDisk();
+                    this.renderManageList();
+                }
+            },
+
+            saveSettings() {
+                this.db.auth.user = document.getElementById('adm-set-user').value || this.db.auth.user;
+                this.db.auth.pass = document.getElementById('adm-set-pass').value || this.db.auth.pass;
+                this.db.siteName = document.getElementById('adm-site-name').value || this.db.siteName;
+                this.db.avatar = document.getElementById('adm-avatar-url').value || this.db.avatar;
+                this.db.links.facebook = document.getElementById('adm-link-fb').value;
+                this.db.links.tiktok = document.getElementById('adm-link-tk').value;
+                
+                this.saveToDisk();
+                this.render();
+                alert("تم حفظ الإعدادات بنجاح!");
+            },
+
+            saveToDisk() {
+                localStorage.setItem('MAHER_ULTRA_DB_PRO', JSON.stringify(this.db));
+            },
+
+            syncInputs() {
+                document.getElementById('adm-set-user').value = this.db.auth.user;
+                document.getElementById('adm-site-name').value = this.db.siteName;
+                document.getElementById('adm-avatar-url').value = this.db.avatar;
+                document.getElementById('adm-link-fb').value = this.db.links.facebook;
+                document.getElementById('adm-link-tk').value = this.db.links.tiktok;
+            },
+
+            toggleMenu(e) { if(e) e.stopPropagation(); document.getElementById('sidebar').classList.toggle('active'); },
+            closeModals() { document.querySelectorAll('.full-modal').forEach(m => m.style.display = 'none'); },
+            toggleDesc() { const d = document.getElementById('desc-panel'); d.style.display = d.style.display === 'block' ? 'none' : 'block'; },
+            toggleTheme() { document.body.setAttribute('data-theme', document.body.getAttribute('data-theme')==='dark' ? 'light' : 'dark'); },
+            
+            redirect(p) {
+                const l = document.getElementById('redir-layer');
+                const t = document.getElementById('timer');
+                let c = 3; l.style.display = 'flex';
+                const iv = setInterval(() => {
+                    c--; t.innerText = c;
+                    if(c <= 0) { clearInterval(iv); window.location.href = this.db.links[p]; }
+                }, 1000);
+            }
+        };
+
+        window.onload = () => App.init();
+        window.onclick = () => document.getElementById('sidebar').classList.remove('active');
+    </script>
+</body>
+</html>
