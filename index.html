@@ -3,264 +3,283 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>موقعي المتطور</title>
+    <title>لوحة التحكم الذكية - Mahir</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/all.min.js"></script>
     <style>
         :root {
-            --primary-color: #6c5ce7;
-            --dark-bg: #0f0c29;
+            --primary: #00d2ff;
+            --accent: #9d50bb;
+            --dark: #0f0c29;
             --glass: rgba(255, 255, 255, 0.1);
         }
 
         body {
             margin: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(to bottom, #0f0c29, #302b63, #24243e);
+            padding: 0;
+            font-family: 'Cairo', sans-serif;
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
             color: white;
+            min-height: 100vh;
             overflow-x: hidden;
         }
 
-        /* الجزء العلوي - صورة متغيرة */
-        #header-section {
-            height: 60vh;
-            background-size: cover;
-            background-position: center;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: 0.5s;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            position: relative;
-        }
-
-        .overlay {
-            background: rgba(0,0,0,0.4);
+        /* القائمة الجانبية */
+        #sidebar {
+            position: fixed;
+            left: -300px;
+            top: 0;
+            width: 300px;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(15px);
+            transition: 0.5s cubic-bezier(0.77, 0, 0.175, 1);
+            z-index: 1000;
             padding: 20px;
-            border-radius: 15px;
-            text-align: center;
-            cursor: pointer;
-            transition: transform 0.3s;
-            max-width: 80%;
+            box-shadow: 5px 0 20px rgba(0,0,0,0.5);
+            overflow-y: auto;
         }
 
-        .overlay:hover { transform: scale(1.05); }
+        #sidebar.active { left: 0; }
 
-        /* الجزء السفلي - صورة تظهر عند النزول */
-        #footer-image-section {
-            height: 50vh;
-            margin: 50px 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            opacity: 0;
-            transform: translateY(50px);
-            transition: 1s all ease-in-out;
-        }
-
-        #footer-image-section.visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        .footer-card {
-            width: 90%;
-            height: 80%;
-            background-size: cover;
-            background-position: center;
-            border-radius: 20px;
-            display: flex;
-            align-items: flex-end;
-            overflow: hidden;
-            position: relative;
-            cursor: pointer;
-        }
-
-        .footer-text {
-            background: rgba(0, 0, 0, 0.7);
-            width: 100%;
-            padding: 20px;
-            transform: translateY(100%);
-            transition: 0.4s;
-        }
-
-        .footer-card:hover .footer-text {
-            transform: translateY(0);
-        }
-
-        /* لوحة التحكم والسر */
-        .admin-trigger {
-            padding: 50px;
-            text-align: center;
-        }
-
-        .admin-panel {
-            display: none;
-            background: var(--glass);
-            backdrop-filter: blur(10px);
-            padding: 30px;
-            margin: 20px;
-            border-radius: 20px;
-            border: 1px solid rgba(255,255,255,0.2);
-        }
-
-        input, textarea {
-            width: 100%;
-            padding: 10px;
-            margin: 10px 0;
-            border-radius: 10px;
+        .toggle-btn {
+            position: fixed;
+            left: 20px;
+            top: 20px;
+            z-index: 1001;
+            background: var(--primary);
             border: none;
-            background: rgba(255,255,255,0.9);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 0 15px var(--primary);
         }
 
-        button {
-            background: var(--primary-color);
+        /* لوحة التحكم داخل القائمة */
+        .admin-box {
+            background: var(--glass);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        input, textarea, select {
+            width: 100%;
+            padding: 8px;
+            margin: 5px 0;
+            border-radius: 5px;
+            border: none;
+            background: rgba(255,255,255,0.8);
+        }
+
+        /* الحاوية الرئيسية للمحتوى */
+        .container {
+            padding: 100px 50px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        /* تصميم البطاقات (المربعات) */
+        .card {
+            background: var(--glass);
+            border-radius: 20px;
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.1);
+            transition: 0.4s;
+            position: relative;
+        }
+
+        .card:hover { transform: translateY(-10px); box-shadow: 0 20px 40px rgba(0,0,0,0.4); }
+
+        .media-container img, .media-container video {
+            width: 100%;
+            display: block;
+            transition: 0.5s;
+            cursor: pointer;
+        }
+
+        .card-content {
+            padding: 20px;
+            max-height: 0;
+            overflow: hidden;
+            transition: 0.5s ease;
+            background: rgba(0,0,0,0.8);
+        }
+
+        .card.expanded .card-content {
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        /* شريط التحكم بالفيديو */
+        .video-controls {
+            display: flex;
+            gap: 10px;
+            padding: 10px;
+            background: #222;
+        }
+
+        .delete-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: red;
             color: white;
             border: none;
-            padding: 10px 25px;
-            border-radius: 10px;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
             cursor: pointer;
-            font-weight: bold;
+            display: none; /* تظهر فقط في وضع الإدارة */
         }
 
-        .hidden { display: none; }
+        .admin-mode .delete-btn { display: block; }
+
+        h2 { border-bottom: 2px solid var(--primary); padding-bottom: 10px; }
     </style>
 </head>
-<body>
+<body id="mainBody">
 
-    <section id="header-section" style="background-image: url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072&auto=format&fit=crop');">
-        <div class="overlay" onclick="alert(document.getElementById('header-desc').innerText)">
-            <h1 id="header-title">أهلاً بك في عالمي</h1>
-            <p id="header-desc">هذا النص يصف الصورة العلوية، انقر لرؤيته بالكامل.</p>
+    <button class="toggle-btn" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
+
+    <div id="sidebar">
+        <h2 id="welcome-msg">مرحباً mahir</h2>
+        
+        <div id="login-section">
+            <input type="text" id="userIn" placeholder="اسم المستخدم">
+            <input type="password" id="passIn" placeholder="كلمة السر">
+            <button onclick="login()" style="width:100%; background: var(--accent);">دخول للنظام</button>
         </div>
-    </section>
 
-    <div style="height: 200px; display: flex; align-items: center; justify-content: center;">
-        <h3>انزل للأسفل لرؤية المفاجأة...</h3>
-    </div>
-
-    <section id="footer-image-section">
-        <div class="footer-card" id="footer-bg" style="background-image: url('https://images.unsplash.com/photo-1478760329108-5c3ed9d495a0?q=80&w=1974&auto=format&fit=crop');">
-            <div class="footer-text">
-                <h2 id="footer-title">استكشاف المجهول</h2>
-                <p id="footer-desc">هذه صورة تظهر بتأثير انسيابي عند النزول، ويمكنك تغيير محتواها من لوحة التحكم.</p>
+        <div id="edit-section" style="display:none;">
+            <div class="admin-box">
+                <h3>إضافة محتوى جديد</h3>
+                <select id="item-type">
+                    <option value="image">صورة</option>
+                    <option value="video">فيديو</option>
+                </select>
+                <input type="text" id="item-url" placeholder="رابط (Image/Video URL)">
+                <input type="text" id="item-title" placeholder="العنوان">
+                <textarea id="item-desc" placeholder="الوصف (كتابة طويلة كما تريد)"></textarea>
+                <button onclick="addItem()" style="background:green;">إضافة للعرض</button>
             </div>
-        </div>
-    </section>
 
-    <div class="admin-trigger">
-        <hr>
-        <p>منطقة الإدارة</p>
-        <div id="login-area">
-            <input type="password" id="passInput" placeholder="أدخل كلمة السر للتعديل..." style="width: 200px;">
-            <button onclick="checkPass()">دخول</button>
-        </div>
+            <div class="admin-box">
+                <h3>إعدادات الحساب</h3>
+                <input type="text" id="new-user" placeholder="تغيير الاسم">
+                <input type="password" id="new-pass" placeholder="تغيير الباسورد">
+                <button onclick="updateAccount()">تحديث البيانات</button>
+            </div>
 
-        <div id="adminPanel" class="admin-panel">
-            <h2>لوحة التحكم بالبث المباشر</h2>
-            
-            <h3>تعديل القسم العلوي:</h3>
-            <input type="text" id="edit-h-img" placeholder="رابط الصورة العلوية الجديد">
-            <input type="text" id="edit-h-title" placeholder="العنوان العلوي">
-            <textarea id="edit-h-desc" placeholder="وصف الصورة العلوية"></textarea>
-
-            <hr>
-
-            <h3>تعديل القسم السفلي:</h3>
-            <input type="text" id="edit-f-img" placeholder="رابط الصورة السفلية الجديد">
-            <input type="text" id="edit-f-title" placeholder="العنوان السفلي">
-            <textarea id="edit-f-desc" placeholder="وصف الصورة السفلية"></textarea>
-
-            <button onclick="saveChanges()">حفظ التغييرات ونشرها</button>
-            <button onclick="logout()" style="background: #e74c3c;">تسجيل خروج</button>
+            <button onclick="logout()" style="background:#c0392b;">خروج</button>
         </div>
     </div>
+
+    <div class="container" id="content-grid">
+        </div>
 
     <script>
-        // تأثير ظهور الصورة عند النزول
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('visible');
-                }
-            });
-        }, { threshold: 0.1 });
+        let currentUser = localStorage.getItem('user') || 'mahir';
+        let currentPass = localStorage.getItem('pass') || '12345';
+        let isAdmin = false;
 
-        observer.observe(document.getElementById('footer-image-section'));
+        // تحميل البيانات المحفوظة
+        let siteItems = JSON.parse(localStorage.getItem('siteItems')) || [
+            { type: 'image', url: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa', title: 'البداية', desc: 'هذا مثال لصورة، اضغط عليها لرؤية النص الطويل الذي يمكن وضعه هنا.' },
+            { type: 'video', url: 'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4', title: 'فيديو توضيحي', desc: 'يمكنك إضافة فيديوهات بروابط مباشرة والتحكم فيها.' }
+        ];
 
-        // نظام كلمة السر
-        function checkPass() {
-            const pass = document.getElementById('passInput').value;
-            if (pass === "123456") {
-                document.getElementById('adminPanel').style.display = 'block';
-                document.getElementById('login-area').classList.add('hidden');
-                loadCurrentValues();
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('active');
+        }
+
+        function login() {
+            const u = document.getElementById('userIn').value;
+            const p = document.getElementById('passIn').value;
+            if(u === currentUser && p === currentPass) {
+                isAdmin = true;
+                document.getElementById('login-section').style.display = 'none';
+                document.getElementById('edit-section').style.display = 'block';
+                document.body.classList.add('admin-mode');
+                document.getElementById('welcome-msg').innerText = "لوحة تحكم " + currentUser;
             } else {
-                alert("كلمة السر خاطئة!");
+                alert("بيانات خاطئة!");
             }
         }
 
         function logout() {
-            document.getElementById('adminPanel').style.display = 'none';
-            document.getElementById('login-area').classList.remove('hidden');
-            document.getElementById('passInput').value = "";
+            isAdmin = false;
+            location.reload();
         }
 
-        // تحميل القيم الحالية في المدخلات
-        function loadCurrentValues() {
-            document.getElementById('edit-h-title').value = document.getElementById('header-title').innerText;
-            document.getElementById('edit-h-desc').value = document.getElementById('header-desc').innerText;
-            document.getElementById('edit-f-title').value = document.getElementById('footer-title').innerText;
-            document.getElementById('edit-f-desc').value = document.getElementById('footer-desc').innerText;
+        function updateAccount() {
+            const nU = document.getElementById('new-user').value;
+            const nP = document.getElementById('new-pass').value;
+            if(nU) { currentUser = nU; localStorage.setItem('user', nU); }
+            if(nP) { currentPass = nP; localStorage.setItem('pass', nP); }
+            alert("تم التحديث بنجاح!");
         }
 
-        // حفظ التغييرات وتطبيقها
-        function saveChanges() {
-            // القسم العلوي
-            const hImg = document.getElementById('edit-h-img').value;
-            if(hImg) document.getElementById('header-section').style.backgroundImage = `url('${hImg}')`;
-            document.getElementById('header-title').innerText = document.getElementById('edit-h-title').value;
-            document.getElementById('header-desc').innerText = document.getElementById('edit-h-desc').value;
-
-            // القسم السفلي
-            const fImg = document.getElementById('edit-f-img').value;
-            if(fImg) document.getElementById('footer-bg').style.backgroundImage = `url('${fImg}')`;
-            document.getElementById('footer-title').innerText = document.getElementById('edit-f-title').value;
-            document.getElementById('footer-desc').innerText = document.getElementById('edit-f-desc').value;
-
-            // حفظ في LocalStorage ليبقى التعديل حتى بعد التحديث
-            const siteData = {
-                hTitle: document.getElementById('edit-h-title').value,
-                hDesc: document.getElementById('edit-h-desc').value,
-                hImg: hImg || document.getElementById('header-section').style.backgroundImage,
-                fTitle: document.getElementById('edit-f-title').value,
-                fDesc: document.getElementById('edit-f-desc').value,
-                fImg: fImg || document.getElementById('footer-bg').style.backgroundImage
+        function addItem() {
+            const newItem = {
+                type: document.getElementById('item-type').value,
+                url: document.getElementById('item-url').value || 'https://via.placeholder.com/400',
+                title: document.getElementById('item-title').value,
+                desc: document.getElementById('item-desc').value
             };
-            localStorage.setItem('mySiteData', JSON.stringify(siteData));
-            
-            alert("تم تحديث الموقع بنجاح!");
+            siteItems.push(newItem);
+            renderSite();
+            saveData();
         }
 
-        // تحميل البيانات المحفوظة عند فتح الصفحة
-        window.onload = function() {
-            const savedData = JSON.parse(localStorage.getItem('mySiteData'));
-            if (savedData) {
-                document.getElementById('header-title').innerText = savedData.hTitle;
-                document.getElementById('header-desc').innerText = savedData.hDesc;
-                if(savedData.hImg.startsWith('url')) {
-                     document.getElementById('header-section').style.backgroundImage = savedData.hImg;
-                } else {
-                     document.getElementById('header-section').style.backgroundImage = `url('${savedData.hImg}')`;
-                }
+        function deleteItem(index) {
+            siteItems.splice(index, 1);
+            renderSite();
+            saveData();
+        }
+
+        function saveData() {
+            localStorage.setItem('siteItems', JSON.stringify(siteItems));
+        }
+
+        function renderSite() {
+            const grid = document.getElementById('content-grid');
+            grid.innerHTML = '';
+            siteItems.forEach((item, index) => {
+                const card = document.createElement('div');
+                card.className = 'card';
                 
-                document.getElementById('footer-title').innerText = savedData.fTitle;
-                document.getElementById('footer-desc').innerText = savedData.fDesc;
-                if(savedData.fImg.startsWith('url')) {
-                    document.getElementById('footer-bg').style.backgroundImage = savedData.fImg;
-                } else {
-                    document.getElementById('footer-bg').style.backgroundImage = `url('${savedData.fImg}')`;
-                }
-            }
-        };
+                let mediaHtml = item.type === 'image' 
+                    ? `<img src="${item.url}" onclick="expandCard(this)">` 
+                    : `<video src="${item.url}" id="vid-${index}"></video>
+                       <div class="video-controls">
+                           <button onclick="document.getElementById('vid-${index}').play()"><i class="fas fa-play"></i></button>
+                           <button onclick="document.getElementById('vid-${index}').pause()"><i class="fas fa-pause"></i></button>
+                           <input type="range" min="0" max="1" step="0.1" onchange="document.getElementById('vid-${index}').volume = this.value">
+                       </div>`;
+
+                card.innerHTML = `
+                    <button class="delete-btn" onclick="deleteItem(${index})">&times;</button>
+                    <div class="media-container" onclick="${item.type === 'video' ? 'expandCard(this)' : ''}">
+                        ${mediaHtml}
+                    </div>
+                    <div class="card-content">
+                        <h3>${item.title}</h3>
+                        <p>${item.desc}</p>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function expandCard(el) {
+            const card = el.closest('.card');
+            card.classList.toggle('expanded');
+        }
+
+        // تشغيل العرض عند البدء
+        renderSite();
     </script>
 </body>
 </html>
