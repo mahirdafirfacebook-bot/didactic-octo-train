@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SMART PLATFORM PRO | MAHER</title>
+    <title>MAHER PLATFORM PRO | إدارة المحتوى الذكية</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -13,164 +13,156 @@
             --primary: #bc202b; --bg: #0a0a0a; --surface: #161616;
             --text: #ffffff; --sub: #b1b1b1; --radius: 15px;
         }
-
         [data-theme="light"] { --bg: #f4f7f6; --surface: #ffffff; --text: #1a1a1a; --sub: #555; }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Cairo', sans-serif; touch-action: manipulation; }
-        body { background: var(--bg); color: var(--text); transition: 0.5s; overflow-x: hidden; width: 100vw; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Cairo', sans-serif; }
+        body { background: var(--bg); color: var(--text); transition: 0.5s; overflow-x: hidden; }
 
+        /* الهيدر */
         header {
             height: 70px; background: var(--surface); display: flex; align-items: center;
             justify-content: space-between; padding: 0 5%; position: sticky; top: 0; z-index: 1000;
             box-shadow: 0 2px 10px rgba(0,0,0,0.5);
         }
 
+        /* القائمة الجانبية */
         .sidebar {
             position: fixed; right: -100%; top: 0; bottom: 0; width: 280px;
             background: var(--surface); z-index: 2000; transition: 0.4s cubic-bezier(0.7, 0, 0.3, 1);
             padding: 25px; box-shadow: -10px 0 30px rgba(0,0,0,0.8);
-            display: flex; flex-direction: column;
         }
         .sidebar.active { right: 0; }
         .nav-link { padding: 12px; border-radius: 10px; display: flex; align-items: center; gap: 12px; cursor: pointer; margin-bottom: 5px; font-weight: 700; transition: 0.2s; }
         .nav-link:hover { background: rgba(255,255,255,0.05); }
 
-        .admin-box-container { width: 100%; display: flex; justify-content: center; margin-top: auto; padding-top: 20px; }
-        .admin-banner {
-            width: 180px; height: 180px; border-radius: 15px;
-            object-fit: cover; border: 3px solid var(--primary); display: block;
-            box-shadow: 0 5px 15px rgba(188, 32, 43, 0.3);
-        }
-
+        /* شريط الأخبار */
         #news-container {
             background: var(--primary); color: #fff; padding: 12px 0; overflow: hidden;
             white-space: nowrap; display: none; cursor: pointer; font-weight: bold;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
         }
-        .marquee { display: inline-block; padding-right: 100%; animation: marquee 25s linear infinite; }
-        @keyframes marquee { 0% { transform: translate(0, 0); } 100% { transform: translate(100%, 0); } }
+        .marquee { display: inline-block; padding-right: 100%; animation: marquee 20s linear infinite; }
+        @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(100%); } }
 
+        /* الحاوية الرئيسية */
         .main-container { max-width: 1100px; margin: 10px auto; padding: 0 15px; }
-        
+
+        /* منطقة المشغل */
         .theater-mode { position: sticky; top: 80px; z-index: 900; background: var(--bg); padding-bottom: 15px; }
         .video-box { width: 100%; aspect-ratio: 16/9; background: #000; border-radius: var(--radius); overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
         iframe, video, img { width: 100%; height: 100%; object-fit: contain; border: none; }
 
         .video-info { margin-top: 15px; cursor: pointer; background: var(--surface); padding: 15px; border-radius: var(--radius); }
         .video-title { font-size: 1.2rem; font-weight: 900; color: var(--text); }
-        #desc-panel { margin-top: 12px; color: var(--sub); display: none; font-size: 0.95rem; line-height: 1.6; border-top: 1px solid #333; padding-top: 10px; }
+        #desc-panel { margin-top: 12px; color: var(--sub); display: none; font-size: 0.95rem; line-height: 1.6; border-top: 1px solid #333; padding-top: 10px; word-wrap: break-word; }
+        #desc-panel a { color: #3498db; text-decoration: underline; font-weight: bold; }
 
+        /* شبكة الفيديوهات اسفل المشغل */
         .section-label { margin: 25px 0 15px; font-weight: 900; font-size: 1.3rem; display: flex; align-items: center; gap: 10px; }
-        .section-label::before { content: ''; width: 5px; height: 25px; background: var(--primary); display: inline-block; border-radius: 10px; }
+        .section-label::before { content: ''; width: 5px; height: 25px; background: var(--primary); border-radius: 10px; }
         
-        .suggestions { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px; padding-bottom: 50px; }
-        .thumb-item { cursor: pointer; transition: 0.3s; position: relative; }
-        .thumb-item:hover { transform: translateY(-5px); }
-        .thumb-img { width: 100%; aspect-ratio: 16/9; object-fit: cover; border-radius: 12px; border: 1px solid #222; }
-        .thumb-text { margin-top: 8px; font-weight: 700; font-size: 0.9rem; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+        .suggestions { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 15px; padding-bottom: 50px; }
+        .thumb-item { cursor: pointer; transition: 0.3s; }
+        .thumb-item:hover { transform: scale(1.03); }
+        .thumb-img-wrapper { width: 100%; aspect-ratio: 16/9; border-radius: 12px; overflow: hidden; background: #1a1a1a; border: 1px solid #333; position: relative; }
+        .thumb-img { width: 100%; height: 100%; object-fit: cover; }
+        .thumb-text { margin-top: 10px; font-weight: 700; font-size: 0.9rem; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 
+        /* المودالات والتحكم */
         .full-modal {
             position: fixed; inset: 0; background: rgba(0,0,0,0.95); backdrop-filter: blur(10px);
             z-index: 5000; display: none; align-items: center; justify-content: center; padding: 20px;
         }
-        .modal-content { background: var(--surface); width: 100%; max-width: 600px; border-radius: 20px; padding: 30px; border: 1px solid #333; max-height: 90vh; overflow-y: auto; position: relative; }
+        .modal-content { background: var(--surface); width: 100%; max-width: 650px; border-radius: 20px; padding: 30px; border: 1px solid #333; max-height: 90vh; overflow-y: auto; }
         
-        /* زر الزائد الجديد */
+        input, textarea, select { width: 100%; padding: 12px; background: #222; border: 1px solid #444; color: #fff; border-radius: 10px; margin-bottom: 15px; font-size: 0.9rem; }
+        .btn-action { background: var(--primary); color: #fff; padding: 14px; border: none; border-radius: 10px; width: 100%; font-weight: 900; cursor: pointer; transition: 0.3s; margin-bottom: 10px; }
+        
         .btn-plus {
-            background: var(--primary); width: 60px; height: 60px; border-radius: 50%;
-            display: flex; align-items: center; justify-content: center; font-size: 25px;
-            color: white; cursor: pointer; margin: 20px auto; transition: 0.3s;
+            background: var(--primary); width: 65px; height: 65px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center; font-size: 28px;
+            color: white; cursor: pointer; margin: 15px auto; box-shadow: 0 5px 15px rgba(188,32,43,0.4);
         }
-        .btn-plus:hover { transform: rotate(90deg); scale: 1.1; }
 
-        /* إدارة المحتوى المباشرة */
-        .content-manager-list { margin-top: 20px; border-top: 2px solid #333; padding-top: 20px; }
-        .item-row { 
-            background: #222; padding: 10px; border-radius: 10px; margin-bottom: 10px;
-            display: flex; align-items: center; gap: 10px; justify-content: space-between;
-        }
-        .item-row input { margin-bottom: 0; padding: 8px; font-size: 12px; }
-
-        label { display: block; margin-bottom: 5px; font-weight: bold; font-size: 0.85rem; color: var(--primary); }
-        input, textarea, select { width: 100%; padding: 12px; background: #222; border: 1px solid #444; color: #fff; border-radius: 10px; margin-bottom: 15px; }
-        .btn-action { background: var(--primary); color: #fff; padding: 15px; border: none; border-radius: 10px; width: 100%; font-weight: 900; cursor: pointer; transition: 0.3s; margin-bottom: 10px; }
-        
-        .redir-screen { position: fixed; inset: 0; background: #000; z-index: 9999; display: none; flex-direction: column; align-items: center; justify-content: center; }
+        .item-manager-card { background: #1a1a1a; padding: 15px; border-radius: 15px; border: 1px solid #333; margin-bottom: 15px; }
+        .admin-banner { width: 160px; height: 160px; border-radius: 20px; object-fit: cover; border: 3px solid var(--primary); margin: 20px auto; display: block; }
     </style>
 </head>
 <body data-theme="dark">
 
-    <div id="redir-layer" class="redir-screen">
-        <h2 style="color:var(--primary)">جاري التحويل...</h2>
-        <div style="font-size:40px; margin-top:20px" id="timer">3</div>
+    <div id="redir-layer" style="position:fixed; inset:0; background:#000; z-index:9999; display:none; flex-direction:column; align-items:center; justify-content:center;">
+        <h2 style="color:var(--primary)">جاري الانتقال...</h2>
+        <div style="font-size:45px; margin-top:15px" id="timer">3</div>
     </div>
 
     <div id="auth-screen" class="full-modal">
         <div class="modal-content">
-            <h2 style="text-align:center; margin-bottom:20px;"><i class="fas fa-lock"></i> منطقة محظورة</h2>
-            <input type="text" id="login-user" placeholder="اسم المسؤول">
-            <input type="password" id="login-pass" placeholder="كلمة المرور">
-            <button class="btn-action" onclick="App.checkAuth()">تأكيد الهوية</button>
-            <p onclick="App.closeModals()" style="text-align:center; cursor:pointer; color:gray">إلغاء</p>
+            <h2 style="text-align:center; margin-bottom:20px;"><i class="fas fa-user-shield"></i> مدخل المسؤول</h2>
+            <input type="text" id="login-user" placeholder="اسم المستخدم">
+            <input type="password" id="login-pass" placeholder="الرمز السري">
+            <button class="btn-action" onclick="App.checkAuth()">تأكيد الدخول</button>
+            <p onclick="App.closeModals()" style="text-align:center; color:gray; cursor:pointer">إلغاء</p>
         </div>
     </div>
 
     <div id="admin-screen" class="full-modal">
         <div class="modal-content">
-            <h2 style="color:var(--primary); text-align:center;">لوحة التحكم الإدارية</h2>
-            <div class="btn-plus" onclick="App.showContentManager()" title="إدارة الفيديوهات والمحتوى">
-                <i class="fas fa-plus"></i>
-            </div>
-            <p style="text-align:center; font-size:12px; margin-bottom:20px; color:var(--sub)">اضغط على الزر أعلاه لإضافة أو تعديل الفيديوهات</p>
+            <h2 style="text-align:center; color:var(--primary)">لوحة التحكم</h2>
             
-            <hr style="opacity:0.1; margin:20px 0">
-            
-            <label>إعدادات الحساب</label>
-            <input type="text" id="adm-set-user" placeholder="تغيير اسم المستخدم">
-            <input type="password" id="adm-set-pass" placeholder="تغيير كلمة المرور">
+            <div class="btn-plus" onclick="App.openManager()"><i class="fas fa-plus"></i></div>
+            <p style="text-align:center; font-size:13px; margin-bottom:20px; color:var(--sub)">إدارة قائمة الفيديوهات والمحتوى</p>
 
-            <label>هوية المنصة</label>
-            <input type="text" id="adm-site-name" placeholder="اسم المنصة">
-            <input type="text" id="adm-avatar-url" placeholder="رابط صورة المسؤول">
+            <label>الأمان</label>
+            <input type="text" id="adm-user" placeholder="تعديل اسم المستخدم">
+            <input type="password" id="adm-pass" placeholder="تعديل الرمز السري">
 
-            <label>الروابط الاجتماعية</label>
+            <label>بيانات المنصة</label>
+            <input type="text" id="adm-name" placeholder="اسم المنصة">
+            <input type="text" id="adm-avatar" placeholder="رابط صورة المسؤول">
+
+            <label>شريط الأخبار العاجلة</label>
+            <select id="adm-news-active">
+                <option value="on">تشغيل الشريط</option>
+                <option value="off">إيقاف الشريط</option>
+            </select>
+            <input type="text" id="adm-news-text" placeholder="نص الخبر">
+            <input type="text" id="adm-news-link" placeholder="رابط الخبر (اختياري)">
+
+            <label>روابط التواصل</label>
             <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px">
-                <input type="text" id="adm-link-fb" placeholder="Facebook">
-                <input type="text" id="adm-link-tk" placeholder="TikTok">
+                <input type="text" id="adm-fb" placeholder="فيسبوك">
+                <input type="text" id="adm-tk" placeholder="تيك توك">
+                <input type="text" id="adm-ig" placeholder="انستجرام">
+                <input type="text" id="adm-wa" placeholder="واتساب">
             </div>
 
-            <button class="btn-action" onclick="App.saveSettings()">حفظ الإعدادات العامة</button>
-            <button class="btn-action" style="background:#333;" onclick="App.closeModals()">إغلاق</button>
+            <button class="btn-action" onclick="App.saveSettings()">حفظ كافة الإعدادات</button>
+            <button class="btn-action" style="background:#333" onclick="App.closeModals()">إغلاق</button>
         </div>
     </div>
 
-    <div id="content-manager-screen" class="full-modal">
-        <div class="modal-content" style="max-width: 700px;">
-            <h2 style="color:var(--primary);"><i class="fas fa-video"></i> إدارة محتوى المنصة</h2>
-            <p style="font-size:13px; margin-bottom:20px;">هنا يمكنك إضافة فيديو جديد أو تعديل الفيديوهات الحالية مباشرة.</p>
-            
-            <div style="background: #1a1a1a; padding: 15px; border-radius: 15px; border: 1px dashed var(--primary); margin-bottom: 20px;">
-                <label>إضافة فيديو/صورة جديد</label>
-                <input type="text" id="new-item-t" placeholder="عنوان الفيديو">
-                <input type="text" id="new-item-u" placeholder="رابط الفيديو (YouTube/Direct)">
-                <textarea id="new-item-d" rows="2" placeholder="الوصف (اختياري)"></textarea>
-                <button class="btn-action" onclick="App.addNewItem()">إضافة إلى المنصة +</button>
+    <div id="manager-screen" class="full-modal">
+        <div class="modal-content" style="max-width:750px">
+            <h2 style="color:var(--primary)">إضافة فيديو جديد</h2>
+            <div style="background:#1a1a1a; padding:15px; border-radius:15px; border:2px dashed var(--primary); margin-bottom:25px">
+                <input type="text" id="new-title" placeholder="عنوان الفيديو / الصورة">
+                <input type="text" id="new-url" placeholder="رابط المحتوى (يوتيوب أو مباشر)">
+                <textarea id="new-desc" rows="3" placeholder="وصف الفيديو (الروابط هنا تصبح قابلة للضغط)"></textarea>
+                <button class="btn-action" onclick="App.addNewItem()">إضافة إلى المنصة الآن</button>
             </div>
 
-            <label>الفيديوهات الحالية (تعديل مباشر)</label>
-            <div id="manage-list" class="content-manager-list">
-                </div>
-
-            <button class="btn-action" style="background:#333;" onclick="App.backToAdmin()">العودة للوحة الرئيسية</button>
+            <h3 style="margin-bottom:15px">تعديل المحتوى الحالي</h3>
+            <div id="manage-list"></div>
+            
+            <button class="btn-action" style="background:#333" onclick="App.backToAdmin()">العودة للخلف</button>
         </div>
     </div>
 
     <header>
         <div style="display:flex; align-items:center; gap:12px">
-            <i class="fas fa-bars" style="font-size:22px; cursor:pointer;" onclick="App.toggleMenu(event)"></i>
-            <span style="font-weight:900; font-size:1.2rem; letter-spacing:1px" id="ui-site-name">...</span>
+            <i class="fas fa-bars" style="font-size:22px; cursor:pointer;" onclick="App.toggleMenu()"></i>
+            <span id="ui-site-name" style="font-weight:900; font-size:1.2rem">...</span>
         </div>
-        <div onclick="App.toggleTheme()" style="cursor:pointer; font-size:20px;"><i class="fas fa-adjust"></i></div>
+        <i class="fas fa-adjust" style="cursor:pointer; font-size:20px" onclick="App.toggleTheme()"></i>
     </header>
 
     <div id="news-container" onclick="App.newsClick()">
@@ -178,191 +170,197 @@
     </div>
 
     <nav class="sidebar" id="sidebar">
-        <h3 style="margin-bottom:20px; border-bottom:1px solid #333; padding-bottom:10px">القائمة الرئيسية</h3>
-        <div class="nav-link" onclick="App.redirect('facebook')"><i class="fab fa-facebook" style="color:#1877F2"></i> Facebook</div>
-        <div class="nav-link" onclick="App.redirect('tiktok')"><i class="fab fa-tiktok"></i> TikTok</div>
+        <h3 style="margin-bottom:20px; border-bottom:1px solid #333; padding-bottom:10px">القائمة</h3>
+        <div class="nav-link" onclick="App.social('facebook')"><i class="fab fa-facebook" style="color:#1877F2"></i> Facebook</div>
+        <div class="nav-link" onclick="App.social('tiktok')"><i class="fab fa-tiktok"></i> TikTok</div>
+        <div class="nav-link" onclick="App.social('instagram')"><i class="fab fa-instagram" style="color:#E1306C"></i> Instagram</div>
+        <div class="nav-link" onclick="App.social('whatsapp')"><i class="fab fa-whatsapp" style="color:#25D366"></i> WhatsApp</div>
         <hr style="opacity:0.1; margin:15px 0">
+        <div class="nav-link" onclick="App.switchLang()"><i class="fas fa-language"></i> <span id="ui-lang">English</span></div>
         <div class="nav-link" style="color:var(--primary)" onclick="App.showAuth()"><i class="fas fa-user-cog"></i> لوحة الإدارة</div>
-        
-        <div class="admin-box-container">
-            <img src="" class="admin-banner" id="ui-avatar">
-        </div>
+        <img src="" id="ui-avatar" class="admin-banner">
     </nav>
 
     <main class="main-container">
         <section class="theater-mode">
-            <div class="video-box" id="main-viewer"></div>
+            <div class="video-box" id="main-player"></div>
             <div class="video-info" onclick="App.toggleDesc()">
                 <h1 class="video-title" id="active-title">...</h1>
                 <div id="desc-panel"></div>
             </div>
         </section>
 
-        <h2 class="section-label">جميع الفيديوهات</h2>
-        <div class="suggestions" id="suggestion-grid"></div>
+        <h2 class="section-label">فيديوهات مقترحة</h2>
+        <div class="suggestions" id="video-grid"></div>
     </main>
 
     <script>
         const App = {
             db: {
-                auth: { user: 'mahir', pass: '1234' },
-                siteName: 'SMART PLATFORM PRO',
-                avatar: 'https://via.placeholder.com/180',
-                news: { active: false, text: '', link: '' },
-                links: { facebook: '#', tiktok: '#' },
+                auth: { user: 'maher', pass: '1234' },
+                siteName: 'MAHER PLATFORM',
+                avatar: 'https://via.placeholder.com/160',
+                news: { active: true, text: 'أهلاً بكم في المنصة المحدثة', link: '#' },
+                social: { facebook: '#', tiktok: '#', instagram: '#', whatsapp: '#' },
                 items: [
-                    { t: 'مرحباً بك', u: 'https://www.w3schools.com/html/mov_bbb.mp4', d: 'فيديو افتراضي', type: 'video' }
+                    { t: 'فيديو ترحيبي للمنصة', u: 'https://www.w3schools.com/html/mov_bbb.mp4', d: 'أهلاً بك. يمكنك تغيير هذا المحتوى من الإدارة.', type: 'video' }
                 ]
             },
 
             init() {
-                const saved = localStorage.getItem('MAHER_ULTRA_DB_PRO');
+                const saved = localStorage.getItem('MAHER_PRO_DATA_V4');
                 if(saved) this.db = JSON.parse(saved);
                 this.render();
-                document.addEventListener('touchstart', (e) => { if (e.touches.length > 1) e.preventDefault(); }, { passive: false });
             },
 
             render() {
+                // تحديث الهوية
                 document.getElementById('ui-site-name').innerText = this.db.siteName;
                 document.getElementById('ui-avatar').src = this.db.avatar;
                 
-                const grid = document.getElementById('suggestion-grid');
+                // تحديث الخبر العاجل
+                const n = document.getElementById('news-container');
+                n.style.display = this.db.news.active ? 'block' : 'none';
+                document.getElementById('ui-news-text').innerText = this.db.news.text;
+
+                // تحديث شبكة الفيديوهات (مثل يوتيوب)
+                const grid = document.getElementById('video-grid');
                 grid.innerHTML = this.db.items.map((it, i) => `
-                    <div class="thumb-item" onclick="App.loadMedia(${i})">
-                        <img src="${it.type==='image'?it.u:'https://via.placeholder.com/400x225/222/fff?text=▶'}" class="thumb-img">
+                    <div class="thumb-item" onclick="App.load(${i})">
+                        <div class="thumb-img-wrapper">
+                            <img src="${it.type==='image'?it.u:'https://via.placeholder.com/400x225/222/fff?text=▶'}" class="thumb-img">
+                        </div>
                         <div class="thumb-text">${it.t}</div>
                     </div>
                 `).join('');
 
-                if(this.db.items.length > 0) this.loadMedia(0);
+                if(this.db.items.length > 0) this.load(0);
                 this.syncInputs();
             },
 
-            loadMedia(idx) {
+            load(idx) {
                 const it = this.db.items[idx];
                 if(!it) return;
-                const v = document.getElementById('main-viewer');
+                
                 document.getElementById('active-title').innerText = it.t;
-                document.getElementById('desc-panel').innerText = it.d;
+                // تفعيل الروابط في الوصف
+                const linkedDesc = it.d.replace(/(https?:\/\/[^\s]+)/g, '<a href="$1" target="_blank">$1</a>');
+                document.getElementById('desc-panel').innerHTML = linkedDesc;
 
+                const player = document.getElementById('main-player');
                 if(it.u.includes('youtube.com') || it.u.includes('youtu.be')) {
-                    let id = it.u.includes('v=') ? it.u.split('v=')[1].split('&')[0] : it.u.split('/').pop();
-                    v.innerHTML = `<iframe src="https://www.youtube.com/embed/${id}" allowfullscreen></iframe>`;
+                    const id = it.u.includes('v=') ? it.u.split('v=')[1].split('&')[0] : it.u.split('/').pop();
+                    player.innerHTML = `<iframe src="https://www.youtube.com/embed/${id}?autoplay=1" allowfullscreen></iframe>`;
                 } else {
-                    v.innerHTML = it.type === 'video' ? `<video controls autoplay><source src="${it.u}"></video>` : `<img src="${it.u}">`;
+                    const isImg = it.u.match(/\.(jpg|jpeg|png|webp|gif)$/i);
+                    player.innerHTML = isImg ? `<img src="${it.u}">` : `<video controls autoplay><source src="${it.u}"></video>`;
                 }
                 window.scrollTo({ top: 0, behavior: 'smooth' });
             },
 
-            // إدارة الجلسة والدخول
-            showAuth() { this.toggleMenu(); document.getElementById('auth-screen').style.display = 'flex'; },
-            checkAuth() {
-                const u = document.getElementById('login-user').value;
-                const p = document.getElementById('login-pass').value;
-                if(u === this.db.auth.user && p === this.db.auth.pass) {
-                    this.closeModals();
-                    document.getElementById('admin-screen').style.display = 'flex';
-                } else alert("بيانات الدخول غير صحيحة!");
-            },
-
-            // صفحة إدارة الفيديوهات
-            showContentManager() {
-                document.getElementById('admin-screen').style.display = 'none';
-                document.getElementById('content-manager-screen').style.display = 'flex';
+            // إدارة الإضافات
+            addNewItem() {
+                const t = document.getElementById('new-title').value;
+                const u = document.getElementById('new-url').value;
+                const d = document.getElementById('new-desc').value;
+                
+                if(!t || !u) return alert("الرجاء إدخال العنوان والرابط");
+                
+                const isImg = u.match(/\.(jpg|jpeg|png|webp|gif)$/i);
+                this.db.items.unshift({ t, u, d, type: isImg?'image':'video' });
+                
+                this.save();
+                this.render();
                 this.renderManageList();
-            },
-
-            backToAdmin() {
-                document.getElementById('content-manager-screen').style.display = 'none';
-                document.getElementById('admin-screen').style.display = 'flex';
+                
+                document.getElementById('new-title').value = '';
+                document.getElementById('new-url').value = '';
+                document.getElementById('new-desc').value = '';
+                alert("تمت الإضافة بنجاح!");
             },
 
             renderManageList() {
                 const list = document.getElementById('manage-list');
                 list.innerHTML = this.db.items.map((it, i) => `
-                    <div class="item-row">
-                        <div style="flex:1">
-                            <input type="text" value="${it.t}" onchange="App.updateItem(${i}, 't', this.value)" placeholder="العنوان">
-                            <input type="text" value="${it.u}" onchange="App.updateItem(${i}, 'u', this.value)" placeholder="الرابط">
-                        </div>
-                        <button onclick="App.deleteItem(${i})" style="background:none; border:none; color:#ff4444; padding:10px; cursor:pointer">
-                            <i class="fas fa-trash"></i>
-                        </button>
+                    <div class="item-manager-card">
+                        <input type="text" value="${it.t}" onchange="App.editItem(${i}, 't', this.value)" placeholder="تعديل العنوان">
+                        <input type="text" value="${it.u}" onchange="App.editItem(${i}, 'u', this.value)" placeholder="تعديل الرابط">
+                        <textarea onchange="App.editItem(${i}, 'd', this.value)" placeholder="تعديل الوصف">${it.d}</textarea>
+                        <button class="btn-action" style="background:#555; font-size:12px; padding:5px" onclick="App.deleteItem(${i})">حذف هذا المحتوى</button>
                     </div>
                 `).join('');
             },
 
-            addNewItem() {
-                const t = document.getElementById('new-item-t').value;
-                const u = document.getElementById('new-item-u').value;
-                const d = document.getElementById('new-item-d').value;
-                if(!t || !u) return alert("يرجى إدخال العنوان والرابط");
-
-                const isImg = u.match(/\.(jpg|jpeg|png|webp|gif)$/i);
-                this.db.items.unshift({ t, u, d, type: isImg?'image':'video' });
-                this.saveToDisk();
-                this.renderManageList();
-                document.getElementById('new-item-t').value = '';
-                document.getElementById('new-item-u').value = '';
-                alert("تمت الإضافة بنجاح!");
-            },
-
-            updateItem(i, field, value) {
-                this.db.items[i][field] = value;
-                this.saveToDisk();
-            },
-
-            deleteItem(i) {
-                if(confirm("هل أنت متأكد من حذف هذا المحتوى؟")) {
-                    this.db.items.splice(i, 1);
-                    this.saveToDisk();
-                    this.renderManageList();
-                }
-            },
+            editItem(i, key, val) { this.db.items[i][key] = val; this.save(); this.render(); },
+            deleteItem(i) { if(confirm("حذف الفيديو؟")) { this.db.items.splice(i,1); this.save(); this.render(); this.renderManageList(); } },
 
             saveSettings() {
-                this.db.auth.user = document.getElementById('adm-set-user').value || this.db.auth.user;
-                this.db.auth.pass = document.getElementById('adm-set-pass').value || this.db.auth.pass;
-                this.db.siteName = document.getElementById('adm-site-name').value || this.db.siteName;
-                this.db.avatar = document.getElementById('adm-avatar-url').value || this.db.avatar;
-                this.db.links.facebook = document.getElementById('adm-link-fb').value;
-                this.db.links.tiktok = document.getElementById('adm-link-tk').value;
+                this.db.auth.user = document.getElementById('adm-user').value || this.db.auth.user;
+                this.db.auth.pass = document.getElementById('adm-pass').value || this.db.auth.pass;
+                this.db.siteName = document.getElementById('adm-name').value || this.db.siteName;
+                this.db.avatar = document.getElementById('adm-avatar').value || this.db.avatar;
+                this.db.news.active = document.getElementById('adm-news-active').value === 'on';
+                this.db.news.text = document.getElementById('adm-news-text').value;
+                this.db.news.link = document.getElementById('adm-news-link').value;
+                this.db.social.facebook = document.getElementById('adm-fb').value;
+                this.db.social.tiktok = document.getElementById('adm-tk').value;
+                this.db.social.instagram = document.getElementById('adm-ig').value;
+                this.db.social.whatsapp = document.getElementById('adm-wa').value;
                 
-                this.saveToDisk();
+                this.save();
                 this.render();
-                alert("تم حفظ الإعدادات بنجاح!");
+                this.closeModals();
+                alert("تم الحفظ!");
             },
 
-            saveToDisk() {
-                localStorage.setItem('MAHER_ULTRA_DB_PRO', JSON.stringify(this.db));
-            },
-
-            syncInputs() {
-                document.getElementById('adm-set-user').value = this.db.auth.user;
-                document.getElementById('adm-site-name').value = this.db.siteName;
-                document.getElementById('adm-avatar-url').value = this.db.avatar;
-                document.getElementById('adm-link-fb').value = this.db.links.facebook;
-                document.getElementById('adm-link-tk').value = this.db.links.tiktok;
-            },
-
-            toggleMenu(e) { if(e) e.stopPropagation(); document.getElementById('sidebar').classList.toggle('active'); },
-            closeModals() { document.querySelectorAll('.full-modal').forEach(m => m.style.display = 'none'); },
-            toggleDesc() { const d = document.getElementById('desc-panel'); d.style.display = d.style.display === 'block' ? 'none' : 'block'; },
-            toggleTheme() { document.body.setAttribute('data-theme', document.body.getAttribute('data-theme')==='dark' ? 'light' : 'dark'); },
+            save() { localStorage.setItem('MAHER_PRO_DATA_V4', JSON.stringify(this.db)); },
             
-            redirect(p) {
+            syncInputs() {
+                document.getElementById('adm-user').value = this.db.auth.user;
+                document.getElementById('adm-name').value = this.db.siteName;
+                document.getElementById('adm-avatar').value = this.db.avatar;
+                document.getElementById('adm-news-text').value = this.db.news.text;
+                document.getElementById('adm-news-link').value = this.db.news.link;
+                document.getElementById('adm-fb').value = this.db.social.facebook;
+                document.getElementById('adm-tk').value = this.db.social.tiktok;
+                document.getElementById('adm-ig').value = this.db.social.instagram;
+                document.getElementById('adm-wa').value = this.db.social.whatsapp;
+            },
+
+            // وظائف الملاحة واللغة
+            showAuth() { this.toggleMenu(); document.getElementById('auth-screen').style.display = 'flex'; },
+            checkAuth() {
+                if(document.getElementById('login-user').value === this.db.auth.user && 
+                   document.getElementById('login-pass').value === this.db.auth.pass) {
+                    this.closeModals();
+                    document.getElementById('admin-screen').style.display = 'flex';
+                } else alert("البيانات خاطئة!");
+            },
+            openManager() { document.getElementById('admin-screen').style.display = 'none'; document.getElementById('manager-screen').style.display = 'flex'; this.renderManageList(); },
+            backToAdmin() { document.getElementById('manager-screen').style.display = 'none'; document.getElementById('admin-screen').style.display = 'flex'; },
+            toggleMenu() { document.getElementById('sidebar').classList.toggle('active'); },
+            closeModals() { document.querySelectorAll('.full-modal').forEach(m => m.style.display = 'none'); },
+            toggleDesc() { const d = document.getElementById('desc-panel'); d.style.display = d.style.display==='block' ? 'none' : 'block'; },
+            toggleTheme() { document.body.setAttribute('data-theme', document.body.getAttribute('data-theme')==='dark'?'light':'dark'); },
+            social(p) {
                 const l = document.getElementById('redir-layer');
                 const t = document.getElementById('timer');
-                let c = 3; l.style.display = 'flex';
+                let c = 3; l.style.display='flex';
                 const iv = setInterval(() => {
                     c--; t.innerText = c;
-                    if(c <= 0) { clearInterval(iv); window.location.href = this.db.links[p]; }
+                    if(c<=0) { clearInterval(iv); window.location.href = this.db.social[p]; }
                 }, 1000);
-            }
+            },
+            switchLang() {
+                const h = document.getElementById('main-html');
+                h.dir = h.dir === 'rtl' ? 'ltr' : 'rtl';
+                document.getElementById('ui-lang').innerText = h.dir === 'rtl' ? 'English' : 'العربية';
+            },
+            newsClick() { if(this.db.news.link !== '#') window.location.href = this.db.news.link; }
         };
 
         window.onload = () => App.init();
-        window.onclick = () => document.getElementById('sidebar').classList.remove('active');
+        window.onclick = (e) => { if(e.target.id === 'sidebar') App.toggleMenu(); }
     </script>
 </body>
 </html>
