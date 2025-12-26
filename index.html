@@ -3,258 +3,248 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Maher Media System | نظام ماهر للمحتوى</title>
+    <title>MAHER INFINITY | المحرك العالمي</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
         :root {
-            --primary: #bc202b; --bg: #0f0f0f; --surface: #1f1f1f;
-            --text: #ffffff; --sub-text: #aaaaaa;
-            --header-h: 60px; --radius: 12px;
+            --primary: #bc202b; --bg: #0a0a0a; --surface: #161616;
+            --text: #ffffff; --sub: #b1b1b1; --accent: #1877F2;
+            --radius: 20px; --shadow: 0 10px 30px rgba(0,0,0,0.7);
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { background: var(--bg); font-family: 'Cairo', sans-serif; color: var(--text); overflow: hidden; }
+        [data-theme="light"] { --bg: #f4f7f6; --surface: #ffffff; --text: #1a1a1a; --sub: #555; }
 
-        /* --- الهيدر (مثل يوتيوب) --- */
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Cairo', sans-serif; }
+        body { background: var(--bg); color: var(--text); transition: 0.5s; overflow-x: hidden; }
+
+        /* --- Header --- */
         header {
-            height: var(--header-h); background: var(--bg); display: flex;
-            align-items: center; justify-content: space-between; padding: 0 20px;
-            position: sticky; top: 0; z-index: 1000;
+            height: 75px; background: var(--surface); display: flex; align-items: center;
+            justify-content: space-between; padding: 0 5%; position: sticky; top: 0; z-index: 1000;
+            box-shadow: var(--shadow);
         }
-        .logo { color: var(--primary); font-size: 24px; font-weight: 900; cursor: pointer; display: flex; align-items: center; gap: 10px; }
-        .search-bar { background: #121212; border: 1px solid #333; border-radius: 40px; padding: 8px 20px; width: 40%; display: flex; }
-        .search-bar input { background: transparent; border: none; color: #fff; width: 100%; outline: none; }
-
-        /* --- الهيكل الرئيسي --- */
-        .master-container { display: flex; height: calc(100vh - var(--header-h)); }
+        .brand { display: flex; align-items: center; gap: 15px; cursor: pointer; }
+        .logo-box { width: 45px; height: 45px; border-radius: 50%; background: var(--primary); display: flex; align-items: center; justify-content: center; font-weight: 900; color: #fff; }
         
-        /* القائمة الجانبية (Sidebar) */
-        nav.sidebar { width: 240px; padding: 15px; overflow-y: auto; }
-        .nav-link { padding: 12px; border-radius: 10px; cursor: pointer; display: flex; align-items: center; gap: 15px; transition: 0.3s; }
-        .nav-link:hover { background: #333; }
-        .nav-link.active { background: #3f3f3f; font-weight: bold; }
+        /* --- Sidebar --- */
+        .sidebar {
+            position: fixed; right: -100%; top: 0; bottom: 0; width: 320px;
+            background: var(--surface); z-index: 2000; transition: 0.5s cubic-bezier(0.7, 0, 0.3, 1);
+            padding: 40px 25px; box-shadow: -15px 0 40px rgba(0,0,0,0.8);
+        }
+        .sidebar.active { right: 0; }
+        .nav-link { padding: 15px; border-radius: 15px; display: flex; align-items: center; gap: 15px; cursor: pointer; margin-bottom: 10px; font-weight: 700; transition: 0.3s; }
+        .nav-link:hover { background: rgba(255,255,255,0.05); transform: translateX(-10px); }
 
-        /* منطقة العرض (Main Stage) */
-        main.content { flex: 1; overflow-y: auto; padding: 24px; background: var(--bg); }
-        
-        /* مشغل الفيديو/الصور (The Player) */
-        .player-box { width: 100%; max-width: 1000px; margin: 0 auto; }
-        .media-screen { 
+        /* --- Media Player Engine --- */
+        .player-wrapper { max-width: 1100px; margin: 30px auto; padding: 0 15px; }
+        .viewport { 
             width: 100%; aspect-ratio: 16/9; background: #000; border-radius: var(--radius); 
-            overflow: hidden; position: relative; box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+            overflow: hidden; box-shadow: var(--shadow); position: relative;
         }
-        .media-screen video, .media-screen img { width: 100%; height: 100%; object-fit: contain; }
-        
-        /* الوصف (Metadata) */
-        .video-info { margin-top: 20px; }
-        .video-title { font-size: 24px; font-weight: 900; margin-bottom: 10px; }
-        .video-desc { background: var(--surface); padding: 15px; border-radius: var(--radius); line-height: 1.6; }
-        .desc-text { white-space: pre-wrap; color: var(--sub-text); }
+        iframe, video, img { width: 100%; height: 100%; border: none; object-fit: contain; }
 
-        /* --- لوحة التحكم السرية (Hidden Admin Panel) --- */
-        #login-trigger { position: fixed; bottom: 0; left: 0; width: 10px; height: 10px; cursor: pointer; opacity: 0; }
-        #admin-modal {
-            position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 10000;
-            display: none; align-items: center; justify-content: center; backdrop-filter: blur(15px);
-        }
-        .admin-box { background: var(--surface); padding: 40px; border-radius: 20px; width: 450px; border: 1px solid var(--primary); }
-        
-        /* --- شبكة المقترحات (Suggestions) --- */
-        .suggestions-grid { 
-            display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); 
-            gap: 20px; margin-top: 40px; border-top: 1px solid #333; padding-top: 30px;
-        }
-        .thumb-card { cursor: pointer; }
-        .thumb-img { width: 100%; aspect-ratio: 16/9; border-radius: 10px; object-fit: cover; }
-        .thumb-title { margin-top: 10px; font-size: 14px; font-weight: bold; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+        .info-card { background: var(--surface); padding: 25px; border-radius: var(--radius); margin-top: -20px; position: relative; z-index: 10; border-bottom: 5px solid var(--primary); }
+        .video-t { font-size: 24px; font-weight: 900; color: var(--text); }
+        .video-d { color: var(--sub); margin-top: 15px; font-size: 15px; line-height: 1.8; white-space: pre-wrap; }
 
-        /* أزرار التحكم في السرعة */
-        .playback-controls { display: flex; gap: 10px; margin-top: 10px; }
-        .speed-btn { background: #333; color: #fff; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer; font-size: 12px; }
-        
-        /* التعديل المباشر للآدمن */
-        .editable-mode [contenteditable="true"] { outline: 2px dashed var(--primary); background: rgba(188,32,43,0.1); padding: 5px; }
+        /* --- Social & Redirect --- */
+        .redirect-screen {
+            position: fixed; inset: 0; background: #000; z-index: 9999;
+            display: none; flex-direction: column; align-items: center; justify-content: center;
+        }
+        .timer-circle { width: 100px; height: 100px; border: 5px solid var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 40px; font-weight: 900; margin-top: 20px; }
+
+        /* --- Grid System --- */
+        .suggestions { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 25px; margin-top: 40px; }
+        .item-card { background: var(--surface); border-radius: var(--radius); overflow: hidden; cursor: pointer; transition: 0.4s; }
+        .item-card:hover { transform: scale(1.03); box-shadow: 0 15px 40px rgba(0,0,0,0.4); }
+        .thumb { width: 100%; aspect-ratio: 16/9; object-fit: cover; background: #222; }
+
+        /* --- Control Panel (Hidden) --- */
+        #admin-panel {
+            position: fixed; inset: 0; background: var(--bg); z-index: 5000;
+            display: none; padding: 50px 10%; overflow-y: auto;
+        }
+        input, textarea, select { width: 100%; padding: 15px; background: #222; border: 1px solid #333; color: #fff; border-radius: 12px; margin-bottom: 15px; }
+        .btn-post { background: var(--primary); color: #fff; padding: 18px; border: none; border-radius: 12px; width: 100%; font-weight: 900; cursor: pointer; }
+
+        /* Animations */
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .animate { animation: fadeIn 0.6s ease forwards; }
     </style>
 </head>
-<body>
+<body data-theme="dark">
 
-    <div id="login-trigger" onclick="System.showLogin()"></div>
+    <div id="redir-layer" class="redirect-screen">
+        <h2 id="redir-title" style="color:var(--primary)">جاري الانتقال لفيسبوك المسؤول...</h2>
+        <div class="timer-circle" id="count-num">3</div>
+    </div>
 
     <header>
-        <div class="logo">
-            <i class="fab fa-youtube" style="font-size: 30px;"></i>
-            <span id="site-name">MAHER TUBE</span>
+        <div class="brand" onclick="location.reload()">
+            <i class="fas fa-bars" style="font-size: 24px;" onclick="App.menu(event)"></i>
+            <div class="logo-box">M</div>
+            <span class="site-name" id="h-name">منصة ماهر العالمية</span>
         </div>
-        <div class="search-bar">
-            <input type="text" placeholder="بحث...">
-            <i class="fas fa-search" style="color: #666;"></i>
-        </div>
-        <div class="user-icons">
-            <i class="fas fa-video" style="margin-left: 20px;"></i>
-            <i class="fas fa-bell"></i>
-        </div>
+        <i class="fab fa-facebook" style="font-size: 30px; color: #1877F2; cursor: pointer;" onclick="App.go('facebook')"></i>
     </header>
 
-    <div class="master-container">
-        <nav class="sidebar">
-            <div class="nav-link active"><i class="fas fa-home"></i> الرئيسية</div>
-            <div class="nav-link"><i class="fas fa-fire"></i> المحتوى الرائج</div>
-            <div class="nav-link"><i class="fas fa-images"></i> معرض الصور</div>
-            <hr style="border: 0; border-top: 1px solid #333; margin: 15px 0;">
-            <div class="nav-link"><i class="fas fa-history"></i> السجل</div>
-            <div class="nav-link" id="admin-btn" style="display:none; color: var(--primary);" onclick="System.openControlPanel()">
-                <i class="fas fa-user-shield"></i> لوحة التحكم
-            </div>
-        </nav>
+    <nav class="sidebar" id="sidebar">
+        <h2 style="margin-bottom: 30px; border-right: 5px solid var(--primary); padding-right: 15px;">القائد ماهر</h2>
+        <div class="nav-link" onclick="App.go('facebook')"><i class="fab fa-facebook"></i> فيسبوك</div>
+        <div class="nav-link" onclick="App.go('youtube')"><i class="fab fa-youtube"></i> يوتيوب</div>
+        <div class="nav-link" onclick="App.go('tiktok')"><i class="fab fa-tiktok"></i> تيك توك</div>
+        <div class="nav-link" onclick="App.theme()"><i class="fas fa-adjust"></i> المظهر (ليلي/نهاري)</div>
+        <hr style="margin: 20px 0; opacity: 0.1;">
+        <div class="nav-link" style="color:var(--primary)" onclick="App.auth()"><i class="fas fa-user-crown"></i> إدارة المحتوى</div>
+    </nav>
 
-        <main class="content">
-            <div class="player-box">
-                <div class="media-screen" id="display-container">
-                    <video id="main-video" controls>
-                        <source src="https://www.w3schools.com/html/mov_bbb.mp4" type="video/mp4">
-                    </video>
-                </div>
-
-                <div class="playback-controls">
-                    <span>السرعة:</span>
-                    <button class="speed-btn" onclick="System.setSpeed(1)">1x</button>
-                    <button class="speed-btn" onclick="System.setSpeed(1.5)">1.5x</button>
-                    <button class="speed-btn" onclick="System.setSpeed(2)">2x</button>
-                </div>
-
-                <div class="video-info">
-                    <h1 class="video-title" id="v-title" contenteditable="false">مرحباً بك في نظام ماهر ميديا - ابدأ برفع محتواك الخاص</h1>
-                    <div class="video-desc">
-                        <strong style="display:block; margin-bottom:10px;">الوصف:</strong>
-                        <div class="desc-text" id="v-desc" contenteditable="false">هذا النظام يسمح لك بعرض الفيديوهات والصور باحترافية تامة. يمكنك إضافة روابط يوتيوب أو رفع ملفاتك الخاصة.</div>
-                    </div>
-                </div>
-
-                <div class="suggestions-grid" id="suggest-grid">
-                    </div>
-            </div>
-        </main>
-    </div>
-
-    <div id="admin-modal">
-        <div class="admin-box">
-            <h2 style="margin-bottom:25px; text-align:center;">دخول السيادة</h2>
-            <input type="text" id="adm-user" placeholder="اسم المستخدم">
-            <input type="password" id="adm-pass" placeholder="كلمة السر">
-            <button class="btn-prime" onclick="System.auth()" style="width:100%; padding:15px; background:var(--primary); border:none; color:#fff; border-radius:10px; font-weight:bold; cursor:pointer;">دخول للنظام</button>
-            <button onclick="System.hideLogin()" style="margin-top:15px; background:transparent; border:none; color:#666; width:100%;">إلغاء</button>
+    <div class="player-wrapper animate">
+        <div class="viewport" id="master-view">
+            <video controls><source src="https://www.w3schools.com/html/mov_bbb.mp4"></video>
         </div>
+        
+        <div class="info-card">
+            <h1 id="view-title" class="video-t">مرحباً بك في إمبراطورية ماهر البرمجية</h1>
+            <div id="view-desc" class="video-d">هذا النظام يدعم الروابط المباشرة من جميع المواقع. قم بالدخول كمسؤول لإضافة محتواك الخاص.</div>
+        </div>
+
+        <h3 style="margin-top: 40px; opacity: 0.5;">اقتراحات لك</h3>
+        <div class="suggestions" id="grid"></div>
     </div>
 
-    <div id="control-panel" style="display:none; position:fixed; right:0; top:0; bottom:0; width:400px; background:#111; z-index:11000; padding:30px; border-left:2px solid var(--primary); overflow-y:auto;">
-        <h3>إدارة المحتوى</h3>
-        <hr style="margin:20px 0;">
-        <label>عنوان المحتوى</label>
-        <input type="text" id="new-title">
-        <label>رابط الفيديو/الصورة</label>
-        <input type="text" id="new-url" placeholder="URL أو رابط YouTube">
-        <label>نوع المحتوى</label>
-        <select id="new-type"><option value="video">فيديو</option><option value="image">صورة</option></select>
-        <label>الوصف</label>
-        <textarea id="new-desc" rows="5" style="width:100%; background:#000; color:#fff; border-radius:10px; padding:10px;"></textarea>
-        <button class="btn-prime" onclick="System.publish()" style="width:100%; padding:15px; background:var(--primary); margin-top:20px;">نشر المحتوى فوراً 🚀</button>
-        <button onclick="System.logout()" style="width:100%; margin-top:20px;">تسجيل الخروج</button>
+    <div id="admin-panel">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:30px;">
+            <h1>لوحة النشر العالمية</h1>
+            <button onclick="location.reload()" style="background:none; color:red; border:none; cursor:pointer; font-weight:900;">إغلاق X</button>
+        </div>
+        
+        <div style="background:var(--surface); padding:30px; border-radius:20px;">
+            <label>عنوان الفيديو أو الصورة</label>
+            <input type="text" id="in-title" placeholder="مثال: رحلتي في البرمجة">
+            
+            <label>رابط الميديا (يوتيوب، فيسبوك، رابط مباشر mp4/jpg)</label>
+            <input type="text" id="in-url" placeholder="انسخ الرابط هنا...">
+            
+            <label>الوصف الشامل</label>
+            <textarea id="in-desc" rows="5" placeholder="اكتب تفاصيل المحتوى هنا..."></textarea>
+            
+            <button class="btn-post" onclick="App.publish()">نشر المحتوى فوراً 🚀</button>
+        </div>
     </div>
 
     <script>
-        const System = {
-            isAdmin: false,
-            // بيانات الدخول (يمكنك تغييرها هنا)
-            creds: { user: "mahir", pass: "8000" },
-            
-            // قاعدة بيانات المحتوى
-            content: [],
+        const App = {
+            state: {
+                waitTime: 3,
+                links: { facebook: "https://facebook.com/your-profile", youtube: "#", tiktok: "#" },
+                data: [
+                    { t: "فيديو تجريبي من خادم خارجي", u: "https://www.w3schools.com/html/mov_bbb.mp4", d: "هذا رابط مباشر بصيغة mp4.", type: "video" },
+                    { t: "صورة بدقة عالية من Unsplash", u: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=800", d: "هذا رابط صورة مباشر.", type: "image" }
+                ]
+            },
 
             init() {
-                // إضافة محتوى تجريبي
-                this.content = [
-                    { title: "أول فيديو في النظام", url: "https://www.w3schools.com/html/mov_bbb.mp4", type: "video", desc: "وصف الفيديو الأول..." },
-                    { title: "صورة بدقة عالية", url: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=800", type: "image", desc: "وصف الصورة التجريبية..." }
-                ];
-                this.renderSuggestions();
+                this.renderGrid();
             },
 
-            // نظام الحماية
-            showLogin() { document.getElementById('admin-modal').style.display = 'flex'; },
-            hideLogin() { document.getElementById('admin-modal').style.display = 'none'; },
-            
-            auth() {
-                const u = document.getElementById('adm-user').value;
-                const p = document.getElementById('adm-pass').value;
-                if(u === this.creds.user && p === this.creds.pass) {
-                    this.isAdmin = true;
-                    this.hideLogin();
-                    document.getElementById('admin-btn').style.display = 'flex';
-                    document.body.classList.add('editable-mode');
-                    document.getElementById('v-title').contentEditable = true;
-                    document.getElementById('v-desc').contentEditable = true;
-                    alert("مرحباً أيها القائد. وضع التعديل مفعّل.");
-                } else {
-                    alert("معلومات خاطئة.");
+            // محلل الروابط الذكي (The Magic Parser)
+            parseURL(url) {
+                if (url.includes('youtube.com/watch?v=')) {
+                    const id = url.split('v=')[1].split('&')[0];
+                    return { type: 'embed', url: `https://www.youtube.com/embed/${id}?autoplay=1` };
                 }
-            },
-
-            // التحكم في العرض
-            setSpeed(s) {
-                const v = document.getElementById('main-video');
-                if(v) v.playbackRate = s;
-            },
-
-            loadMedia(idx) {
-                const item = this.content[idx];
-                const display = document.getElementById('display-container');
-                document.getElementById('v-title').innerText = item.title;
-                document.getElementById('v-desc').innerText = item.desc;
-
-                if(item.type === 'video') {
-                    display.innerHTML = `<video id="main-video" controls autoplay style="width:100%"><source src="${item.url}"></video>`;
-                } else {
-                    display.innerHTML = `<img src="${item.url}" style="width:100%; height:100%; object-fit:contain;">`;
+                if (url.includes('youtu.be/')) {
+                    const id = url.split('youtu.be/')[1];
+                    return { type: 'embed', url: `https://www.youtube.com/embed/${id}?autoplay=1` };
                 }
+                const ext = url.split('.').pop().toLowerCase();
+                if (['mp4', 'webm', 'ogg'].includes(ext)) return { type: 'video', url };
+                if (['jpg', 'jpeg', 'png', 'webp', 'gif'].includes(ext)) return { type: 'image', url };
+                return { type: 'video', url }; // Default
             },
 
-            renderSuggestions() {
-                const grid = document.getElementById('suggest-grid');
-                grid.innerHTML = this.content.map((item, i) => `
-                    <div class="thumb-card" onclick="System.loadMedia(${i})">
-                        <img class="thumb-img" src="${item.type === 'video' ? 'https://picsum.photos/300/170?v='+i : item.url}">
-                        <div class="thumb-title">${item.title}</div>
-                        <div style="font-size:12px; color:#666; margin-top:5px;">${item.type === 'video' ? 'فيديو' : 'صورة'} • قبل قليل</div>
+            renderGrid() {
+                const grid = document.getElementById('grid');
+                grid.innerHTML = this.state.data.map((item, i) => `
+                    <div class="item-card animate" onclick="App.view(${i})">
+                        <img src="${item.type === 'image' ? item.u : 'https://via.placeholder.com/400x225/222/fff?text=MEDIA'}" class="thumb">
+                        <div style="padding:15px">
+                            <div style="font-weight:900; font-size:14px;">${item.t}</div>
+                        </div>
                     </div>
                 `).join('');
             },
 
-            // لوحة التعديل
-            openControlPanel() {
-                const cp = document.getElementById('control-panel');
-                cp.style.display = cp.style.display === 'none' ? 'block' : 'none';
+            view(idx) {
+                const item = this.state.data[idx];
+                const viewer = document.getElementById('master-view');
+                const res = this.parseURL(item.u);
+
+                document.getElementById('view-title').innerText = item.t;
+                document.getElementById('view-desc').innerText = item.d;
+
+                if (res.type === 'embed') {
+                    viewer.innerHTML = `<iframe src="${res.url}" allowfullscreen allow="autoplay"></iframe>`;
+                } else if (res.type === 'video') {
+                    viewer.innerHTML = `<video controls autoplay><source src="${res.url}"></video>`;
+                } else {
+                    viewer.innerHTML = `<img src="${res.url}">`;
+                }
+                window.scrollTo({top: 0, behavior: 'smooth'});
             },
 
             publish() {
-                const newItem = {
-                    title: document.getElementById('new-title').value,
-                    url: document.getElementById('new-url').value,
-                    type: document.getElementById('new-type').value,
-                    desc: document.getElementById('new-desc').value
-                };
-                this.content.unshift(newItem);
-                this.renderSuggestions();
-                this.loadMedia(0);
+                const t = document.getElementById('in-title').value;
+                const u = document.getElementById('in-url').value;
+                const d = document.getElementById('in-desc').value;
+                if(!t || !u) return alert("املأ البيانات!");
+
+                const res = this.parseURL(u);
+                this.state.data.unshift({ t, u, d, type: res.type });
+                this.renderGrid();
+                this.view(0);
+                document.getElementById('admin-panel').style.display = 'none';
                 alert("تم النشر بنجاح!");
             },
 
-            logout() { location.reload(); }
+            go(platform) {
+                const layer = document.getElementById('redir-layer');
+                const num = document.getElementById('count-num');
+                let c = this.state.waitTime;
+                
+                layer.style.display = 'flex';
+                num.innerText = c;
+                
+                const timer = setInterval(() => {
+                    c--;
+                    num.innerText = c;
+                    if(c <= 0) {
+                        clearInterval(timer);
+                        window.location.href = this.state.links[platform];
+                    }
+                }, 1000);
+            },
+
+            auth() {
+                const u = prompt("المسؤول:");
+                const p = prompt("كلمة السر:");
+                if(u === "mahir" && p === "1234") {
+                    document.getElementById('admin-panel').style.display = 'block';
+                    this.menu();
+                } else alert("خطأ!");
+            },
+
+            menu(e) { if(e) e.stopPropagation(); document.getElementById('sidebar').classList.toggle('active'); },
+            theme() { document.body.setAttribute('data-theme', document.body.getAttribute('data-theme') === 'light' ? 'dark' : 'light'); }
         };
 
-        window.onload = () => System.init();
+        window.onclick = () => document.getElementById('sidebar').classList.remove('active');
+        window.onload = () => App.init();
     </script>
 </body>
 </html>
