@@ -45,6 +45,7 @@
         #news-container {
             background: var(--primary); color: #fff; padding: 12px 0; overflow: hidden;
             white-space: nowrap; display: none; cursor: pointer; font-weight: bold;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
         }
         .marquee { display: inline-block; padding-right: 100%; animation: marquee 25s linear infinite; }
         @keyframes marquee { 0% { transform: translate(0, 0); } 100% { transform: translate(100%, 0); } }
@@ -76,7 +77,11 @@
         label { display: block; margin-bottom: 5px; font-weight: bold; font-size: 0.85rem; color: var(--primary); }
         input, textarea, select { width: 100%; padding: 12px; background: #222; border: 1px solid #444; color: #fff; border-radius: 10px; margin-bottom: 15px; }
         .btn-action { background: var(--primary); color: #fff; padding: 15px; border: none; border-radius: 10px; width: 100%; font-weight: 900; cursor: pointer; transition: 0.3s; }
-        
+        .btn-action:hover { opacity: 0.9; transform: scale(1.02); }
+
+        .manage-list { margin-top: 15px; border: 1px solid #333; border-radius: 10px; padding: 10px; max-height: 200px; overflow-y: auto; }
+        .manage-item { display: flex; justify-content: space-between; align-items: center; padding: 8px; border-bottom: 1px solid #222; font-size: 0.8rem; }
+        .del-btn { background: #ff4444; color: white; border: none; padding: 4px 10px; border-radius: 5px; cursor: pointer; }
         .redir-screen { position: fixed; inset: 0; background: #000; z-index: 9999; display: none; flex-direction: column; align-items: center; justify-content: center; }
     </style>
 </head>
@@ -99,23 +104,33 @@
 
     <div id="admin-screen" class="full-modal">
         <div class="modal-content">
-            <h2 style="color:var(--primary); text-align:center;">إعدادات المنصة</h2>
+            <h2 style="color:var(--primary); text-align:center;">إعدادات المنصة الشاملة</h2>
             <hr style="margin:15px 0; opacity:0.1">
+            
             <label>الأمان</label>
-            <input type="text" id="adm-set-user">
-            <input type="password" id="adm-set-pass">
-            <label>الروابط</label>
-            <input type="text" id="adm-link-fb" placeholder="Facebook">
-            <input type="text" id="adm-link-tk" placeholder="TikTok">
-            <input type="text" id="adm-link-wa" placeholder="WhatsApp">
-            <label>الهوية</label>
-            <input type="text" id="adm-site-name">
-            <input type="text" id="adm-avatar-url" placeholder="رابط صورة المسؤول">
-            <label>إضافة محتوى (يوتيوب، فيسبوك، انستغرام)</label>
+            <input type="text" id="adm-set-user" placeholder="اسم المستخدم">
+            <input type="password" id="adm-set-pass" placeholder="الرقم السري">
+
+            <label>سحابة جوجل (رفع مباشر من جهازك) ☁️</label>
+            <input type="file" id="cloud-file-input">
+            <button class="btn-action" id="upload-btn" style="background:#28a745; margin-bottom:20px;" onclick="App.uploadToCloud()">رفع وتثبيت في المنصة 🚀</button>
+
+            <label>إضافة يدوية (روابط خارجية/يوتيوب)</label>
             <input type="text" id="adm-item-t" placeholder="العنوان">
             <input type="text" id="adm-item-u" placeholder="الرابط">
             <textarea id="adm-item-d" rows="2" placeholder="الوصف"></textarea>
-            <button class="btn-action" onclick="App.saveAll()">حفظ التغييرات 🚀</button>
+
+            <label>إدارة المحتوى (حذف الفيديوهات الحالية)</label>
+            <div id="admin-manage-list" class="manage-list"></div>
+
+            <hr style="margin:20px 0; opacity:0.1">
+            <label>الهوية والروابط</label>
+            <input type="text" id="adm-site-name" placeholder="اسم المنصة">
+            <input type="text" id="adm-avatar-url" placeholder="رابط صورة المسؤول">
+            <input type="text" id="adm-link-fb" placeholder="رابط فيسبوك">
+            <input type="text" id="adm-link-tk" placeholder="رابط تيك توك">
+
+            <button class="btn-action" onclick="App.saveAll()">حفظ كل التغييرات ✅</button>
             <button class="btn-action" style="background:#333; margin-top:10px" onclick="App.closeModals()">إغلاق</button>
         </div>
     </div>
@@ -123,9 +138,9 @@
     <header>
         <div style="display:flex; align-items:center; gap:12px">
             <i class="fas fa-bars" style="font-size:22px; cursor:pointer;" onclick="App.toggleMenu(event)"></i>
-            <span style="font-weight:900;" id="ui-site-name">SMART PLATFORM</span>
+            <span style="font-weight:900; font-size:1.2rem; letter-spacing:1px" id="ui-site-name">SMART PLATFORM</span>
         </div>
-        <i class="fas fa-adjust" onclick="App.toggleTheme()" style="cursor:pointer; font-size:20px;"></i>
+        <div onclick="App.toggleTheme()" style="cursor:pointer; font-size:20px;"><i class="fas fa-adjust"></i></div>
     </header>
 
     <div id="news-container" onclick="App.newsClick()">
@@ -133,13 +148,14 @@
     </div>
 
     <nav class="sidebar" id="sidebar">
-        <h3 style="margin-bottom:20px;">القائمة</h3>
-        <div class="nav-link" onclick="App.redirect('facebook')"><i class="fab fa-facebook"></i> Facebook</div>
+        <h3 style="margin-bottom:20px; border-bottom:1px solid #333; padding-bottom:10px">القائمة الرئيسية</h3>
+        <div class="nav-link" onclick="App.redirect('facebook')"><i class="fab fa-facebook" style="color:#1877F2"></i> Facebook</div>
         <div class="nav-link" onclick="App.redirect('tiktok')"><i class="fab fa-tiktok"></i> TikTok</div>
-        <div class="nav-link" onclick="App.redirect('whatsapp')"><i class="fab fa-whatsapp"></i> WhatsApp</div>
-        <div class="nav-link" style="color:var(--primary)" onclick="App.showAuth()"><i class="fas fa-user-shield"></i> لوحة الإدارة</div>
+        <hr style="opacity:0.1; margin:15px 0">
+        <div class="nav-link" style="color:var(--primary)" onclick="App.showAuth()"><i class="fas fa-user-cog"></i> لوحة الإدارة</div>
+        
         <div class="admin-box-container">
-            <img src="" class="admin-banner" id="ui-avatar">
+            <img src="https://via.placeholder.com/180" class="admin-banner" id="ui-avatar">
         </div>
     </nav>
 
@@ -151,23 +167,27 @@
                 <div id="desc-panel"></div>
             </div>
         </section>
-        <h2 class="section-label">المحتوى المتوفر</h2>
+
+        <h2 class="section-label">المحتوى المقترح</h2>
         <div class="suggestions" id="suggestion-grid"></div>
     </main>
 
     <script>
         const App = {
+            // انتبه: يجب وضع رابط الـ Web App الخاص بك هنا بعد نشره من Google Script
+            GOOGLE_SCRIPT_URL: "ضع_رابط_سكريبت_جوجل_هنا",
+
             db: {
                 auth: { user: 'mahir', pass: '1234' },
                 siteName: 'SMART PLATFORM',
                 avatar: 'https://via.placeholder.com/180',
                 news: { active: false, text: '', link: '' },
-                links: { facebook: '#', tiktok: '#', whatsapp: '#' },
-                items: [{ t: 'محتوى ترحيبي', u: 'https://www.w3schools.com/html/mov_bbb.mp4', d: 'أهلاً بك.', type: 'video' }]
+                links: { facebook: '#', tiktok: '#', instagram: '#', whatsapp: '#' },
+                items: [{ t: 'مرحباً بك في منصة ماهر', u: 'https://www.w3schools.com/html/mov_bbb.mp4', d: 'فيديو ترحيبي', type: 'video' }]
             },
 
             init() {
-                const saved = localStorage.getItem('MAHER_PRO_V3');
+                const saved = localStorage.getItem('MAHER_ULTRA_DB');
                 if(saved) this.db = JSON.parse(saved);
                 this.render();
             },
@@ -175,6 +195,7 @@
             render() {
                 document.getElementById('ui-site-name').innerText = this.db.siteName;
                 document.getElementById('ui-avatar').src = this.db.avatar;
+                
                 const grid = document.getElementById('suggestion-grid');
                 grid.innerHTML = this.db.items.map((it, i) => `
                     <div class="thumb-item" onclick="App.loadMedia(${i})">
@@ -182,40 +203,70 @@
                         <div class="thumb-text">${it.t}</div>
                     </div>
                 `).join('');
+
+                const mList = document.getElementById('admin-manage-list');
+                mList.innerHTML = this.db.items.map((it, i) => `
+                    <div class="manage-item">
+                        <span>${it.t}</span>
+                        <button class="del-btn" onclick="App.deleteItem(${i})">حذف</button>
+                    </div>
+                `).join('');
+
                 this.loadMedia(0);
                 this.syncInputs();
             },
 
             loadMedia(idx) {
+                if(!this.db.items[idx]) return;
                 const it = this.db.items[idx];
                 const v = document.getElementById('main-viewer');
                 document.getElementById('active-title').innerText = it.t;
                 document.getElementById('desc-panel').innerText = it.d;
-                let url = it.u.trim();
 
-                if(url.includes('youtube.com') || url.includes('youtu.be')) {
-                    let id = url.includes('v=') ? url.split('v=')[1].split('&')[0] : url.split('/').pop();
+                if(it.u.includes('youtube.com') || it.u.includes('youtu.be')) {
+                    let id = it.u.includes('v=') ? it.u.split('v=')[1].split('&')[0] : it.u.split('/').pop();
                     v.innerHTML = `<iframe src="https://www.youtube.com/embed/${id}?autoplay=1" allowfullscreen></iframe>`;
-                } 
-                else if(url.includes('facebook.com')) {
-                    v.innerHTML = `<iframe src="https://www.facebook.com/plugins/video.php?href=${encodeURIComponent(url)}&show_text=0" allowfullscreen="true"></iframe>`;
-                }
-                else if(url.includes('instagram.com')) {
-                    let clean = url.endsWith('/') ? url : url + '/';
-                    v.innerHTML = `<iframe src="${clean}embed" frameborder="0"></iframe>`;
-                }
-                else {
-                    v.innerHTML = it.type === 'video' ? `<video controls autoplay><source src="${url}"></video>` : `<img src="${url}">`;
+                } else {
+                    v.innerHTML = it.type === 'video' ? `<video controls autoplay><source src="${it.u}"></video>` : `<img src="${it.u}">`;
                 }
                 window.scrollTo({ top: 0, behavior: 'smooth' });
             },
 
-            showAuth() { this.toggleMenu(); document.getElementById('auth-screen').style.display = 'flex'; },
-            checkAuth() {
-                if(document.getElementById('login-user').value === this.db.auth.user && document.getElementById('login-pass').value === this.db.auth.pass) {
-                    document.getElementById('auth-screen').style.display = 'none';
-                    document.getElementById('admin-screen').style.display = 'flex';
-                } else alert("بيانات خاطئة");
+            async uploadToCloud() {
+                const fileInput = document.getElementById('cloud-file-input');
+                const file = fileInput.files[0];
+                if(!file) return alert("الرجاء اختيار ملف!");
+                if(this.GOOGLE_SCRIPT_URL.includes("ضع_رابط")) return alert("يجب وضع رابط جوجل سكريبت أولاً في الكود!");
+
+                const btn = document.getElementById('upload-btn');
+                btn.innerText = "جاري الرفع... ⏳"; btn.disabled = true;
+
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = async () => {
+                    const base64Data = reader.result.split(',')[1];
+                    try {
+                        const response = await fetch(this.GOOGLE_SCRIPT_URL, {
+                            method: 'POST',
+                            body: JSON.stringify({ filename: file.name, mimeType: file.type, data: base64Data })
+                        });
+                        const res = await response.json();
+                        if(res.url) {
+                            const isImg = file.type.includes('image');
+                            this.db.items.unshift({ t: file.name, u: res.url, d: 'تم الرفع من الجهاز', type: isImg?'image':'video' });
+                            this.saveToDisk();
+                            alert("✅ تم الرفع والإضافة للمنصة!");
+                        }
+                    } catch (e) { alert("❌ خطأ في الرفع"); }
+                    finally { btn.innerText = "رفع وتثبيت في المنصة 🚀"; btn.disabled = false; }
+                };
+            },
+
+            deleteItem(i) {
+                if(confirm("هل أنت متأكد من حذف هذا العنصر؟")) {
+                    this.db.items.splice(i, 1);
+                    this.saveToDisk();
+                }
             },
 
             saveAll() {
@@ -223,46 +274,45 @@
                 this.db.auth.pass = document.getElementById('adm-set-pass').value || this.db.auth.pass;
                 this.db.siteName = document.getElementById('adm-site-name').value || this.db.siteName;
                 this.db.avatar = document.getElementById('adm-avatar-url').value || this.db.avatar;
-                this.db.links.facebook = document.getElementById('adm-link-fb').value;
-                this.db.links.tiktok = document.getElementById('adm-link-tk').value;
-                this.db.links.whatsapp = document.getElementById('adm-link-wa').value;
-
+                
                 const nt = document.getElementById('adm-item-t').value;
                 const nu = document.getElementById('adm-item-u').value;
                 if(nt && nu) {
                     const isImg = nu.match(/\.(jpg|jpeg|png|webp|gif)$/i);
                     this.db.items.unshift({ t: nt, u: nu, d: document.getElementById('adm-item-d').value, type: isImg?'image':'video' });
                 }
-                localStorage.setItem('MAHER_PRO_V3', JSON.stringify(this.db));
-                this.render(); this.closeModals();
+
+                this.saveToDisk();
+                this.closeModals();
+                alert("✅ تم الحفظ!");
+            },
+
+            saveToDisk() {
+                localStorage.setItem('MAHER_ULTRA_DB', JSON.stringify(this.db));
+                this.render();
             },
 
             syncInputs() {
                 document.getElementById('adm-set-user').value = this.db.auth.user;
                 document.getElementById('adm-site-name').value = this.db.siteName;
                 document.getElementById('adm-avatar-url').value = this.db.avatar;
-                document.getElementById('adm-link-fb').value = this.db.links.facebook;
-                document.getElementById('adm-link-tk').value = this.db.links.tiktok;
-                document.getElementById('adm-link-wa').value = this.db.links.whatsapp;
             },
 
-            toggleMenu(e) { if(e) e.stopPropagation(); document.getElementById('sidebar').classList.toggle('active'); },
+            showAuth() { this.toggleMenu(); document.getElementById('auth-screen').style.display = 'flex'; },
+            checkAuth() {
+                if(document.getElementById('login-pass').value === this.db.auth.pass) {
+                    document.getElementById('auth-screen').style.display = 'none';
+                    document.getElementById('admin-screen').style.display = 'flex';
+                } else alert("❌ خطأ!");
+            },
             closeModals() { document.querySelectorAll('.full-modal').forEach(m => m.style.display = 'none'); },
+            toggleMenu() { document.getElementById('sidebar').classList.toggle('active'); },
             toggleDesc() { const d = document.getElementById('desc-panel'); d.style.display = d.style.display === 'block' ? 'none' : 'block'; },
             toggleTheme() { document.body.setAttribute('data-theme', document.body.getAttribute('data-theme')==='dark' ? 'light' : 'dark'); },
-            redirect(p) {
-                const l = document.getElementById('redir-layer');
-                const t = document.getElementById('timer');
-                let c = 3; l.style.display = 'flex';
-                const iv = setInterval(() => {
-                    c--; t.innerText = c;
-                    if(c <= 0) { clearInterval(iv); window.location.href = this.db.links[p]; }
-                }, 1000);
-            }
+            redirect(p) { window.location.href = this.db.links[p]; }
         };
 
         window.onload = () => App.init();
-        window.onclick = () => document.getElementById('sidebar').classList.remove('active');
     </script>
 </body>
 </html>
