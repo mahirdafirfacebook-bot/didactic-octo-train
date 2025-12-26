@@ -18,14 +18,12 @@
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Cairo', sans-serif; }
         body { background: var(--bg); color: var(--text); transition: 0.5s; overflow-x: hidden; }
 
-        /* الهيدر */
         header {
             height: 70px; background: var(--surface); display: flex; align-items: center;
             justify-content: space-between; padding: 0 5%; position: sticky; top: 0; z-index: 1000;
             box-shadow: 0 2px 10px rgba(0,0,0,0.5);
         }
 
-        /* القائمة الجانبية */
         .sidebar {
             position: fixed; right: -100%; top: 0; bottom: 0; width: 280px;
             background: var(--surface); z-index: 2000; transition: 0.4s cubic-bezier(0.7, 0, 0.3, 1);
@@ -35,7 +33,6 @@
         .nav-link { padding: 12px; border-radius: 10px; display: flex; align-items: center; gap: 12px; cursor: pointer; margin-bottom: 5px; font-weight: 700; transition: 0.2s; }
         .nav-link:hover { background: rgba(255,255,255,0.05); }
 
-        /* شريط الأخبار */
         #news-container {
             background: var(--primary); color: #fff; padding: 12px 0; overflow: hidden;
             white-space: nowrap; display: none; cursor: pointer; font-weight: bold;
@@ -43,10 +40,8 @@
         .marquee { display: inline-block; padding-right: 100%; animation: marquee 20s linear infinite; }
         @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(100%); } }
 
-        /* الحاوية الرئيسية */
         .main-container { max-width: 1100px; margin: 10px auto; padding: 0 15px; }
 
-        /* منطقة المشغل */
         .theater-mode { position: sticky; top: 80px; z-index: 900; background: var(--bg); padding-bottom: 15px; }
         .video-box { width: 100%; aspect-ratio: 16/9; background: #000; border-radius: var(--radius); overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
         iframe, video, img { width: 100%; height: 100%; object-fit: contain; border: none; }
@@ -56,7 +51,6 @@
         #desc-panel { margin-top: 12px; color: var(--sub); display: none; font-size: 0.95rem; line-height: 1.6; border-top: 1px solid #333; padding-top: 10px; word-wrap: break-word; }
         #desc-panel a { color: #3498db; text-decoration: underline; font-weight: bold; }
 
-        /* شبكة الفيديوهات اسفل المشغل */
         .section-label { margin: 25px 0 15px; font-weight: 900; font-size: 1.3rem; display: flex; align-items: center; gap: 10px; }
         .section-label::before { content: ''; width: 5px; height: 25px; background: var(--primary); border-radius: 10px; }
         
@@ -67,7 +61,6 @@
         .thumb-img { width: 100%; height: 100%; object-fit: cover; }
         .thumb-text { margin-top: 10px; font-weight: 700; font-size: 0.9rem; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 
-        /* المودالات والتحكم */
         .full-modal {
             position: fixed; inset: 0; background: rgba(0,0,0,0.95); backdrop-filter: blur(10px);
             z-index: 5000; display: none; align-items: center; justify-content: center; padding: 20px;
@@ -107,18 +100,14 @@
     <div id="admin-screen" class="full-modal">
         <div class="modal-content">
             <h2 style="text-align:center; color:var(--primary)">لوحة التحكم</h2>
-            
             <div class="btn-plus" onclick="App.openManager()"><i class="fas fa-plus"></i></div>
             <p style="text-align:center; font-size:13px; margin-bottom:20px; color:var(--sub)">إدارة قائمة الفيديوهات والمحتوى</p>
-
             <label>الأمان</label>
             <input type="text" id="adm-user" placeholder="تعديل اسم المستخدم">
             <input type="password" id="adm-pass" placeholder="تعديل الرمز السري">
-
             <label>بيانات المنصة</label>
             <input type="text" id="adm-name" placeholder="اسم المنصة">
             <input type="text" id="adm-avatar" placeholder="رابط صورة المسؤول">
-
             <label>شريط الأخبار العاجلة</label>
             <select id="adm-news-active">
                 <option value="on">تشغيل الشريط</option>
@@ -126,7 +115,6 @@
             </select>
             <input type="text" id="adm-news-text" placeholder="نص الخبر">
             <input type="text" id="adm-news-link" placeholder="رابط الخبر (اختياري)">
-
             <label>روابط التواصل</label>
             <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px">
                 <input type="text" id="adm-fb" placeholder="فيسبوك">
@@ -134,7 +122,6 @@
                 <input type="text" id="adm-ig" placeholder="انستجرام">
                 <input type="text" id="adm-wa" placeholder="واتساب">
             </div>
-
             <button class="btn-action" onclick="App.saveSettings()">حفظ كافة الإعدادات</button>
             <button class="btn-action" style="background:#333" onclick="App.closeModals()">إغلاق</button>
         </div>
@@ -149,10 +136,8 @@
                 <textarea id="new-desc" rows="3" placeholder="وصف الفيديو (الروابط هنا تصبح قابلة للضغط)"></textarea>
                 <button class="btn-action" onclick="App.addNewItem()">إضافة إلى المنصة الآن</button>
             </div>
-
             <h3 style="margin-bottom:15px">تعديل المحتوى الحالي</h3>
             <div id="manage-list"></div>
-            
             <button class="btn-action" style="background:#333" onclick="App.backToAdmin()">العودة للخلف</button>
         </div>
     </div>
@@ -189,7 +174,6 @@
                 <div id="desc-panel"></div>
             </div>
         </section>
-
         <h2 class="section-label">فيديوهات مقترحة</h2>
         <div class="suggestions" id="video-grid"></div>
     </main>
@@ -213,26 +197,36 @@
                 this.render();
             },
 
+            // وظيفة استخراج صورة اليوتيوب (الحل للمشكلة)
+            getYoutubeThumb(url) {
+                if (url.includes('youtube.com') || url.includes('youtu.be')) {
+                    const id = url.includes('v=') ? url.split('v=')[1].split('&')[0] : url.split('/').pop();
+                    return `https://img.youtube.com/vi/${id}/mqdefault.jpg`;
+                }
+                return 'https://via.placeholder.com/400x225/222/fff?text=VIDEO';
+            },
+
             render() {
-                // تحديث الهوية
                 document.getElementById('ui-site-name').innerText = this.db.siteName;
                 document.getElementById('ui-avatar').src = this.db.avatar;
                 
-                // تحديث الخبر العاجل
                 const n = document.getElementById('news-container');
                 n.style.display = this.db.news.active ? 'block' : 'none';
                 document.getElementById('ui-news-text').innerText = this.db.news.text;
 
-                // تحديث شبكة الفيديوهات (مثل يوتيوب)
                 const grid = document.getElementById('video-grid');
-                grid.innerHTML = this.db.items.map((it, i) => `
+                grid.innerHTML = this.db.items.map((it, i) => {
+                    // تحديد الصورة بناءً على نوع الرابط
+                    let thumb = it.type === 'image' ? it.u : this.getYoutubeThumb(it.u);
+                    
+                    return `
                     <div class="thumb-item" onclick="App.load(${i})">
                         <div class="thumb-img-wrapper">
-                            <img src="${it.type==='image'?it.u:'https://via.placeholder.com/400x225/222/fff?text=▶'}" class="thumb-img">
+                            <img src="${thumb}" class="thumb-img" onerror="this.src='https://via.placeholder.com/400x225/222/fff?text=Error'">
                         </div>
                         <div class="thumb-text">${it.t}</div>
                     </div>
-                `).join('');
+                `}).join('');
 
                 if(this.db.items.length > 0) this.load(0);
                 this.syncInputs();
@@ -241,9 +235,7 @@
             load(idx) {
                 const it = this.db.items[idx];
                 if(!it) return;
-                
                 document.getElementById('active-title').innerText = it.t;
-                // تفعيل الروابط في الوصف
                 const linkedDesc = it.d.replace(/(https?:\/\/[^\s]+)/g, '<a href="$1" target="_blank">$1</a>');
                 document.getElementById('desc-panel').innerHTML = linkedDesc;
 
@@ -258,21 +250,16 @@
                 window.scrollTo({ top: 0, behavior: 'smooth' });
             },
 
-            // إدارة الإضافات
             addNewItem() {
                 const t = document.getElementById('new-title').value;
                 const u = document.getElementById('new-url').value;
                 const d = document.getElementById('new-desc').value;
-                
                 if(!t || !u) return alert("الرجاء إدخال العنوان والرابط");
-                
                 const isImg = u.match(/\.(jpg|jpeg|png|webp|gif)$/i);
                 this.db.items.unshift({ t, u, d, type: isImg?'image':'video' });
-                
                 this.save();
                 this.render();
                 this.renderManageList();
-                
                 document.getElementById('new-title').value = '';
                 document.getElementById('new-url').value = '';
                 document.getElementById('new-desc').value = '';
@@ -306,11 +293,7 @@
                 this.db.social.tiktok = document.getElementById('adm-tk').value;
                 this.db.social.instagram = document.getElementById('adm-ig').value;
                 this.db.social.whatsapp = document.getElementById('adm-wa').value;
-                
-                this.save();
-                this.render();
-                this.closeModals();
-                alert("تم الحفظ!");
+                this.save(); this.render(); this.closeModals(); alert("تم الحفظ!");
             },
 
             save() { localStorage.setItem('MAHER_PRO_DATA_V4', JSON.stringify(this.db)); },
@@ -327,7 +310,6 @@
                 document.getElementById('adm-wa').value = this.db.social.whatsapp;
             },
 
-            // وظائف الملاحة واللغة
             showAuth() { this.toggleMenu(); document.getElementById('auth-screen').style.display = 'flex'; },
             checkAuth() {
                 if(document.getElementById('login-user').value === this.db.auth.user && 
