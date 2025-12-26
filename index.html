@@ -3,283 +3,385 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>لوحة التحكم الذكية - Mahir</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/all.min.js"></script>
+    <title>Ultimate Dashboard - Mahir Pro</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
     <style>
         :root {
-            --primary: #00d2ff;
-            --accent: #9d50bb;
-            --dark: #0f0c29;
-            --glass: rgba(255, 255, 255, 0.1);
+            --bg-color: #0f0f0f;
+            --sidebar-color: #1a1a1a;
+            --card-bg: #2a2a2a;
+            --primary-color: #ff0000; /* YouTube Red */
+            --text-color: #ffffff;
+            --accent-color: #3ea6ff;
+            --icon-size: 24px;
         }
 
         body {
             margin: 0;
-            padding: 0;
+            background-color: var(--bg-color);
+            color: var(--text-color);
             font-family: 'Cairo', sans-serif;
-            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
-            color: white;
-            min-height: 100vh;
             overflow-x: hidden;
+            display: flex;
+            transition: 0.3s;
         }
 
-        /* القائمة الجانبية */
-        #sidebar {
+        /* --- الهيدر (مثل جوجل/يوتيوب) --- */
+        header {
             position: fixed;
-            left: -300px;
             top: 0;
-            width: 300px;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.9);
-            backdrop-filter: blur(15px);
-            transition: 0.5s cubic-bezier(0.77, 0, 0.175, 1);
+            width: 100%;
+            height: 60px;
+            background: var(--bg-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
             z-index: 1000;
-            padding: 20px;
-            box-shadow: 5px 0 20px rgba(0,0,0,0.5);
-            overflow-y: auto;
+            border-bottom: 1px solid #333;
         }
 
-        #sidebar.active { left: 0; }
+        .search-bar {
+            background: #121212;
+            border: 1px solid #333;
+            border-radius: 40px;
+            padding: 5px 20px;
+            width: 40%;
+            display: flex;
+            align-items: center;
+        }
 
-        .toggle-btn {
-            position: fixed;
-            left: 20px;
-            top: 20px;
-            z-index: 1001;
-            background: var(--primary);
+        .search-bar input {
+            background: transparent;
             border: none;
             color: white;
-            padding: 10px 15px;
-            border-radius: 50%;
-            cursor: pointer;
-            box-shadow: 0 0 15px var(--primary);
-        }
-
-        /* لوحة التحكم داخل القائمة */
-        .admin-box {
-            background: var(--glass);
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-        }
-
-        input, textarea, select {
             width: 100%;
             padding: 8px;
-            margin: 5px 0;
-            border-radius: 5px;
-            border: none;
-            background: rgba(255,255,255,0.8);
+            outline: none;
         }
 
-        /* الحاوية الرئيسية للمحتوى */
-        .container {
-            padding: 100px 50px;
+        /* --- القائمة الجانبية (Sidebar) --- */
+        nav#sidebar {
+            width: 240px;
+            height: 100vh;
+            background: var(--sidebar-color);
+            position: fixed;
+            top: 60px;
+            right: 0;
+            padding-top: 20px;
+            transition: 0.3s;
+        }
+
+        .nav-item {
+            padding: 12px 25px;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .nav-item:hover { background: #333; }
+        .nav-item i { margin-left: 20px; font-size: var(--icon-size); color: var(--accent-color); }
+
+        /* --- ساحة العرض الرئيسية --- */
+        main {
+            margin-right: 240px;
+            margin-top: 70px;
+            padding: 20px;
+            width: 100%;
+        }
+
+        .content-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 30px;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
         }
 
-        /* تصميم البطاقات (المربعات) */
+        /* --- بطاقة المحتوى (مثل فيديو يوتيوب أو خبر) --- */
         .card {
-            background: var(--glass);
-            border-radius: 20px;
+            background: transparent;
+            cursor: pointer;
+            border-radius: 12px;
             overflow: hidden;
-            border: 1px solid rgba(255,255,255,0.1);
-            transition: 0.4s;
+            transition: 0.3s;
+        }
+
+        .card:hover { transform: scale(1.02); }
+
+        .thumbnail {
+            width: 100%;
+            aspect-ratio: 16/9;
+            background-size: cover;
+            background-position: center;
+            border-radius: 12px;
             position: relative;
         }
 
-        .card:hover { transform: translateY(-10px); box-shadow: 0 20px 40px rgba(0,0,0,0.4); }
-
-        .media-container img, .media-container video {
-            width: 100%;
-            display: block;
-            transition: 0.5s;
-            cursor: pointer;
+        .card-info {
+            padding: 12px 5px;
+            display: flex;
+            gap: 12px;
         }
 
-        .card-content {
-            padding: 20px;
-            max-height: 0;
-            overflow: hidden;
-            transition: 0.5s ease;
-            background: rgba(0,0,0,0.8);
+        .avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: var(--primary-color);
         }
 
-        .card.expanded .card-content {
-            max-height: 500px;
+        .text-data h3 { font-size: 16px; margin: 0; line-height: 1.4; }
+        .text-data p { font-size: 14px; color: #aaa; margin: 5px 0; }
+
+        /* --- نظام النوافذ المنبثقة (Popup Windows) --- */
+        .window-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.9);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+        }
+
+        .window-content {
+            background: #1e1e1e;
+            width: 90%;
+            height: 85%;
+            border-radius: 15px;
+            position: relative;
+            padding: 40px;
             overflow-y: auto;
         }
 
-        /* شريط التحكم بالفيديو */
-        .video-controls {
-            display: flex;
-            gap: 10px;
-            padding: 10px;
-            background: #222;
-        }
-
-        .delete-btn {
+        .close-btn {
             position: absolute;
-            top: 10px;
-            right: 10px;
-            background: red;
-            color: white;
-            border: none;
-            border-radius: 50%;
-            width: 30px;
-            height: 30px;
+            top: 20px; left: 20px;
+            font-size: 30px;
             cursor: pointer;
-            display: none; /* تظهر فقط في وضع الإدارة */
+            color: var(--primary-color);
         }
 
-        .admin-mode .delete-btn { display: block; }
+        /* --- لوحة الإدارة --- */
+        #admin-panel {
+            background: #252525;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 30px;
+            display: none; /* مخفي افتراضياً */
+        }
 
-        h2 { border-bottom: 2px solid var(--primary); padding-bottom: 10px; }
+        .admin-input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            background: #111;
+            border: 1px solid #444;
+            color: white;
+            border-radius: 5px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .btn-save { background: var(--primary-color); color: white; }
+        .btn-admin { background: var(--accent-color); color: white; }
+
+        /* تعديل الأحجام */
+        .size-control { display: flex; align-items: center; gap: 10px; margin-top: 10px; }
+
     </style>
 </head>
-<body id="mainBody">
+<body>
 
-    <button class="toggle-btn" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
-
-    <div id="sidebar">
-        <h2 id="welcome-msg">مرحباً mahir</h2>
-        
-        <div id="login-section">
-            <input type="text" id="userIn" placeholder="اسم المستخدم">
-            <input type="password" id="passIn" placeholder="كلمة السر">
-            <button onclick="login()" style="width:100%; background: var(--accent);">دخول للنظام</button>
+    <header>
+        <div style="display: flex; align-items: center; gap: 15px;">
+            <i class="fas fa-bars" onclick="toggleSidebar()" style="cursor: pointer; font-size: 20px;"></i>
+            <h2 style="color: var(--primary-color); letter-spacing: -1px;">MAHIR <span style="color:white; font-weight:lighter;">PLATFORM</span></h2>
         </div>
+        <div class="search-bar">
+            <i class="fas fa-search" style="color: #555;"></i>
+            <input type="text" id="mainSearch" placeholder="بحث عن صور، فيديوهات، أخبار..." onkeyup="searchContent()">
+        </div>
+        <div class="user-area">
+            <button class="btn btn-admin" onclick="showLogin()">لوحة التحكم <i class="fas fa-user-shield"></i></button>
+        </div>
+    </header>
 
-        <div id="edit-section" style="display:none;">
-            <div class="admin-box">
-                <h3>إضافة محتوى جديد</h3>
-                <select id="item-type">
-                    <option value="image">صورة</option>
-                    <option value="video">فيديو</option>
-                </select>
-                <input type="text" id="item-url" placeholder="رابط (Image/Video URL)">
-                <input type="text" id="item-title" placeholder="العنوان">
-                <textarea id="item-desc" placeholder="الوصف (كتابة طويلة كما تريد)"></textarea>
-                <button onclick="addItem()" style="background:green;">إضافة للعرض</button>
+    <nav id="sidebar">
+        <div class="nav-item" onclick="location.reload()"><i class="fas fa-home"></i> الرئيسية</div>
+        <div class="nav-item" onclick="openWindow('about')"><i class="fas fa-info-circle"></i> من نحن</div>
+        <div class="nav-item" onclick="openWindow('services')"><i class="fas fa-layer-group"></i> خدماتنا</div>
+        <hr style="border: 0.1px solid #333;">
+        <div class="nav-item" onclick="toggleAdmin()"><i class="fas fa-cog"></i> الإعدادات</div>
+    </nav>
+
+    <main>
+        <section id="admin-panel">
+            <h2>إعدادات النظام - مرحباً <span id="admin-name-display">mahir</span></h2>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                <div>
+                    <h3>إضافة محتوى جديد</h3>
+                    <select id="new-type" class="admin-input">
+                        <option value="video">فيديو يوتيوب</option>
+                        <option value="image">صورة احترافية</option>
+                        <option value="news">خبر عاجل</option>
+                    </select>
+                    <input type="text" id="new-url" class="admin-input" placeholder="رابط المحتوى (URL)">
+                    <input type="text" id="new-title" class="admin-input" placeholder="العنوان الرئيسي">
+                    <textarea id="new-desc" class="admin-input" placeholder="شرح المحتوى بالتفصيل..."></textarea>
+                    <button class="btn btn-save" onclick="addNewContent()">نشر الآن</button>
+                </div>
+                <div>
+                    <h3>تخصيص الواجهة</h3>
+                    <label>تغيير لون الهوية:</label>
+                    <input type="color" id="color-picker" onchange="changeTheme(this.value)" class="admin-input">
+                    <div class="size-control">
+                        <label>حجم الأيقونات:</label>
+                        <input type="range" min="15" max="40" value="24" oninput="changeIconSize(this.value)">
+                    </div>
+                    <label>تغيير كلمة السر:</label>
+                    <input type="password" id="pass-change" class="admin-input" placeholder="كلمة سر جديدة">
+                    <button class="btn btn-admin" onclick="updateSettings()">تحديث الإعدادات</button>
+                </div>
             </div>
+        </section>
 
-            <div class="admin-box">
-                <h3>إعدادات الحساب</h3>
-                <input type="text" id="new-user" placeholder="تغيير الاسم">
-                <input type="password" id="new-pass" placeholder="تغيير الباسورد">
-                <button onclick="updateAccount()">تحديث البيانات</button>
+        <div class="content-grid" id="main-grid">
             </div>
+    </main>
 
-            <button onclick="logout()" style="background:#c0392b;">خروج</button>
+    <div id="windowOverlay" class="window-overlay">
+        <div class="window-content">
+            <span class="close-btn" onclick="closeWindow()">&times;</span>
+            <div id="windowBody"></div>
         </div>
     </div>
 
-    <div class="container" id="content-grid">
-        </div>
-
     <script>
-        let currentUser = localStorage.getItem('user') || 'mahir';
-        let currentPass = localStorage.getItem('pass') || '12345';
-        let isAdmin = false;
-
-        // تحميل البيانات المحفوظة
-        let siteItems = JSON.parse(localStorage.getItem('siteItems')) || [
-            { type: 'image', url: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa', title: 'البداية', desc: 'هذا مثال لصورة، اضغط عليها لرؤية النص الطويل الذي يمكن وضعه هنا.' },
-            { type: 'video', url: 'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4', title: 'فيديو توضيحي', desc: 'يمكنك إضافة فيديوهات بروابط مباشرة والتحكم فيها.' }
+        // --- البيانات الأساسية ---
+        let adminUser = localStorage.getItem('adminUser') || 'mahir';
+        let adminPass = localStorage.getItem('adminPass') || '12345';
+        
+        let contentData = JSON.parse(localStorage.getItem('myContent')) || [
+            { id: 1, type: 'video', title: 'مستقبل الذكاء الاصطناعي 2025', desc: 'نظرة عميقة في تطور الموديلات الذكية.', url: 'https://images.unsplash.com/photo-1677442136019-21780ecad995', avatar: 'https://i.pravatar.cc/150?u=1' },
+            { id: 2, type: 'image', title: 'جمال الطبيعة الصامتة', desc: 'مجموعة من الصور التي تريح الأعصاب.', url: 'https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05', avatar: 'https://i.pravatar.cc/150?u=2' },
+            { id: 3, type: 'news', title: 'إطلاق أكبر تحديث للموقع اليوم', desc: 'الآن يمكنك التحكم بكل شيء من لوحة الإدارة.', url: 'https://images.unsplash.com/photo-1504711432869-5d5932e221d1', avatar: 'https://i.pravatar.cc/150?u=3' }
         ];
 
-        function toggleSidebar() {
-            document.getElementById('sidebar').classList.toggle('active');
-        }
-
-        function login() {
-            const u = document.getElementById('userIn').value;
-            const p = document.getElementById('passIn').value;
-            if(u === currentUser && p === currentPass) {
-                isAdmin = true;
-                document.getElementById('login-section').style.display = 'none';
-                document.getElementById('edit-section').style.display = 'block';
-                document.body.classList.add('admin-mode');
-                document.getElementById('welcome-msg').innerText = "لوحة تحكم " + currentUser;
-            } else {
-                alert("بيانات خاطئة!");
-            }
-        }
-
-        function logout() {
-            isAdmin = false;
-            location.reload();
-        }
-
-        function updateAccount() {
-            const nU = document.getElementById('new-user').value;
-            const nP = document.getElementById('new-pass').value;
-            if(nU) { currentUser = nU; localStorage.setItem('user', nU); }
-            if(nP) { currentPass = nP; localStorage.setItem('pass', nP); }
-            alert("تم التحديث بنجاح!");
-        }
-
-        function addItem() {
-            const newItem = {
-                type: document.getElementById('item-type').value,
-                url: document.getElementById('item-url').value || 'https://via.placeholder.com/400',
-                title: document.getElementById('item-title').value,
-                desc: document.getElementById('item-desc').value
-            };
-            siteItems.push(newItem);
-            renderSite();
-            saveData();
-        }
-
-        function deleteItem(index) {
-            siteItems.splice(index, 1);
-            renderSite();
-            saveData();
-        }
-
-        function saveData() {
-            localStorage.setItem('siteItems', JSON.stringify(siteItems));
-        }
-
-        function renderSite() {
-            const grid = document.getElementById('content-grid');
+        // --- وظائف العرض ---
+        function renderItems(data = contentData) {
+            const grid = document.getElementById('main-grid');
             grid.innerHTML = '';
-            siteItems.forEach((item, index) => {
-                const card = document.createElement('div');
-                card.className = 'card';
-                
-                let mediaHtml = item.type === 'image' 
-                    ? `<img src="${item.url}" onclick="expandCard(this)">` 
-                    : `<video src="${item.url}" id="vid-${index}"></video>
-                       <div class="video-controls">
-                           <button onclick="document.getElementById('vid-${index}').play()"><i class="fas fa-play"></i></button>
-                           <button onclick="document.getElementById('vid-${index}').pause()"><i class="fas fa-pause"></i></button>
-                           <input type="range" min="0" max="1" step="0.1" onchange="document.getElementById('vid-${index}').volume = this.value">
-                       </div>`;
-
-                card.innerHTML = `
-                    <button class="delete-btn" onclick="deleteItem(${index})">&times;</button>
-                    <div class="media-container" onclick="${item.type === 'video' ? 'expandCard(this)' : ''}">
-                        ${mediaHtml}
-                    </div>
-                    <div class="card-content">
-                        <h3>${item.title}</h3>
-                        <p>${item.desc}</p>
+            data.forEach((item, index) => {
+                grid.innerHTML += `
+                    <div class="card" onclick="openDetail(${index})">
+                        <div class="thumbnail" style="background-image: url('${item.url}')"></div>
+                        <div class="card-info">
+                            <div class="avatar" style="background-image: url('${item.avatar}')"></div>
+                            <div class="text-data">
+                                <h3>${item.title}</h3>
+                                <p>${item.desc.substring(0, 50)}...</p>
+                            </div>
+                        </div>
                     </div>
                 `;
-                grid.appendChild(card);
             });
         }
 
-        function expandCard(el) {
-            const card = el.closest('.card');
-            card.classList.toggle('expanded');
+        // --- نظام النوافذ والبحث ---
+        function openDetail(index) {
+            const item = contentData[index];
+            const body = document.getElementById('windowBody');
+            body.innerHTML = `
+                <h1 style="color:var(--accent-color)">${item.title}</h1>
+                <img src="${item.url}" style="width:100%; border-radius:15px; margin: 20px 0;">
+                <div style="font-size: 1.2rem; line-height: 1.8;">
+                    <p>${item.desc}</p>
+                    <hr>
+                    <p>تعليقات المستخدمين: <br> <small>لا توجد تعليقات بعد لهذا المحتوى.</small></p>
+                </div>
+            `;
+            document.getElementById('windowOverlay').style.display = 'flex';
         }
 
-        // تشغيل العرض عند البدء
-        renderSite();
+        function openWindow(type) {
+            const body = document.getElementById('windowBody');
+            if(type === 'about') body.innerHTML = "<h1>من نحن</h1><p>نحن منصة متطورة صممها Mahir للتحكم الكامل في المحتوى الرقمي.</p>";
+            if(type === 'services') body.innerHTML = "<h1>خدماتنا</h1><p>نقدم خدمة إدارة الصور والفيديوهات والبيانات الضخمة.</p>";
+            document.getElementById('windowOverlay').style.display = 'flex';
+        }
+
+        function closeWindow() { document.getElementById('windowOverlay').style.display = 'none'; }
+
+        function searchContent() {
+            const query = document.getElementById('mainSearch').value.toLowerCase();
+            const filtered = contentData.filter(i => i.title.toLowerCase().includes(query));
+            renderItems(filtered);
+        }
+
+        // --- وظائف الإدارة ---
+        function showLogin() {
+            const p = prompt("أدخل كلمة السر للإدارة:");
+            if(p === adminPass) {
+                document.getElementById('admin-panel').style.display = 'block';
+                window.scrollTo(0,0);
+            } else {
+                alert("خطأ في الدخول!");
+            }
+        }
+
+        function addNewContent() {
+            const newItem = {
+                id: Date.now(),
+                type: document.getElementById('new-type').value,
+                url: document.getElementById('new-url').value,
+                title: document.getElementById('new-title').value,
+                desc: document.getElementById('new-desc').value,
+                avatar: `https://i.pravatar.cc/150?u=${Math.random()}`
+            };
+            contentData.unshift(newItem);
+            localStorage.setItem('myContent', JSON.stringify(contentData));
+            renderItems();
+            alert("تم النشر بنجاح!");
+        }
+
+        function changeTheme(color) {
+            document.documentElement.style.setProperty('--primary-color', color);
+        }
+
+        function changeIconSize(size) {
+            document.documentElement.style.setProperty('--icon-size', size + 'px');
+        }
+
+        function toggleSidebar() {
+            const sb = document.getElementById('sidebar');
+            if(sb.style.width === '0px') {
+                sb.style.width = '240px';
+                document.querySelector('main').style.marginRight = '240px';
+            } else {
+                sb.style.width = '0px';
+                document.querySelector('main').style.marginRight = '0px';
+            }
+        }
+
+        function updateSettings() {
+            const newPass = document.getElementById('pass-change').value;
+            if(newPass) {
+                adminPass = newPass;
+                localStorage.setItem('adminPass', newPass);
+                alert("تم تغيير كلمة السر بنجاح!");
+            }
+        }
+
+        // تشغيل أولي
+        renderItems();
     </script>
 </body>
 </html>
