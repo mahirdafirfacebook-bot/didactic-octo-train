@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="ar" dir="rtl" id="main-html">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MAHER INFINITY | المحرك العالمي</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>MAHER CONTROL SYSTEM</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -12,239 +12,240 @@
         :root {
             --primary: #bc202b; --bg: #0a0a0a; --surface: #161616;
             --text: #ffffff; --sub: #b1b1b1; --accent: #1877F2;
-            --radius: 20px; --shadow: 0 10px 30px rgba(0,0,0,0.7);
+            --radius: 15px;
         }
 
         [data-theme="light"] { --bg: #f4f7f6; --surface: #ffffff; --text: #1a1a1a; --sub: #555; }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Cairo', sans-serif; }
-        body { background: var(--bg); color: var(--text); transition: 0.5s; overflow-x: hidden; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Cairo', sans-serif; touch-action: manipulation; }
+        body { background: var(--bg); color: var(--text); transition: 0.5s; overflow-x: hidden; width: 100vw; }
 
-        /* --- Header --- */
         header {
-            height: 75px; background: var(--surface); display: flex; align-items: center;
+            height: 70px; background: var(--surface); display: flex; align-items: center;
             justify-content: space-between; padding: 0 5%; position: sticky; top: 0; z-index: 1000;
-            box-shadow: var(--shadow);
         }
-        .brand { display: flex; align-items: center; gap: 15px; cursor: pointer; }
-        .logo-box { width: 45px; height: 45px; border-radius: 50%; background: var(--primary); display: flex; align-items: center; justify-content: center; font-weight: 900; color: #fff; }
-        
-        /* --- Sidebar --- */
+
         .sidebar {
-            position: fixed; right: -100%; top: 0; bottom: 0; width: 320px;
-            background: var(--surface); z-index: 2000; transition: 0.5s cubic-bezier(0.7, 0, 0.3, 1);
-            padding: 40px 25px; box-shadow: -15px 0 40px rgba(0,0,0,0.8);
+            position: fixed; right: -100%; top: 0; bottom: 0; width: 280px;
+            background: var(--surface); z-index: 2000; transition: 0.4s cubic-bezier(0.7, 0, 0.3, 1);
+            padding: 30px 20px; box-shadow: -10px 0 30px rgba(0,0,0,0.8);
         }
         .sidebar.active { right: 0; }
-        .nav-link { padding: 15px; border-radius: 15px; display: flex; align-items: center; gap: 15px; cursor: pointer; margin-bottom: 10px; font-weight: 700; transition: 0.3s; }
-        .nav-link:hover { background: rgba(255,255,255,0.05); transform: translateX(-10px); }
+        .nav-link { padding: 12px; border-radius: 10px; display: flex; align-items: center; gap: 12px; cursor: pointer; margin-bottom: 5px; font-weight: 700; }
 
-        /* --- Media Player Engine --- */
-        .player-wrapper { max-width: 1100px; margin: 30px auto; padding: 0 15px; }
-        .viewport { 
-            width: 100%; aspect-ratio: 16/9; background: #000; border-radius: var(--radius); 
-            overflow: hidden; box-shadow: var(--shadow); position: relative;
-        }
-        iframe, video, img { width: 100%; height: 100%; border: none; object-fit: contain; }
+        .main-container { max-width: 1000px; margin: 20px auto; padding: 0 10px; }
+        .video-box { width: 100%; aspect-ratio: 16/9; background: #000; border-radius: var(--radius); overflow: hidden; position: relative; }
+        iframe, video, img { width: 100%; height: 100%; object-fit: contain; border: none; }
 
-        .info-card { background: var(--surface); padding: 25px; border-radius: var(--radius); margin-top: -20px; position: relative; z-index: 10; border-bottom: 5px solid var(--primary); }
-        .video-t { font-size: 24px; font-weight: 900; color: var(--text); }
-        .video-d { color: var(--sub); margin-top: 15px; font-size: 15px; line-height: 1.8; white-space: pre-wrap; }
+        .video-info { margin-top: 15px; cursor: pointer; }
+        .video-title { font-size: 20px; font-weight: 900; }
+        #desc-panel { background: rgba(255,255,255,0.05); padding: 15px; border-radius: 12px; margin-top: 10px; display: none; font-size: 14px; }
 
-        /* --- Social & Redirect --- */
-        .redirect-screen {
-            position: fixed; inset: 0; background: #000; z-index: 9999;
-            display: none; flex-direction: column; align-items: center; justify-content: center;
-        }
-        .timer-circle { width: 100px; height: 100px; border: 5px solid var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 40px; font-weight: 900; margin-top: 20px; }
+        #news-bar { background: var(--primary); color: #fff; padding: 10px; border-radius: 10px; margin-bottom: 20px; display: none; text-align: center; font-weight: bold; cursor: pointer; }
 
-        /* --- Grid System --- */
-        .suggestions { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 25px; margin-top: 40px; }
-        .item-card { background: var(--surface); border-radius: var(--radius); overflow: hidden; cursor: pointer; transition: 0.4s; }
-        .item-card:hover { transform: scale(1.03); box-shadow: 0 15px 40px rgba(0,0,0,0.4); }
-        .thumb { width: 100%; aspect-ratio: 16/9; object-fit: cover; background: #222; }
+        .suggestions { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 15px; margin-top: 30px; }
+        .thumb { width: 100%; aspect-ratio: 16/9; object-fit: cover; border-radius: 10px; cursor: pointer; }
 
-        /* --- Control Panel (Hidden) --- */
+        /* لوحة التحكم الاحترافية */
         #admin-panel {
             position: fixed; inset: 0; background: var(--bg); z-index: 5000;
-            display: none; padding: 50px 10%; overflow-y: auto;
+            display: none; padding: 30px 5%; overflow-y: auto;
         }
-        input, textarea, select { width: 100%; padding: 15px; background: #222; border: 1px solid #333; color: #fff; border-radius: 12px; margin-bottom: 15px; }
-        .btn-post { background: var(--primary); color: #fff; padding: 18px; border: none; border-radius: 12px; width: 100%; font-weight: 900; cursor: pointer; }
+        .admin-section { background: var(--surface); padding: 20px; border-radius: 15px; margin-bottom: 20px; border: 1px solid #333; }
+        input, textarea, select { width: 100%; padding: 12px; background: #222; border: 1px solid #444; color: #fff; border-radius: 8px; margin-bottom: 10px; font-size: 14px; }
+        .btn-save { background: var(--primary); color: #fff; padding: 15px; border: none; border-radius: 10px; width: 100%; font-weight: 900; cursor: pointer; margin-top: 10px; }
 
-        /* Animations */
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-        .animate { animation: fadeIn 0.6s ease forwards; }
+        .redir-screen { position: fixed; inset: 0; background: #000; z-index: 9999; display: none; flex-direction: column; align-items: center; justify-content: center; }
     </style>
 </head>
 <body data-theme="dark">
 
-    <div id="redir-layer" class="redirect-screen">
-        <h2 id="redir-title" style="color:var(--primary)">جاري الانتقال لفيسبوك المسؤول...</h2>
-        <div class="timer-circle" id="count-num">3</div>
+    <div id="redir-layer" class="redir-screen">
+        <h2 style="color:var(--primary)">جاري التحويل...</h2>
+        <div style="font-size: 40px; margin-top: 20px;" id="timer">3</div>
     </div>
 
     <header>
-        <div class="brand" onclick="location.reload()">
-            <i class="fas fa-bars" style="font-size: 24px;" onclick="App.menu(event)"></i>
-            <div class="logo-box">M</div>
-            <span class="site-name" id="h-name">منصة ماهر العالمية</span>
+        <div style="display:flex; align-items:center; gap:15px">
+            <i class="fas fa-bars" style="font-size: 22px; cursor: pointer;" onclick="App.toggleMenu(event)"></i>
+            <span style="font-weight:900;" id="ui-site-name">منصة ماهر</span>
         </div>
-        <i class="fab fa-facebook" style="font-size: 30px; color: #1877F2; cursor: pointer;" onclick="App.go('facebook')"></i>
+        <div onclick="App.toggleTheme()" style="cursor:pointer; font-size:20px;"><i class="fas fa-adjust"></i></div>
     </header>
 
     <nav class="sidebar" id="sidebar">
-        <h2 style="margin-bottom: 30px; border-right: 5px solid var(--primary); padding-right: 15px;">القائد ماهر</h2>
-        <div class="nav-link" onclick="App.go('facebook')"><i class="fab fa-facebook"></i> فيسبوك</div>
-        <div class="nav-link" onclick="App.go('youtube')"><i class="fab fa-youtube"></i> يوتيوب</div>
-        <div class="nav-link" onclick="App.go('tiktok')"><i class="fab fa-tiktok"></i> تيك توك</div>
-        <div class="nav-link" onclick="App.theme()"><i class="fas fa-adjust"></i> المظهر (ليلي/نهاري)</div>
-        <hr style="margin: 20px 0; opacity: 0.1;">
-        <div class="nav-link" style="color:var(--primary)" onclick="App.auth()"><i class="fas fa-user-crown"></i> إدارة المحتوى</div>
+        <h3 id="ui-menu-title" style="margin-bottom:20px; border-bottom:1px solid #333; padding-bottom:10px;">القائمة</h3>
+        <div class="nav-link" onclick="App.redirect('facebook')"><i class="fab fa-facebook" style="color:#1877F2"></i> Facebook</div>
+        <div class="nav-link" onclick="App.redirect('youtube')"><i class="fab fa-youtube" style="color:red"></i> YouTube</div>
+        <div class="nav-link" onclick="App.redirect('whatsapp')"><i class="fab fa-whatsapp" style="color:#25D366"></i> WhatsApp</div>
+        <hr style="opacity:0.1; margin:10px 0">
+        <div class="nav-link" onclick="App.switchLang()"><i class="fas fa-language"></i> <span id="lang-btn">English</span></div>
+        <div class="nav-link" style="color:var(--primary)" onclick="App.openAdmin()"><i class="fas fa-user-shield"></i> إدارة المحتوى</div>
     </nav>
 
-    <div class="player-wrapper animate">
-        <div class="viewport" id="master-view">
-            <video controls><source src="https://www.w3schools.com/html/mov_bbb.mp4"></video>
-        </div>
-        
-        <div class="info-card">
-            <h1 id="view-title" class="video-t">مرحباً بك في إمبراطورية ماهر البرمجية</h1>
-            <div id="view-desc" class="video-d">هذا النظام يدعم الروابط المباشرة من جميع المواقع. قم بالدخول كمسؤول لإضافة محتواك الخاص.</div>
+    <main class="main-container">
+        <div id="news-bar" onclick="App.newsClick()"></div>
+
+        <div class="video-box" id="main-viewer">
+            </div>
+
+        <div class="video-info" onclick="App.toggleDesc()">
+            <h1 class="video-title" id="active-title">عنوان الفيديو</h1>
+            <div id="desc-panel"></div>
         </div>
 
-        <h3 style="margin-top: 40px; opacity: 0.5;">اقتراحات لك</h3>
-        <div class="suggestions" id="grid"></div>
-    </div>
+        <div class="suggestions" id="suggestion-grid"></div>
+    </main>
 
     <div id="admin-panel">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:30px;">
-            <h1>لوحة النشر العالمية</h1>
-            <button onclick="location.reload()" style="background:none; color:red; border:none; cursor:pointer; font-weight:900;">إغلاق X</button>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+            <h2 style="color:var(--primary)">لوحة القيادة السيادية</h2>
+            <button onclick="App.closeAdmin()" style="color:#fff; background:#333; padding:5px 15px; border-radius:5px; border:none; cursor:pointer;">إغلاق X</button>
         </div>
-        
-        <div style="background:var(--surface); padding:30px; border-radius:20px;">
-            <label>عنوان الفيديو أو الصورة</label>
-            <input type="text" id="in-title" placeholder="مثال: رحلتي في البرمجة">
-            
-            <label>رابط الميديا (يوتيوب، فيسبوك، رابط مباشر mp4/jpg)</label>
-            <input type="text" id="in-url" placeholder="انسخ الرابط هنا...">
-            
-            <label>الوصف الشامل</label>
-            <textarea id="in-desc" rows="5" placeholder="اكتب تفاصيل المحتوى هنا..."></textarea>
-            
-            <button class="btn-post" onclick="App.publish()">نشر المحتوى فوراً 🚀</button>
+
+        <div class="admin-section">
+            <h4><i class="fas fa-key"></i> تعديل بيانات الحساب</h4>
+            <input type="text" id="adm-new-user" placeholder="اسم المستخدم الجديد">
+            <input type="password" id="adm-new-pass" placeholder="كلمة السر الجديدة">
+            <button class="btn-save" style="background:#444; font-size:12px;" onclick="App.updateAccess()">حفظ بيانات الدخول الجديدة</button>
+        </div>
+
+        <div class="admin-section">
+            <h4><i class="fas fa-cog"></i> إعدادات المنصة</h4>
+            <input type="text" id="adm-site-name" placeholder="اسم المنصة">
+            <input type="text" id="adm-news-text" placeholder="نص الخبر العاجل">
+            <input type="text" id="adm-news-link" placeholder="رابط الخبر العاجل">
+            <select id="adm-news-status"><option value="off">إيقاف الخبر</option><option value="on">تفعيل الخبر</option></select>
+        </div>
+
+        <div class="admin-section">
+            <h4><i class="fas fa-plus-circle"></i> إضافة فيديو أو صورة</h4>
+            <input type="text" id="adm-item-title" placeholder="عنوان المحتوى">
+            <input type="text" id="adm-item-url" placeholder="رابط الميديا (يوتيوب أو رابط مباشر)">
+            <textarea id="adm-item-desc" rows="3" placeholder="الوصف والروابط"></textarea>
+            <button class="btn-save" onclick="App.addItem()">نشر المحتوى الآن</button>
         </div>
     </div>
 
     <script>
         const App = {
-            state: {
-                waitTime: 3,
-                links: { facebook: "https://facebook.com/your-profile", youtube: "#", tiktok: "#" },
-                data: [
-                    { t: "فيديو تجريبي من خادم خارجي", u: "https://www.w3schools.com/html/mov_bbb.mp4", d: "هذا رابط مباشر بصيغة mp4.", type: "video" },
-                    { t: "صورة بدقة عالية من Unsplash", u: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=800", d: "هذا رابط صورة مباشر.", type: "image" }
-                ]
+            // بيانات الدخول الافتراضية (يمكن تغييرها من اللوحة)
+            access: { user: 'mahir', pass: '1234' },
+            lang: 'ar',
+            db: {
+                siteName: 'منصة ماهر',
+                news: { active: false, text: '', link: '' },
+                items: [
+                    { t: "مرحباً بك في منصتك الجديدة", u: "https://www.w3schools.com/html/mov_bbb.mp4", d: "هذا الفيديو تجريبي، يمكنك حذفه وإضافة فيديوهاتك من لوحة المسؤول.", type: "video" }
+                ],
+                social: { facebook: '#', youtube: '#', whatsapp: '#' }
             },
 
             init() {
-                this.renderGrid();
+                this.render();
+                // منع التكبير
+                document.addEventListener('touchstart', (e) => { if (e.touches.length > 1) e.preventDefault(); }, { passive: false });
             },
 
-            // محلل الروابط الذكي (The Magic Parser)
-            parseURL(url) {
-                if (url.includes('youtube.com/watch?v=')) {
-                    const id = url.split('v=')[1].split('&')[0];
-                    return { type: 'embed', url: `https://www.youtube.com/embed/${id}?autoplay=1` };
-                }
-                if (url.includes('youtu.be/')) {
-                    const id = url.split('youtu.be/')[1];
-                    return { type: 'embed', url: `https://www.youtube.com/embed/${id}?autoplay=1` };
-                }
-                const ext = url.split('.').pop().toLowerCase();
-                if (['mp4', 'webm', 'ogg'].includes(ext)) return { type: 'video', url };
-                if (['jpg', 'jpeg', 'png', 'webp', 'gif'].includes(ext)) return { type: 'image', url };
-                return { type: 'video', url }; // Default
-            },
+            toggleMenu(e) { if(e) e.stopPropagation(); document.getElementById('sidebar').classList.toggle('active'); },
 
-            renderGrid() {
-                const grid = document.getElementById('grid');
-                grid.innerHTML = this.state.data.map((item, i) => `
-                    <div class="item-card animate" onclick="App.view(${i})">
-                        <img src="${item.type === 'image' ? item.u : 'https://via.placeholder.com/400x225/222/fff?text=MEDIA'}" class="thumb">
-                        <div style="padding:15px">
-                            <div style="font-weight:900; font-size:14px;">${item.t}</div>
-                        </div>
-                    </div>
-                `).join('');
-            },
-
-            view(idx) {
-                const item = this.state.data[idx];
-                const viewer = document.getElementById('master-view');
-                const res = this.parseURL(item.u);
-
-                document.getElementById('view-title').innerText = item.t;
-                document.getElementById('view-desc').innerText = item.d;
-
-                if (res.type === 'embed') {
-                    viewer.innerHTML = `<iframe src="${res.url}" allowfullscreen allow="autoplay"></iframe>`;
-                } else if (res.type === 'video') {
-                    viewer.innerHTML = `<video controls autoplay><source src="${res.url}"></video>`;
+            openAdmin() {
+                const u = prompt("أدخل اسم المستخدم للمسؤول:");
+                const p = prompt("أدخل الرقم السري:");
+                if(u === this.access.user && p === this.access.pass) {
+                    document.getElementById('admin-panel').style.display = 'block';
+                    this.toggleMenu();
                 } else {
-                    viewer.innerHTML = `<img src="${res.url}">`;
+                    alert("⚠️ بيانات الدخول خاطئة! لا يمكن الدخول.");
                 }
-                window.scrollTo({top: 0, behavior: 'smooth'});
             },
 
-            publish() {
-                const t = document.getElementById('in-title').value;
-                const u = document.getElementById('in-url').value;
-                const d = document.getElementById('in-desc').value;
-                if(!t || !u) return alert("املأ البيانات!");
-
-                const res = this.parseURL(u);
-                this.state.data.unshift({ t, u, d, type: res.type });
-                this.renderGrid();
-                this.view(0);
-                document.getElementById('admin-panel').style.display = 'none';
-                alert("تم النشر بنجاح!");
+            updateAccess() {
+                const newU = document.getElementById('adm-new-user').value;
+                const newP = document.getElementById('adm-new-pass').value;
+                if(newU && newP) {
+                    this.access.user = newU;
+                    this.access.pass = newP;
+                    alert("✅ تم تغيير بيانات الدخول بنجاح! استخدمها في المرة القادمة.");
+                } else { alert("يرجى ملء الحقلين"); }
             },
 
-            go(platform) {
-                const layer = document.getElementById('redir-layer');
-                const num = document.getElementById('count-num');
-                let c = this.state.waitTime;
+            addItem() {
+                const t = document.getElementById('adm-item-title').value;
+                const u = document.getElementById('adm-item-url').value;
+                const d = document.getElementById('adm-item-desc').value;
                 
-                layer.style.display = 'flex';
-                num.innerText = c;
-                
-                const timer = setInterval(() => {
-                    c--;
-                    num.innerText = c;
-                    if(c <= 0) {
-                        clearInterval(timer);
-                        window.location.href = this.state.links[platform];
-                    }
+                if(!t || !u) return alert("العنوان والرابط مطلوبان");
+
+                const type = (u.match(/\.(jpg|jpeg|png|webp)$/i)) ? 'image' : 'video';
+                this.db.items.unshift({ t, u, d, type });
+
+                // تحديث إعدادات الموقع
+                this.db.siteName = document.getElementById('adm-site-name').value || this.db.siteName;
+                this.db.news.text = document.getElementById('adm-news-text').value;
+                this.db.news.link = document.getElementById('adm-news-link').value;
+                this.db.news.active = document.getElementById('adm-news-status').value === 'on';
+
+                this.render();
+                this.closeAdmin();
+                alert("🚀 تم التحديث ونشر المحتوى!");
+            },
+
+            render() {
+                document.getElementById('ui-site-name').innerText = this.db.siteName;
+                const grid = document.getElementById('suggestion-grid');
+                grid.innerHTML = this.db.items.map((it, i) => `
+                    <img src="${it.type==='image'?it.u:'https://via.placeholder.com/400x225/222/fff?text=VIDEO'}" class="thumb" onclick="App.loadMedia(${i})">
+                `).join('');
+
+                const nb = document.getElementById('news-bar');
+                if(this.db.news.active) {
+                    nb.style.display = 'block';
+                    nb.innerText = this.db.news.text;
+                } else { nb.style.display = 'none'; }
+
+                this.loadMedia(0);
+            },
+
+            loadMedia(idx) {
+                const it = this.db.items[idx];
+                const viewer = document.getElementById('main-viewer');
+                document.getElementById('active-title').innerText = it.t;
+                document.getElementById('desc-panel').innerText = it.d;
+
+                if(it.u.includes('youtube.com') || it.u.includes('youtu.be')) {
+                    let id = it.u.includes('v=') ? it.u.split('v=')[1].split('&')[0] : it.u.split('/').pop();
+                    viewer.innerHTML = `<iframe src="https://www.youtube.com/embed/${id}"></iframe>`;
+                } else if(it.type === 'video') {
+                    viewer.innerHTML = `<video controls><source src="${it.u}"></video>`;
+                } else {
+                    viewer.innerHTML = `<img src="${it.u}">`;
+                }
+            },
+
+            redirect(p) {
+                const l = document.getElementById('redir-layer');
+                const t = document.getElementById('timer');
+                let c = 3;
+                l.style.display = 'flex';
+                const iv = setInterval(() => {
+                    c--; t.innerText = c;
+                    if(c <= 0) { clearInterval(iv); window.location.href = this.db.social[p]; }
                 }, 1000);
             },
 
-            auth() {
-                const u = prompt("المسؤول:");
-                const p = prompt("كلمة السر:");
-                if(u === "mahir" && p === "1234") {
-                    document.getElementById('admin-panel').style.display = 'block';
-                    this.menu();
-                } else alert("خطأ!");
-            },
-
-            menu(e) { if(e) e.stopPropagation(); document.getElementById('sidebar').classList.toggle('active'); },
-            theme() { document.body.setAttribute('data-theme', document.body.getAttribute('data-theme') === 'light' ? 'dark' : 'light'); }
+            closeAdmin() { document.getElementById('admin-panel').style.display = 'none'; },
+            toggleDesc() { const d = document.getElementById('desc-panel'); d.style.display = d.style.display === 'block' ? 'none' : 'block'; },
+            toggleTheme() { document.body.setAttribute('data-theme', document.body.getAttribute('data-theme')==='dark' ? 'light' : 'dark'); },
+            switchLang() { 
+                this.lang = this.lang === 'ar' ? 'en' : 'ar';
+                document.getElementById('main-html').dir = this.lang === 'ar' ? 'rtl' : 'ltr';
+                document.getElementById('lang-btn').innerText = this.lang === 'ar' ? 'English' : 'العربية';
+            }
         };
 
-        window.onclick = () => document.getElementById('sidebar').classList.remove('active');
         window.onload = () => App.init();
+        window.onclick = () => document.getElementById('sidebar').classList.remove('active');
     </script>
 </body>
 </html>
