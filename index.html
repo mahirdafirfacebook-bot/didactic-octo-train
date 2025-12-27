@@ -24,6 +24,16 @@
             box-shadow: 0 2px 10px rgba(0,0,0,0.5);
         }
 
+        /* شريط البحث الجديد */
+        .search-box {
+            flex: 1; margin: 0 20px; max-width: 400px; position: relative;
+        }
+        .search-box input {
+            width: 100%; padding: 8px 40px 8px 15px; background: #222; border: 1px solid #444;
+            color: white; border-radius: 20px; outline: none; margin-bottom: 0;
+        }
+        .search-box i { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: var(--sub); }
+
         .sidebar {
             position: fixed; right: -100%; top: 0; bottom: 0; width: 280px;
             background: var(--surface); z-index: 2000; transition: 0.4s cubic-bezier(0.7, 0, 0.3, 1);
@@ -44,12 +54,11 @@
 
         .theater-mode { position: sticky; top: 80px; z-index: 900; background: var(--bg); padding-bottom: 15px; }
         .video-box { width: 100%; aspect-ratio: 16/9; background: #000; border-radius: var(--radius); overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        iframe, video, img { width: 100%; height: 100%; object-fit: contain; border: none; }
+        iframe, video { width: 100%; height: 100%; object-fit: contain; border: none; }
 
         .video-info { margin-top: 15px; cursor: pointer; background: var(--surface); padding: 15px; border-radius: var(--radius); }
         .video-title { font-size: 1.2rem; font-weight: 900; color: var(--text); }
         #desc-panel { margin-top: 12px; color: var(--sub); display: none; font-size: 0.95rem; line-height: 1.6; border-top: 1px solid #333; padding-top: 10px; word-wrap: break-word; }
-        #desc-panel a { color: #3498db; text-decoration: underline; font-weight: bold; }
 
         .section-label { margin: 25px 0 15px; font-weight: 900; font-size: 1.3rem; display: flex; align-items: center; gap: 10px; }
         .section-label::before { content: ''; width: 5px; height: 25px; background: var(--primary); border-radius: 10px; }
@@ -70,14 +79,20 @@
         input, textarea, select { width: 100%; padding: 12px; background: #222; border: 1px solid #444; color: #fff; border-radius: 10px; margin-bottom: 15px; font-size: 0.9rem; }
         .btn-action { background: var(--primary); color: #fff; padding: 14px; border: none; border-radius: 10px; width: 100%; font-weight: 900; cursor: pointer; transition: 0.3s; margin-bottom: 10px; }
         
-        .btn-plus {
-            background: var(--primary); width: 65px; height: 65px; border-radius: 50%;
-            display: flex; align-items: center; justify-content: center; font-size: 28px;
-            color: white; cursor: pointer; margin: 15px auto; box-shadow: 0 5px 15px rgba(188,32,43,0.4);
-        }
+        /* أزرار الإدارة الجديدة */
+        .admin-btns-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+        .btn-manage-box { background: #1a1a1a; border: 1px solid #333; padding: 15px; border-radius: 15px; text-align: center; cursor: pointer; transition: 0.3s; }
+        .btn-manage-box:hover { border-color: var(--primary); }
+        .btn-manage-box i { font-size: 24px; color: var(--primary); margin-bottom: 10px; display: block; }
 
         .item-manager-card { background: #1a1a1a; padding: 15px; border-radius: 15px; border: 1px solid #333; margin-bottom: 15px; }
         .admin-banner { width: 160px; height: 160px; border-radius: 20px; object-fit: cover; border: 3px solid var(--primary); margin: 20px auto; display: block; }
+
+        /* ستايل صفحة معرض الصور */
+        .gallery-item { margin-bottom: 30px; border-bottom: 1px solid #333; padding-bottom: 20px; }
+        .gallery-img { width: 100%; border-radius: 15px; margin-bottom: 10px; }
+        .gallery-title { font-weight: 900; font-size: 1.1rem; margin-bottom: 5px; color: var(--primary); }
+        .gallery-desc { font-size: 0.9rem; color: var(--sub); line-height: 1.5; }
     </style>
 </head>
 <body data-theme="dark">
@@ -85,6 +100,14 @@
     <div id="redir-layer" style="position:fixed; inset:0; background:#000; z-index:9999; display:none; flex-direction:column; align-items:center; justify-content:center;">
         <h2 style="color:var(--primary)">جاري الانتقال...</h2>
         <div style="font-size:45px; margin-top:15px" id="timer">3</div>
+    </div>
+
+    <div id="gallery-screen" class="full-modal">
+        <div class="modal-content" style="max-width: 800px;">
+            <h2 style="text-align:center; margin-bottom:20px; color:var(--primary)">معرض الصور والمنشورات</h2>
+            <div id="gallery-container"></div>
+            <button class="btn-action" style="background:#333" onclick="App.closeModals()">إغلاق المعرض</button>
+        </div>
     </div>
 
     <div id="auth-screen" class="full-modal">
@@ -100,25 +123,26 @@
     <div id="admin-screen" class="full-modal">
         <div class="modal-content">
             <h2 style="text-align:center; color:var(--primary)">لوحة التحكم</h2>
-            <div class="btn-plus" onclick="App.openManager()"><i class="fas fa-plus"></i></div>
-            <p style="text-align:center; font-size:13px; margin-bottom:20px; color:var(--sub)">إدارة قائمة الفيديوهات والمحتوى</p>
+            
+            <div class="admin-btns-row">
+                <div class="btn-manage-box" onclick="App.openManager('video')">
+                    <i class="fas fa-video"></i>
+                    <span>إدارة الفيديوهات</span>
+                </div>
+                <div class="btn-manage-box" onclick="App.openManager('image')">
+                    <i class="fas fa-images"></i>
+                    <span>إدارة الصور</span>
+                </div>
+            </div>
+
             <label>الأمان</label>
             <input type="text" id="adm-user" placeholder="تعديل اسم المستخدم">
             <input type="password" id="adm-pass" placeholder="تعديل الرمز السري">
             <label>بيانات المنصة</label>
             <input type="text" id="adm-name" placeholder="اسم المنصة">
             <input type="text" id="adm-avatar" placeholder="رابط صورة المسؤول">
-            <label>شريط الأخبار العاجلة</label>
-            <select id="adm-news-active"><option value="on">تشغيل الشريط</option><option value="off">إيقاف الشريط</option></select>
+            <label>شريط الأخبار</label>
             <input type="text" id="adm-news-text" placeholder="نص الخبر">
-            <input type="text" id="adm-news-link" placeholder="رابط الخبر (اختياري)">
-            <label>روابط التواصل</label>
-            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px">
-                <input type="text" id="adm-fb" placeholder="فيسبوك">
-                <input type="text" id="adm-tk" placeholder="تيك توك">
-                <input type="text" id="adm-ig" placeholder="انستجرام">
-                <input type="text" id="adm-wa" placeholder="واتساب">
-            </div>
             <button class="btn-action" onclick="App.saveSettings()">حفظ كافة الإعدادات</button>
             <button class="btn-action" style="background:#333" onclick="App.closeModals()">إغلاق</button>
         </div>
@@ -126,14 +150,14 @@
 
     <div id="manager-screen" class="full-modal">
         <div class="modal-content" style="max-width:750px">
-            <h2 style="color:var(--primary)">إضافة فيديو جديد</h2>
+            <h2 id="manager-title" style="color:var(--primary)">إضافة جديد</h2>
             <div style="background:#1a1a1a; padding:15px; border-radius:15px; border:2px dashed var(--primary); margin-bottom:25px">
-                <input type="text" id="new-title" placeholder="عنوان الفيديو / الصورة">
-                <input type="text" id="new-url" placeholder="رابط جوجل درايف أو يوتيوب">
-                <textarea id="new-desc" rows="3" placeholder="وصف الفيديو"></textarea>
-                <button class="btn-action" onclick="App.addNewItem()">إضافة إلى المنصة الآن</button>
+                <input type="text" id="new-title" placeholder="العنوان">
+                <input type="text" id="new-url" placeholder="الرابط المباشر">
+                <textarea id="new-desc" rows="3" placeholder="الوصف أو النص"></textarea>
+                <button class="btn-action" id="add-btn-final" onclick="App.addNewItem()">إضافة الآن</button>
             </div>
-            <h3 style="margin-bottom:15px">تعديل المحتوى الحالي</h3>
+            <h3 style="margin-bottom:15px">تعديل الحالي</h3>
             <div id="manage-list"></div>
             <button class="btn-action" style="background:#333" onclick="App.backToAdmin()">العودة للخلف</button>
         </div>
@@ -144,6 +168,12 @@
             <i class="fas fa-bars" style="font-size:22px; cursor:pointer;" onclick="App.toggleMenu()"></i>
             <span id="ui-site-name" style="font-weight:900; font-size:1.2rem">...</span>
         </div>
+        
+        <div class="search-box">
+            <input type="text" id="search-input" placeholder="ابحث عن فيديو..." oninput="App.searchVideos(this.value)">
+            <i class="fas fa-search"></i>
+        </div>
+
         <i class="fas fa-adjust" style="cursor:pointer; font-size:20px" onclick="App.toggleTheme()"></i>
     </header>
 
@@ -153,13 +183,14 @@
 
     <nav class="sidebar" id="sidebar">
         <h3 style="margin-bottom:20px; border-bottom:1px solid #333; padding-bottom:10px">القائمة</h3>
+        <div class="nav-link" onclick="App.openGallery()"><i class="fas fa-images" style="color:var(--primary)"></i> معرض الصور</div>
+        <hr style="opacity:0.1; margin:15px 0">
         <div class="nav-link" onclick="App.social('facebook')"><i class="fab fa-facebook" style="color:#1877F2"></i> Facebook</div>
         <div class="nav-link" onclick="App.social('tiktok')"><i class="fab fa-tiktok"></i> TikTok</div>
         <div class="nav-link" onclick="App.social('instagram')"><i class="fab fa-instagram" style="color:#E1306C"></i> Instagram</div>
         <div class="nav-link" onclick="App.social('whatsapp')"><i class="fab fa-whatsapp" style="color:#25D366"></i> WhatsApp</div>
         <hr style="opacity:0.1; margin:15px 0">
-        <div class="nav-link" onclick="App.switchLang()"><i class="fas fa-language"></i> <span id="ui-lang">English</span></div>
-        <div class="nav-link" style="color:var(--primary)" onclick="App.showAuth()"><i class="fas fa-user-cog"></i> لوحة الإدارة</div>
+        <div class="nav-link" onclick="App.showAuth()"><i class="fas fa-user-cog"></i> لوحة الإدارة</div>
         <img src="" id="ui-avatar" class="admin-banner">
     </nav>
 
@@ -171,12 +202,14 @@
                 <div id="desc-panel"></div>
             </div>
         </section>
+
         <h2 class="section-label">فيديوهات مقترحة</h2>
         <div class="suggestions" id="video-grid"></div>
     </main>
 
     <script>
         const App = {
+            currentMode: 'video', // 'video' or 'image'
             db: {
                 auth: { user: 'maher', pass: '1234' },
                 siteName: 'MAHER PLATFORM',
@@ -184,65 +217,82 @@
                 news: { active: true, text: 'أهلاً بكم في المنصة المحدثة', link: '#' },
                 social: { facebook: '#', tiktok: '#', instagram: '#', whatsapp: '#' },
                 items: [
-                    { t: 'رابط فيديو تجريبي من الدرايف', u: 'https://drive.google.com/file/d/18ONifRffE2lNnsVEiHiU3Az3z7qEr6Gx/view', d: 'هذا مثال لفيديو يعمل مباشرة من جوجل درايف.', type: 'video' }
-                ]
+                    { t: 'فيديو ترحيبي', u: 'https://www.w3schools.com/html/mov_bbb.mp4', d: 'أهلاً بك في منصتك.', type: 'video' }
+                ],
+                gallery: [] // مصفوفة الصور المنفصلة
             },
 
             init() {
-                const saved = localStorage.getItem('MAHER_PRO_DATA_V4');
+                const saved = localStorage.getItem('MAHER_PRO_DATA_V7');
                 if(saved) this.db = JSON.parse(saved);
                 this.render();
-            },
-
-            fixDriveUrl(url) {
-                if (url.includes('drive.google.com')) {
-                    let id = "";
-                    if (url.includes('/file/d/')) id = url.split('/file/d/')[1].split('/')[0];
-                    else if (url.includes('id=')) id = url.split('id=')[1].split('&')[0];
-                    return id ? `https://drive.google.com/uc?export=download&id=${id}` : url;
-                }
-                return url;
+                if(this.db.items.length > 0) this.load(0);
             },
 
             render() {
                 document.getElementById('ui-site-name').innerText = this.db.siteName;
                 document.getElementById('ui-avatar').src = this.db.avatar;
-                const n = document.getElementById('news-container');
-                n.style.display = this.db.news.active ? 'block' : 'none';
+                document.getElementById('news-container').style.display = this.db.news.active ? 'block' : 'none';
                 document.getElementById('ui-news-text').innerText = this.db.news.text;
 
-                const grid = document.getElementById('video-grid');
-                grid.innerHTML = this.db.items.map((it, i) => {
-                    let thumb = it.type==='image' ? this.fixDriveUrl(it.u) : 'https://via.placeholder.com/400x225/222/fff?text=▶';
-                    return `
-                        <div class="thumb-item" onclick="App.load(${i})">
-                            <div class="thumb-img-wrapper"><img src="${thumb}" class="thumb-img"></div>
-                            <div class="thumb-text">${it.t}</div>
-                        </div>`;
-                }).join('');
-
-                if(this.db.items.length > 0) this.load(0);
+                this.renderVideoGrid(this.db.items);
                 this.syncInputs();
+            },
+
+            renderVideoGrid(list) {
+                const grid = document.getElementById('video-grid');
+                grid.innerHTML = list.map((it, i) => `
+                    <div class="thumb-item" onclick="App.load(${i})">
+                        <div class="thumb-img-wrapper">
+                            <img src="https://via.placeholder.com/400x225/222/fff?text=▶" class="thumb-img">
+                        </div>
+                        <div class="thumb-text">${it.t}</div>
+                    </div>
+                `).join('');
             },
 
             load(idx) {
                 const it = this.db.items[idx];
                 if(!it) return;
                 document.getElementById('active-title').innerText = it.t;
-                const linkedDesc = it.d.replace(/(https?:\/\/[^\s]+)/g, '<a href="$1" target="_blank">$1</a>');
-                document.getElementById('desc-panel').innerHTML = linkedDesc;
+                document.getElementById('desc-panel').innerText = it.d;
 
                 const player = document.getElementById('main-player');
-                const finalUrl = this.fixDriveUrl(it.u);
-
-                if(finalUrl.includes('youtube.com') || finalUrl.includes('youtu.be')) {
-                    const id = finalUrl.includes('v=') ? finalUrl.split('v=')[1].split('&')[0] : finalUrl.split('/').pop();
+                if(it.u.includes('youtube.com') || it.u.includes('youtu.be')) {
+                    const id = it.u.includes('v=') ? it.u.split('v=')[1].split('&')[0] : it.u.split('/').pop();
                     player.innerHTML = `<iframe src="https://www.youtube.com/embed/${id}?autoplay=1" allowfullscreen></iframe>`;
                 } else {
-                    const isImg = finalUrl.match(/\.(jpg|jpeg|png|webp|gif)$/i) || it.type === 'image';
-                    player.innerHTML = isImg ? `<img src="${finalUrl}">` : `<video controls autoplay style="width:100%"><source src="${finalUrl}" type="video/mp4"></video>`;
+                    player.innerHTML = `<video controls autoplay><source src="${it.u}"></video>`;
                 }
                 window.scrollTo({ top: 0, behavior: 'smooth' });
+            },
+
+            searchVideos(val) {
+                const filtered = this.db.items.filter(it => it.t.toLowerCase().includes(val.toLowerCase()));
+                this.renderVideoGrid(filtered);
+            },
+
+            // نظام الصور (Gallery)
+            openGallery() {
+                this.toggleMenu();
+                document.getElementById('gallery-screen').style.display = 'flex';
+                const container = document.getElementById('gallery-container');
+                container.innerHTML = this.db.gallery.length > 0 ? this.db.gallery.map(img => `
+                    <div class="gallery-item">
+                        <img src="${img.u}" class="gallery-img">
+                        <div class="gallery-title">${img.t}</div>
+                        <div class="gallery-desc">${img.d}</div>
+                    </div>
+                `).join('') : '<p style="text-align:center; padding:20px;">لا توجد صور حالياً.</p>';
+            },
+
+            // إدارة الإضافات
+            openManager(mode) {
+                this.currentMode = mode;
+                document.getElementById('admin-screen').style.display = 'none';
+                document.getElementById('manager-screen').style.display = 'flex';
+                document.getElementById('manager-title').innerText = mode === 'video' ? 'إدارة الفيديوهات' : 'إدارة الصور';
+                this.renderManageList();
             },
 
             addNewItem() {
@@ -250,73 +300,86 @@
                 const u = document.getElementById('new-url').value;
                 const d = document.getElementById('new-desc').value;
                 if(!t || !u) return alert("أدخل البيانات");
-                const isImg = u.match(/\.(jpg|jpeg|png|webp|gif)$/i);
-                this.db.items.unshift({ t, u, d, type: isImg?'image':'video' });
-                this.save(); this.render(); this.renderManageList();
-                document.getElementById('new-title').value = ''; document.getElementById('new-url').value = ''; document.getElementById('new-desc').value = '';
+
+                const newItem = { t, u, d, type: this.currentMode };
+                
+                if(this.currentMode === 'video') {
+                    this.db.items.unshift(newItem);
+                } else {
+                    this.db.gallery.unshift(newItem);
+                }
+                
+                this.save();
+                this.renderManageList();
+                document.getElementById('new-title').value = '';
+                document.getElementById('new-url').value = '';
+                document.getElementById('new-desc').value = '';
+                alert("تمت الإضافة!");
             },
 
             renderManageList() {
                 const list = document.getElementById('manage-list');
-                list.innerHTML = this.db.items.map((it, i) => `
+                const target = this.currentMode === 'video' ? this.db.items : this.db.gallery;
+                list.innerHTML = target.map((it, i) => `
                     <div class="item-manager-card">
                         <input type="text" value="${it.t}" onchange="App.editItem(${i}, 't', this.value)">
                         <input type="text" value="${it.u}" onchange="App.editItem(${i}, 'u', this.value)">
                         <textarea onchange="App.editItem(${i}, 'd', this.value)">${it.d}</textarea>
-                        <button class="btn-action" style="background:#555; padding:5px" onclick="App.deleteItem(${i})">حذف</button>
-                    </div>`).join('');
+                        <button class="btn-action" style="background:#555; font-size:12px; padding:5px" onclick="App.deleteItem(${i})">حذف</button>
+                    </div>
+                `).join('');
             },
 
-            editItem(i, key, val) { this.db.items[i][key] = val; this.save(); this.render(); },
-            deleteItem(i) { if(confirm("حذف؟")) { this.db.items.splice(i,1); this.save(); this.render(); this.renderManageList(); } },
+            editItem(i, key, val) {
+                if(this.currentMode === 'video') this.db.items[i][key] = val;
+                else this.db.gallery[i][key] = val;
+                this.save();
+            },
+
+            deleteItem(i) {
+                if(confirm("متأكد؟")) {
+                    if(this.currentMode === 'video') this.db.items.splice(i,1);
+                    else this.db.gallery.splice(i,1);
+                    this.save();
+                    this.renderManageList();
+                }
+            },
+
             saveSettings() {
                 this.db.auth.user = document.getElementById('adm-user').value || this.db.auth.user;
                 this.db.auth.pass = document.getElementById('adm-pass').value || this.db.auth.pass;
                 this.db.siteName = document.getElementById('adm-name').value || this.db.siteName;
                 this.db.avatar = document.getElementById('adm-avatar').value || this.db.avatar;
-                this.db.news.active = document.getElementById('adm-news-active').value === 'on';
                 this.db.news.text = document.getElementById('adm-news-text').value;
-                this.db.news.link = document.getElementById('adm-news-link').value;
-                this.db.social.facebook = document.getElementById('adm-fb').value;
-                this.db.social.tiktok = document.getElementById('adm-tk').value;
-                this.db.social.instagram = document.getElementById('adm-ig').value;
-                this.db.social.whatsapp = document.getElementById('adm-wa').value;
                 this.save(); this.render(); this.closeModals(); alert("تم الحفظ!");
             },
-            save() { localStorage.setItem('MAHER_PRO_DATA_V4', JSON.stringify(this.db)); },
+
+            save() { localStorage.setItem('MAHER_PRO_DATA_V7', JSON.stringify(this.db)); },
+            
             syncInputs() {
                 document.getElementById('adm-user').value = this.db.auth.user;
                 document.getElementById('adm-name').value = this.db.siteName;
                 document.getElementById('adm-avatar').value = this.db.avatar;
                 document.getElementById('adm-news-text').value = this.db.news.text;
-                document.getElementById('adm-news-link').value = this.db.news.link;
-                document.getElementById('adm-fb').value = this.db.social.facebook;
-                document.getElementById('adm-tk').value = this.db.social.tiktok;
-                document.getElementById('adm-ig').value = this.db.social.instagram;
-                document.getElementById('adm-wa').value = this.db.social.whatsapp;
             },
+
             showAuth() { this.toggleMenu(); document.getElementById('auth-screen').style.display = 'flex'; },
             checkAuth() {
-                if(document.getElementById('login-user').value === this.db.auth.user && document.getElementById('login-pass').value === this.db.auth.pass) {
-                    this.closeModals(); document.getElementById('admin-screen').style.display = 'flex';
+                if(document.getElementById('login-user').value === this.db.auth.user && 
+                   document.getElementById('login-pass').value === this.db.auth.pass) {
+                    this.closeModals();
+                    document.getElementById('admin-screen').style.display = 'flex';
                 } else alert("خطأ!");
             },
-            openManager() { document.getElementById('admin-screen').style.display = 'none'; document.getElementById('manager-screen').style.display = 'flex'; this.renderManageList(); },
             backToAdmin() { document.getElementById('manager-screen').style.display = 'none'; document.getElementById('admin-screen').style.display = 'flex'; },
             toggleMenu() { document.getElementById('sidebar').classList.toggle('active'); },
             closeModals() { document.querySelectorAll('.full-modal').forEach(m => m.style.display = 'none'); },
             toggleDesc() { const d = document.getElementById('desc-panel'); d.style.display = d.style.display==='block' ? 'none' : 'block'; },
             toggleTheme() { document.body.setAttribute('data-theme', document.body.getAttribute('data-theme')==='dark'?'light':'dark'); },
-            social(p) { window.location.href = this.db.social[p]; },
-            switchLang() {
-                const h = document.getElementById('main-html');
-                h.dir = h.dir === 'rtl' ? 'ltr' : 'rtl';
-                document.getElementById('ui-lang').innerText = h.dir === 'rtl' ? 'English' : 'العربية';
-            },
-            newsClick() { if(this.db.news.link !== '#') window.location.href = this.db.news.link; }
+            social(p) { window.location.href = this.db.social[p]; }
         };
+
         window.onload = () => App.init();
-        window.onclick = (e) => { if(e.target.id === 'sidebar') App.toggleMenu(); }
     </script>
 </body>
-                    </html>
+</html>
