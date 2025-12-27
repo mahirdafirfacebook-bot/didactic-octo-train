@@ -59,10 +59,6 @@
         .thumb-item:hover { transform: scale(1.03); }
         .thumb-img-wrapper { width: 100%; aspect-ratio: 16/9; border-radius: 12px; overflow: hidden; background: #1a1a1a; border: 1px solid #333; position: relative; }
         .thumb-img { width: 100%; height: 100%; object-fit: cover; }
-        
-        /* علامة تمييز نوع المحتوى */
-        .type-badge { position: absolute; bottom: 8px; left: 8px; background: rgba(0,0,0,0.8); color: #fff; padding: 2px 8px; border-radius: 4px; font-size: 10px; }
-
         .thumb-text { margin-top: 10px; font-weight: 700; font-size: 0.9rem; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 
         .full-modal {
@@ -105,20 +101,17 @@
         <div class="modal-content">
             <h2 style="text-align:center; color:var(--primary)">لوحة التحكم</h2>
             <div class="btn-plus" onclick="App.openManager()"><i class="fas fa-plus"></i></div>
-            <p style="text-align:center; font-size:13px; margin-bottom:20px; color:var(--sub)">إدارة قائمة المحتوى</p>
+            <p style="text-align:center; font-size:13px; margin-bottom:20px; color:var(--sub)">إدارة قائمة الفيديوهات والمحتوى</p>
             <label>الأمان</label>
             <input type="text" id="adm-user" placeholder="تعديل اسم المستخدم">
             <input type="password" id="adm-pass" placeholder="تعديل الرمز السري">
             <label>بيانات المنصة</label>
             <input type="text" id="adm-name" placeholder="اسم المنصة">
             <input type="text" id="adm-avatar" placeholder="رابط صورة المسؤول">
-            <label>شريط الأخبار</label>
-            <select id="adm-news-active">
-                <option value="on">تشغيل الشريط</option>
-                <option value="off">إيقاف الشريط</option>
-            </select>
+            <label>شريط الأخبار العاجلة</label>
+            <select id="adm-news-active"><option value="on">تشغيل الشريط</option><option value="off">إيقاف الشريط</option></select>
             <input type="text" id="adm-news-text" placeholder="نص الخبر">
-            <input type="text" id="adm-news-link" placeholder="رابط الخبر">
+            <input type="text" id="adm-news-link" placeholder="رابط الخبر (اختياري)">
             <label>روابط التواصل</label>
             <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px">
                 <input type="text" id="adm-fb" placeholder="فيسبوك">
@@ -133,14 +126,14 @@
 
     <div id="manager-screen" class="full-modal">
         <div class="modal-content" style="max-width:750px">
-            <h2 style="color:var(--primary)">إضافة محتوى جديد</h2>
+            <h2 style="color:var(--primary)">إضافة فيديو جديد</h2>
             <div style="background:#1a1a1a; padding:15px; border-radius:15px; border:2px dashed var(--primary); margin-bottom:25px">
-                <input type="text" id="new-title" placeholder="العنوان">
-                <input type="text" id="new-url" placeholder="رابط (يوتيوب، صورة، فيسبوك، تيك توك)">
-                <textarea id="new-desc" rows="3" placeholder="وصف المحتوى"></textarea>
-                <button class="btn-action" onclick="App.addNewItem()">إضافة الآن</button>
+                <input type="text" id="new-title" placeholder="عنوان الفيديو / الصورة">
+                <input type="text" id="new-url" placeholder="رابط جوجل درايف أو يوتيوب">
+                <textarea id="new-desc" rows="3" placeholder="وصف الفيديو"></textarea>
+                <button class="btn-action" onclick="App.addNewItem()">إضافة إلى المنصة الآن</button>
             </div>
-            <h3 style="margin-bottom:15px">تعديل الحالي</h3>
+            <h3 style="margin-bottom:15px">تعديل المحتوى الحالي</h3>
             <div id="manage-list"></div>
             <button class="btn-action" style="background:#333" onclick="App.backToAdmin()">العودة للخلف</button>
         </div>
@@ -178,8 +171,7 @@
                 <div id="desc-panel"></div>
             </div>
         </section>
-
-        <h2 class="section-label">المحتوى المقترح</h2>
+        <h2 class="section-label">فيديوهات مقترحة</h2>
         <div class="suggestions" id="video-grid"></div>
     </main>
 
@@ -192,7 +184,7 @@
                 news: { active: true, text: 'أهلاً بكم في المنصة المحدثة', link: '#' },
                 social: { facebook: '#', tiktok: '#', instagram: '#', whatsapp: '#' },
                 items: [
-                    { t: 'مرحباً بك في منصة ماهر', u: 'https://www.youtube.com/watch?v=ScMzIvxBSi4', d: 'هذا محتوى تجريبي.', type: 'video' }
+                    { t: 'رابط فيديو تجريبي من الدرايف', u: 'https://drive.google.com/file/d/18ONifRffE2lNnsVEiHiU3Az3z7qEr6Gx/view', d: 'هذا مثال لفيديو يعمل مباشرة من جوجل درايف.', type: 'video' }
                 ]
             },
 
@@ -202,22 +194,14 @@
                 this.render();
             },
 
-            // دالة ذكية لاستخراج الصورة المصغرة من أي رابط
-            getPreviewImage(url) {
-                // 1. يوتيوب
-                if(url.includes('youtube.com') || url.includes('youtu.be')) {
-                    const id = url.includes('v=') ? url.split('v=')[1].split('&')[0] : url.split('/').pop();
-                    return `https://img.youtube.com/vi/${id}/mqdefault.jpg`;
+            fixDriveUrl(url) {
+                if (url.includes('drive.google.com')) {
+                    let id = "";
+                    if (url.includes('/file/d/')) id = url.split('/file/d/')[1].split('/')[0];
+                    else if (url.includes('id=')) id = url.split('id=')[1].split('&')[0];
+                    return id ? `https://drive.google.com/uc?export=download&id=${id}` : url;
                 }
-                // 2. إذا كان الرابط هو صورة أصلاً
-                if(url.match(/\.(jpg|jpeg|png|webp|gif)$/i)) {
-                    return url;
-                }
-                // 3. فيسبوك، تيك توك، إلخ (نستخدم صورة افتراضية ملونة)
-                if(url.includes('facebook.com')) return 'https://img.freepik.com/free-vector/facebook-icon_53876-7635.jpg';
-                if(url.includes('tiktok.com')) return 'https://img.freepik.com/free-vector/tiktok-icon_53876-7635.jpg';
-                
-                return 'https://via.placeholder.com/400x225/222/fff?text=MEDIA+CONTENT';
+                return url;
             },
 
             render() {
@@ -228,15 +212,14 @@
                 document.getElementById('ui-news-text').innerText = this.db.news.text;
 
                 const grid = document.getElementById('video-grid');
-                grid.innerHTML = this.db.items.map((it, i) => `
-                    <div class="thumb-item" onclick="App.load(${i})">
-                        <div class="thumb-img-wrapper">
-                            <img src="${this.getPreviewImage(it.u)}" class="thumb-img">
-                            <span class="type-badge">${it.u.includes('youtube') ? 'YouTube' : 'Media'}</span>
-                        </div>
-                        <div class="thumb-text">${it.t}</div>
-                    </div>
-                `).join('');
+                grid.innerHTML = this.db.items.map((it, i) => {
+                    let thumb = it.type==='image' ? this.fixDriveUrl(it.u) : 'https://via.placeholder.com/400x225/222/fff?text=▶';
+                    return `
+                        <div class="thumb-item" onclick="App.load(${i})">
+                            <div class="thumb-img-wrapper"><img src="${thumb}" class="thumb-img"></div>
+                            <div class="thumb-text">${it.t}</div>
+                        </div>`;
+                }).join('');
 
                 if(this.db.items.length > 0) this.load(0);
                 this.syncInputs();
@@ -250,23 +233,14 @@
                 document.getElementById('desc-panel').innerHTML = linkedDesc;
 
                 const player = document.getElementById('main-player');
-                
-                // تشغيل يوتيوب
-                if(it.u.includes('youtube.com') || it.u.includes('youtu.be')) {
-                    const id = it.u.includes('v=') ? it.u.split('v=')[1].split('&')[0] : it.u.split('/').pop();
+                const finalUrl = this.fixDriveUrl(it.u);
+
+                if(finalUrl.includes('youtube.com') || finalUrl.includes('youtu.be')) {
+                    const id = finalUrl.includes('v=') ? finalUrl.split('v=')[1].split('&')[0] : finalUrl.split('/').pop();
                     player.innerHTML = `<iframe src="https://www.youtube.com/embed/${id}?autoplay=1" allowfullscreen></iframe>`;
-                } 
-                // تشغيل صورة
-                else if(it.u.match(/\.(jpg|jpeg|png|webp|gif)$/i)) {
-                    player.innerHTML = `<img src="${it.u}" style="object-fit:contain">`;
-                }
-                // روابط المنصات الأخرى (عرضها في Frame إذا سمحت أو وضع رابط مباشر)
-                else {
-                    player.innerHTML = `<div style="display:flex; flex-direction:column; align-items:center; justify-content:center; height:100%; padding:20px; text-align:center">
-                        <i class="fas fa-external-link-alt" style="font-size:40px; color:var(--primary); margin-bottom:15px"></i>
-                        <p>هذا المحتوى يتطلب فتحه في منصته الأصلية</p>
-                        <a href="${it.u}" target="_blank" class="btn-action" style="max-width:200px; margin-top:15px">فتح الرابط الآن</a>
-                    </div>`;
+                } else {
+                    const isImg = finalUrl.match(/\.(jpg|jpeg|png|webp|gif)$/i) || it.type === 'image';
+                    player.innerHTML = isImg ? `<img src="${finalUrl}">` : `<video controls autoplay style="width:100%"><source src="${finalUrl}" type="video/mp4"></video>`;
                 }
                 window.scrollTo({ top: 0, behavior: 'smooth' });
             },
@@ -275,13 +249,11 @@
                 const t = document.getElementById('new-title').value;
                 const u = document.getElementById('new-url').value;
                 const d = document.getElementById('new-desc').value;
-                if(!t || !u) return alert("أكمل البيانات");
-                this.db.items.unshift({ t, u, d });
+                if(!t || !u) return alert("أدخل البيانات");
+                const isImg = u.match(/\.(jpg|jpeg|png|webp|gif)$/i);
+                this.db.items.unshift({ t, u, d, type: isImg?'image':'video' });
                 this.save(); this.render(); this.renderManageList();
-                document.getElementById('new-title').value = '';
-                document.getElementById('new-url').value = '';
-                document.getElementById('new-desc').value = '';
-                alert("تمت الإضافة!");
+                document.getElementById('new-title').value = ''; document.getElementById('new-url').value = ''; document.getElementById('new-desc').value = '';
             },
 
             renderManageList() {
@@ -290,18 +262,18 @@
                     <div class="item-manager-card">
                         <input type="text" value="${it.t}" onchange="App.editItem(${i}, 't', this.value)">
                         <input type="text" value="${it.u}" onchange="App.editItem(${i}, 'u', this.value)">
-                        <button class="btn-action" style="background:#555" onclick="App.deleteItem(${i})">حذف</button>
-                    </div>
-                `).join('');
+                        <textarea onchange="App.editItem(${i}, 'd', this.value)">${it.d}</textarea>
+                        <button class="btn-action" style="background:#555; padding:5px" onclick="App.deleteItem(${i})">حذف</button>
+                    </div>`).join('');
             },
 
-            editItem(i, k, v) { this.db.items[i][k] = v; this.save(); this.render(); },
+            editItem(i, key, val) { this.db.items[i][key] = val; this.save(); this.render(); },
             deleteItem(i) { if(confirm("حذف؟")) { this.db.items.splice(i,1); this.save(); this.render(); this.renderManageList(); } },
             saveSettings() {
-                this.db.auth.user = document.getElementById('adm-user').value;
-                this.db.auth.pass = document.getElementById('adm-pass').value;
-                this.db.siteName = document.getElementById('adm-name').value;
-                this.db.avatar = document.getElementById('adm-avatar').value;
+                this.db.auth.user = document.getElementById('adm-user').value || this.db.auth.user;
+                this.db.auth.pass = document.getElementById('adm-pass').value || this.db.auth.pass;
+                this.db.siteName = document.getElementById('adm-name').value || this.db.siteName;
+                this.db.avatar = document.getElementById('adm-avatar').value || this.db.avatar;
                 this.db.news.active = document.getElementById('adm-news-active').value === 'on';
                 this.db.news.text = document.getElementById('adm-news-text').value;
                 this.db.news.link = document.getElementById('adm-news-link').value;
@@ -325,10 +297,9 @@
             },
             showAuth() { this.toggleMenu(); document.getElementById('auth-screen').style.display = 'flex'; },
             checkAuth() {
-                if(document.getElementById('login-user').value === this.db.auth.user && 
-                   document.getElementById('login-pass').value === this.db.auth.pass) {
+                if(document.getElementById('login-user').value === this.db.auth.user && document.getElementById('login-pass').value === this.db.auth.pass) {
                     this.closeModals(); document.getElementById('admin-screen').style.display = 'flex';
-                } else alert("بيانات خاطئة");
+                } else alert("خطأ!");
             },
             openManager() { document.getElementById('admin-screen').style.display = 'none'; document.getElementById('manager-screen').style.display = 'flex'; this.renderManageList(); },
             backToAdmin() { document.getElementById('manager-screen').style.display = 'none'; document.getElementById('admin-screen').style.display = 'flex'; },
@@ -345,6 +316,7 @@
             newsClick() { if(this.db.news.link !== '#') window.location.href = this.db.news.link; }
         };
         window.onload = () => App.init();
+        window.onclick = (e) => { if(e.target.id === 'sidebar') App.toggleMenu(); }
     </script>
 </body>
-</html>
+                    </html>
