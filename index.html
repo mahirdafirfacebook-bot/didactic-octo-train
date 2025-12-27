@@ -24,12 +24,21 @@
             box-shadow: 0 2px 10px rgba(0,0,0,0.5);
         }
 
-        .search-box { flex: 1; margin: 0 20px; max-width: 400px; position: relative; }
-        .search-box input {
-            width: 100%; padding: 8px 40px 8px 15px; background: #222; border: 1px solid #444;
+        /* تعديل أدوات الرأس */
+        .header-tools { display: flex; align-items: center; gap: 20px; }
+        .tool-icon { cursor: pointer; font-size: 1.2rem; transition: 0.3s; color: var(--text); }
+        .tool-icon:hover { color: var(--primary); }
+
+        .search-container { position: relative; display: flex; align-items: center; }
+        .search-input-wrapper { 
+            position: absolute; right: 0; top: 50%; transform: translateY(-50%);
+            width: 0; overflow: hidden; transition: 0.4s; background: var(--surface);
+        }
+        .search-container.active .search-input-wrapper { width: 200px; right: 30px; }
+        .search-input-wrapper input {
+            width: 100%; padding: 8px 15px; background: #222; border: 1px solid #444;
             color: white; border-radius: 20px; outline: none;
         }
-        .search-box i { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: var(--sub); }
 
         .sidebar {
             position: fixed; right: -100%; top: 0; bottom: 0; width: 280px;
@@ -75,7 +84,6 @@
         .btn-manage-box { background: #1a1a1a; border: 1px solid #333; padding: 15px; border-radius: 15px; text-align: center; cursor: pointer; }
         .admin-banner { width: 160px; height: 160px; border-radius: 20px; object-fit: cover; border: 3px solid var(--primary); margin: 20px auto; display: block; }
         
-        /* تنسيق خانات التواصل الاجتماعي في لوحة الإدارة */
         .social-input-group { position: relative; margin-bottom: 20px; }
         .social-input-group i { position: absolute; right: 10px; top: 40px; color: var(--primary); font-size: 1.2rem; }
         .social-input-group input { padding-right: 40px; }
@@ -83,6 +91,14 @@
 
         .gallery-item { margin-bottom: 30px; border-bottom: 1px solid #333; padding-bottom: 20px; }
         .gallery-img { width: 100%; border-radius: 15px; }
+
+        /* تنسيق قائمة اللغات */
+        .lang-list { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .lang-item { 
+            padding: 15px; background: #222; border-radius: 10px; text-align: center; 
+            cursor: pointer; border: 1px solid #333; transition: 0.3s; font-weight: bold;
+        }
+        .lang-item:hover { border-color: var(--primary); background: var(--primary); }
     </style>
 </head>
 <body data-theme="dark">
@@ -90,6 +106,23 @@
     <div id="redir-layer" style="position:fixed; inset:0; background:#000; z-index:9999; display:none; flex-direction:column; align-items:center; justify-content:center;">
         <h2 style="color:var(--primary)">جاري الانتقال...</h2>
         <div style="font-size:60px; font-weight:900; margin-top:20px" id="timer">3</div>
+    </div>
+
+    <div id="lang-screen" class="full-modal">
+        <div class="modal-content">
+            <h2 style="text-align:center; color:var(--primary); margin-bottom:20px">اختر اللغة / Select Language</h2>
+            <div class="lang-list">
+                <div class="lang-item" onclick="App.setLang('ar')">العربية</div>
+                <div class="lang-item" onclick="App.setLang('en')">English</div>
+                <div class="lang-item" onclick="App.setLang('he')">עברית</div>
+                <div class="lang-item" onclick="App.setLang('fr')">Français</div>
+                <div class="lang-item" onclick="App.setLang('de')">Deutsch</div>
+                <div class="lang-item" onclick="App.setLang('es')">Español</div>
+                <div class="lang-item" onclick="App.setLang('tr')">Türkçe</div>
+                <div class="lang-item" onclick="App.setLang('ru')">Русский</div>
+            </div>
+            <button class="btn-action" style="background:#333; margin-top:20px" onclick="App.closeModals()">إغلاق</button>
+        </div>
     </div>
 
     <div id="gallery-screen" class="full-modal">
@@ -181,11 +214,19 @@
             <i class="fas fa-bars" style="font-size:22px; cursor:pointer;" onclick="App.toggleMenu()"></i>
             <span id="ui-site-name" style="font-weight:900;">...</span>
         </div>
-        <div class="search-box">
-            <input type="text" id="search-input" placeholder="بحث..." oninput="App.search(this.value)">
-            <i class="fas fa-search"></i>
+
+        <div class="header-tools">
+            <div class="search-container" id="search-container">
+                <i class="fas fa-search tool-icon" onclick="App.toggleSearch()"></i>
+                <div class="search-input-wrapper">
+                    <input type="text" id="search-input" placeholder="بحث..." oninput="App.search(this.value)">
+                </div>
+            </div>
+
+            <i class="fas fa-globe tool-icon" onclick="App.showLang()"></i>
+
+            <i class="fas fa-adjust tool-icon" onclick="App.toggleTheme()"></i>
         </div>
-        <i class="fas fa-adjust" style="cursor:pointer;" onclick="App.toggleTheme()"></i>
     </header>
 
     <div id="news-container" onclick="App.newsClick()">
@@ -278,6 +319,24 @@
                 window.scrollTo({top:0, behavior:'smooth'});
             },
 
+            // وظائف جديدة
+            toggleSearch() {
+                document.getElementById('search-container').classList.toggle('active');
+            },
+
+            showLang() {
+                document.getElementById('lang-screen').style.display = 'flex';
+            },
+
+            setLang(code) {
+                const html = document.getElementById('main-html');
+                if(code === 'ar' || code === 'he') html.dir = 'rtl';
+                else html.dir = 'ltr';
+                html.lang = code;
+                this.closeModals();
+                alert("Language changed to: " + code);
+            },
+
             search(v) {
                 const f = this.db.items.filter(it => it.t.toLowerCase().includes(v.toLowerCase()));
                 this.renderGrid(f);
@@ -301,7 +360,6 @@
                 let c = 3; t.innerText = c; l.style.display = 'flex';
                 
                 let targetUrl = this.db.social[p];
-                // معالجة رابط واتساب إذا كان رقماً فقط
                 if(p === 'whatsapp' && !targetUrl.startsWith('http')) {
                     targetUrl = `https://wa.me/${targetUrl}`;
                 }
@@ -398,4 +456,4 @@
         window.onload = () => App.init();
     </script>
 </body>
-</html>
+                </html>
