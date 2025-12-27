@@ -75,6 +75,12 @@
         .btn-manage-box { background: #1a1a1a; border: 1px solid #333; padding: 15px; border-radius: 15px; text-align: center; cursor: pointer; }
         .admin-banner { width: 160px; height: 160px; border-radius: 20px; object-fit: cover; border: 3px solid var(--primary); margin: 20px auto; display: block; }
         
+        /* تنسيق خانات التواصل الاجتماعي في لوحة الإدارة */
+        .social-input-group { position: relative; margin-bottom: 20px; }
+        .social-input-group i { position: absolute; right: 10px; top: 40px; color: var(--primary); font-size: 1.2rem; }
+        .social-input-group input { padding-right: 40px; }
+        .social-input-group label { display: block; margin-bottom: 5px; font-weight: bold; color: var(--sub); font-size: 0.85rem; }
+
         .gallery-item { margin-bottom: 30px; border-bottom: 1px solid #333; padding-bottom: 20px; }
         .gallery-img { width: 100%; border-radius: 15px; }
     </style>
@@ -113,6 +119,8 @@
                 <div class="btn-manage-box" onclick="App.openManager('image')"><i class="fas fa-images"></i><br>الصور</div>
             </div>
 
+            <hr style="border: 0; border-top: 1px solid #333; margin-bottom: 20px;">
+
             <label>شريط الأخبار العاجلة</label>
             <select id="adm-news-active">
                 <option value="on">تشغيل</option>
@@ -121,17 +129,37 @@
             <input type="text" id="adm-news-text" placeholder="نص الخبر">
             <input type="text" id="adm-news-link" placeholder="رابط عند الضغط على الخبر">
 
-            <label>روابط التواصل الاجتماعي</label>
-            <input type="text" id="adm-fb" placeholder="رابط الفيسبوك">
-            <input type="text" id="adm-tk" placeholder="رابط تيك توك">
-            <input type="text" id="adm-ig" placeholder="رابط انستجرام">
-            <input type="text" id="adm-wa" placeholder="رابط واتساب">
+            <h3 style="margin: 20px 0 15px; color: var(--primary); font-size: 1rem; border-bottom: 1px solid #333; padding-bottom: 5px;">إدارة روابط التواصل الاجتماعي</h3>
+            
+            <div class="social-input-group">
+                <label>رابط فيسبوك (Facebook)</label>
+                <i class="fab fa-facebook"></i>
+                <input type="text" id="adm-fb" placeholder="https://facebook.com/your-page">
+            </div>
 
-            <label>الإعدادات العامة</label>
+            <div class="social-input-group">
+                <label>رابط تيك توك (TikTok)</label>
+                <i class="fab fa-tiktok"></i>
+                <input type="text" id="adm-tk" placeholder="https://tiktok.com/@your-user">
+            </div>
+
+            <div class="social-input-group">
+                <label>رابط انستجرام (Instagram)</label>
+                <i class="fab fa-instagram"></i>
+                <input type="text" id="adm-ig" placeholder="https://instagram.com/your-user">
+            </div>
+
+            <div class="social-input-group">
+                <label>رابط واتساب (WhatsApp)</label>
+                <i class="fab fa-whatsapp"></i>
+                <input type="text" id="adm-wa" placeholder="مثال: 212600000000">
+            </div>
+
+            <h3 style="margin: 20px 0 15px; color: var(--primary); font-size: 1rem; border-bottom: 1px solid #333; padding-bottom: 5px;">الإعدادات العامة</h3>
             <input type="text" id="adm-name" placeholder="اسم المنصة">
-            <input type="text" id="adm-avatar" placeholder="صورة المسؤول">
+            <input type="text" id="adm-avatar" placeholder="رابط صورة المسؤول">
 
-            <button class="btn-action" onclick="App.saveSettings()">حفظ الإعدادات</button>
+            <button class="btn-action" onclick="App.saveSettings()">حفظ كافة التغييرات</button>
             <button class="btn-action" style="background:#333" onclick="App.closeModals()">إغلاق</button>
         </div>
     </div>
@@ -168,10 +196,10 @@
         <h3 style="margin-bottom:20px; border-bottom:1px solid #333">القائمة</h3>
         <div class="nav-link" onclick="App.openGallery()"><i class="fas fa-images"></i> معرض الصور</div>
         <hr style="opacity:0.1; margin:15px 0">
-        <div class="nav-link" onclick="App.social('facebook')"><i class="fab fa-facebook"></i> Facebook</div>
+        <div class="nav-link" onclick="App.social('facebook')"><i class="fab fa-facebook" style="color:#1877F2"></i> Facebook</div>
         <div class="nav-link" onclick="App.social('tiktok')"><i class="fab fa-tiktok"></i> TikTok</div>
-        <div class="nav-link" onclick="App.social('instagram')"><i class="fab fa-instagram"></i> Instagram</div>
-        <div class="nav-link" onclick="App.social('whatsapp')"><i class="fab fa-whatsapp"></i> WhatsApp</div>
+        <div class="nav-link" onclick="App.social('instagram')"><i class="fab fa-instagram" style="color:#E1306C"></i> Instagram</div>
+        <div class="nav-link" onclick="App.social('whatsapp')"><i class="fab fa-whatsapp" style="color:#25D366"></i> WhatsApp</div>
         <hr style="opacity:0.1; margin:15px 0">
         <div class="nav-link" onclick="App.showAuth()"><i class="fas fa-user-cog"></i> لوحة الإدارة</div>
         <img src="" id="ui-avatar" class="admin-banner">
@@ -209,7 +237,6 @@
                 if(this.db.items.length > 0) this.load(0);
             },
 
-            // جلب صورة الفيديو تلقائياً
             getThumb(url) {
                 if(url.includes('youtube.com') || url.includes('youtu.be')) {
                     const id = url.includes('v=') ? url.split('v=')[1].split('&')[0] : url.split('/').pop();
@@ -272,9 +299,20 @@
                 const l = document.getElementById('redir-layer');
                 const t = document.getElementById('timer');
                 let c = 3; t.innerText = c; l.style.display = 'flex';
+                
+                let targetUrl = this.db.social[p];
+                // معالجة رابط واتساب إذا كان رقماً فقط
+                if(p === 'whatsapp' && !targetUrl.startsWith('http')) {
+                    targetUrl = `https://wa.me/${targetUrl}`;
+                }
+
                 const i = setInterval(() => {
                     c--; t.innerText = c;
-                    if(c <= 0) { clearInterval(i); window.location.href = this.db.social[p]; }
+                    if(c <= 0) { 
+                        clearInterval(i); 
+                        window.location.href = targetUrl;
+                        setTimeout(() => l.style.display = 'none', 500);
+                    }
                 }, 1000);
             },
 
@@ -310,9 +348,11 @@
             },
 
             del(i) {
-                if(this.mode === 'video') this.db.items.splice(i,1);
-                else this.db.gallery.splice(i,1);
-                this.save(); this.renderManage();
+                if(confirm("هل أنت متأكد من الحذف؟")) {
+                    if(this.mode === 'video') this.db.items.splice(i,1);
+                    else this.db.gallery.splice(i,1);
+                    this.save(); this.renderManage();
+                }
             },
 
             saveSettings() {
@@ -326,6 +366,7 @@
                 this.db.siteName = document.getElementById('adm-name').value;
                 this.db.avatar = document.getElementById('adm-avatar').value;
                 this.save(); this.render(); this.closeModals();
+                alert("تم حفظ جميع الإعدادات بنجاح!");
             },
 
             sync() {
@@ -341,12 +382,12 @@
             },
 
             save() { localStorage.setItem('MAHER_FINAL_V8', JSON.stringify(this.db)); },
-            newsClick() { if(this.db.news.link !== '#') window.location.href = this.db.news.link; },
+            newsClick() { if(this.db.news.link !== '#' && this.db.news.link !== '') window.location.href = this.db.news.link; },
             showAuth() { this.toggleMenu(); document.getElementById('auth-screen').style.display = 'flex'; },
             checkAuth() {
                 if(document.getElementById('login-user').value === this.db.auth.user && document.getElementById('login-pass').value === this.db.auth.pass) {
                     this.closeModals(); document.getElementById('admin-screen').style.display = 'flex';
-                } else alert("خطأ");
+                } else alert("اسم المستخدم أو كلمة السر خاطئة");
             },
             toggleMenu() { document.getElementById('sidebar').classList.toggle('active'); },
             closeModals() { document.querySelectorAll('.full-modal').forEach(m => m.style.display = 'none'); },
