@@ -1,160 +1,187 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl" id="main-html">
+<html lang="ar" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>MAHER PLATFORM ULTIMATE</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        /* CSS الشامل والمكثف لزيادة الحجم والجودة */
-        :root { --primary: #bc202b; --bg: #0a0a0a; --surface: #161616; --text: #fff; --sub: #b1b1b1; --transition: 0.4s ease; }
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Cairo', sans-serif; }
-        body { background: var(--bg); color: var(--text); overflow-x: hidden; }
-        header { height: 75px; background: var(--surface); display: flex; align-items: center; justify-content: space-between; padding: 0 5%; position: sticky; top: 0; z-index: 2000; border-bottom: 2px solid var(--primary); }
-        .logo-text { font-weight: 900; font-size: 1.5rem; color: #fff; }
-        .tool-icon { cursor: pointer; font-size: 1.2rem; transition: var(--transition); color: var(--text); }
-        .tool-icon:hover { color: var(--primary); }
-        .sidebar { position: fixed; top: 0; right: -320px; width: 310px; height: 100vh; background: var(--surface); z-index: 3000; transition: var(--transition); padding: 30px; border-left: 1px solid var(--primary); }
-        .sidebar.active { right: 0; }
-        .nav-item { padding: 15px; border-radius: 12px; display: flex; align-items: center; gap: 15px; cursor: pointer; margin-bottom: 10px; transition: 0.3s; }
-        .nav-item:hover { background: rgba(188,32,43,0.1); color: var(--primary); }
-        .video-player-sec { padding: 20px; }
-        .video-screen { width: 100%; aspect-ratio: 16/9; background: #000; border-radius: 20px; overflow: hidden; border: 2px solid var(--surface); }
-        .news-flash { height: 45px; background: var(--primary); display: none; align-items: center; font-weight: 900; overflow: hidden; position: relative; margin: 10px 0; border-radius: 10px; }
-        .marquee { display: inline-block; animation: scroll 15s linear infinite; white-space: nowrap; padding-right: 100%; }
-        @keyframes scroll { from { transform: translateX(100%); } to { transform: translateX(-100%); } }
-        .grid-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; padding: 20px; }
-        .card { background: var(--surface); border-radius: 15px; overflow: hidden; cursor: pointer; transition: 0.3s; }
-        .card:hover { transform: translateY(-5px); border: 1px solid var(--primary); }
-        .card img { width: 100%; aspect-ratio: 16/9; object-fit: cover; }
-        .layer { position: fixed; inset: 0; background: var(--bg); z-index: 5000; display: none; flex-direction: column; }
-        .layer-header { padding: 20px; background: var(--surface); display: flex; justify-content: space-between; border-bottom: 2px solid var(--primary); }
-        .layer-body { flex: 1; padding: 20px; overflow-y: auto; }
-        .input-group { margin-bottom: 15px; }
-        input, textarea { width: 100%; padding: 12px; background: #1a1a1a; border: 1px solid #333; color: #fff; border-radius: 10px; }
-        .btn { background: var(--primary); color: #fff; padding: 15px; border: none; border-radius: 10px; width: 100%; font-weight: 700; cursor: pointer; margin-top: 10px; }
-        .admin-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .admin-btn { background: var(--surface); padding: 20px; border-radius: 15px; text-align: center; cursor: pointer; border: 1px solid #333; }
-        /* تكرار وتوسيع الـ CSS للوصول للحجم المطلوب */
-        .gallery-item { margin-bottom: 30px; border-radius: 20px; overflow: hidden; background: var(--surface); }
-        .gallery-item img { width: 100%; height: auto; display: block; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>MAHER PLATFORM PRO</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Cairo}
+body{background:#0a0a0a;color:#fff;overflow:hidden}
+button{cursor:pointer}
+.full{position:fixed;inset:0;background:rgba(0,0,0,.95);display:none;align-items:center;justify-content:center;z-index:999}
+.box{background:#161616;border-radius:15px;padding:20px;width:100%;max-width:900px;max-height:90vh;overflow:auto}
+input,textarea{width:100%;padding:12px;background:#222;border:1px solid #444;color:#fff;border-radius:10px;margin:8px 0}
+.btn{background:#bc202b;border:none;color:#fff;padding:12px;border-radius:10px;font-weight:900}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.card{background:#1a1a1a;border:1px solid #333;padding:15px;border-radius:12px;text-align:center}
+.list-item{border-bottom:1px solid #333;padding:10px}
+.list-item span{display:block;color:#aaa;font-size:13px}
+header{height:60px;background:#161616;display:flex;align-items:center;justify-content:space-between;padding:0 15px}
+main{padding:15px;overflow:auto;height:calc(100vh - 60px)}
+.video{background:#000;border-radius:15px;aspect-ratio:16/9;margin-bottom:15px}
+</style>
 </head>
+
 <body>
-    <header>
-        <div style="display:flex; align-items:center; gap:15px;">
-            <i class="fas fa-bars tool-icon" onclick="App.sidebar()"></i>
-            <span class="logo-text" id="site-name">MAHER PLATFORM</span>
-        </div>
-        <div style="display:flex; gap:20px;">
-            <i class="fas fa-search tool-icon" id="search-btn" onclick="App.layer('search-layer')"></i>
-            <i class="fas fa-globe tool-icon" id="lang-btn" onclick="App.layer('lang-layer')"></i>
-            <i class="fas fa-moon tool-icon" id="theme-btn" onclick="App.theme()"></i>
-        </div>
-    </header>
 
-    <div id="flash-top" class="news-flash"><div class="marquee" id="text-top"></div></div>
-    
-    <div class="sidebar" id="sidebar">
-        <h2 style="margin-bottom:20px; color:var(--primary);">القائمة</h2>
-        <div class="nav-item" onclick="location.reload()"><i class="fas fa-home"></i> الرئيسية</div>
-        <div class="nav-item" onclick="App.layer('gallery-layer')"><i class="fas fa-images"></i> المعرض</div>
-        <div class="nav-item" onclick="App.layer('auth-layer')"><i class="fas fa-lock"></i> الإدارة</div>
-        <div style="margin-top:auto; text-align:center; padding:20px;">
-            <img id="avatar-img" src="" style="width:100px; height:100px; border-radius:50%; border:3px solid var(--primary);">
-            <h4 id="avatar-name" style="margin-top:10px;"></h4>
-        </div>
-    </div>
+<header>
+<b>MAHER PLATFORM</b>
+<i class="fas fa-user-cog" onclick="openLogin()"></i>
+</header>
 
-    <main>
-        <section class="video-player-sec">
-            <div class="video-screen" id="player"></div>
-            <div id="flash-bottom" class="news-flash"><div class="marquee" id="text-bottom"></div></div>
-            <div style="margin-top:20px; background:var(--surface); padding:20px; border-radius:15px;">
-                <h2 id="v-title">اخر الفيديوهات</h2>
-                <p id="v-desc" style="color:var(--sub); margin-top:10px;"></p>
-            </div>
-        </section>
-        <div class="grid-container" id="grid"></div>
-    </main>
+<main>
+<div class="video" id="player"></div>
+<h2 id="title"></h2>
+<p id="desc" style="color:#aaa"></p>
+<hr>
+<div id="videos"></div>
+</main>
 
-    <div id="auth-layer" class="layer">
-        <div class="layer-header"><h2>دخول الإدارة</h2><i class="fas fa-times" onclick="App.close('auth-layer')"></i></div>
-        <div class="layer-body">
-            <div class="input-group"><label>المستخدم</label><input id="u"></div>
-            <div class="input-group"><label>كلمة المرور</label><input type="password" id="p"></div>
-            <div class="admin-grid">
-                <div class="input-group"><label>كود 1</label><input type="password" id="c1"></div>
-                <div class="input-group"><label>كود 2</label><input type="password" id="c2"></div>
-            </div>
-            <button class="btn" onclick="App.login()">دخول</button>
-        </div>
-    </div>
+<!-- LOGIN -->
+<div class="full" id="login">
+<div class="box">
+<h3>دخول الإدارة</h3>
+<input id="u" placeholder="اسم المستخدم">
+<input id="p" type="password" placeholder="كلمة المرور">
+<button class="btn" onclick="login()">دخول</button>
+</div>
+</div>
 
-    <div id="admin-panel" class="layer">
-        <div class="layer-header"><h2>لوحة التحكم</h2><i class="fas fa-times" onclick="App.close('admin-panel')"></i></div>
-        <div class="layer-body">
-            <div class="admin-grid">
-                <div class="admin-btn" onclick="App.layer('add-v')"><i class="fas fa-plus"></i><br>فيديو</div>
-                <div class="admin-btn" onclick="App.layer('add-i')"><i class="fas fa-camera"></i><br>صورة</div>
-                <div class="admin-btn" onclick="App.layer('set-color')"><i class="fas fa-palette"></i><br>الألوان</div>
-                <div class="admin-btn" onclick="App.layer('set-news')"><i class="fas fa-bullhorn"></i><br>عاجل</div>
-            </div>
-            <button class="btn" style="background:#333; margin-top:20px;" onclick="App.saveAll()">حفظ وتحديث</button>
-        </div>
-    </div>
+<!-- ADMIN -->
+<div class="full" id="admin">
+<div class="box">
 
-    <script>
-        const App = {
-            db: {
-                config: { name: 'MAHER PLATFORM', color: '#bc202b', bg: '#0a0a0a', tools: {search:true, lang:true, theme:true} },
-                auth: { user: 'maher', pass: '1234', c1: '0000', c2: '1111' },
-                news: { top: {on:false, txt:''}, bot: {on:false, txt:''} },
-                videos: [], images: [], avatar: {url:'', name:'المدير'}
-            },
-            init() {
-                const s = localStorage.getItem('MAHER_DB');
-                if(s) this.db = JSON.parse(s);
-                this.apply();
-                this.render();
-            },
-            apply() {
-                document.documentElement.style.setProperty('--primary', this.db.config.color);
-                document.getElementById('site-name').innerText = this.db.config.name;
-                document.getElementById('avatar-img').src = this.db.avatar.url;
-                document.getElementById('avatar-name').innerText = this.db.avatar.name;
-                if(this.db.news.top.on) { document.getElementById('flash-top').style.display='flex'; document.getElementById('text-top').innerText=this.db.news.top.txt; }
-            },
-            render() {
-                const g = document.getElementById('grid');
-                g.innerHTML = this.db.videos.map((v, i) => `
-                    <div class="card" onclick="App.play(${i})">
-                        <img src="${this.thumb(v.url)}">
-                        <div style="padding:15px;"><h4>${v.title}</h4></div>
-                    </div>
-                `).join('');
-                if(this.db.videos.length > 0) this.play(0);
-            },
-            play(i) {
-                const v = this.db.videos[i];
-                document.getElementById('v-title').innerText = v.title;
-                document.getElementById('v-desc').innerText = v.desc;
-                const id = v.url.includes('v=') ? v.url.split('v=')[1] : v.url.split('/').pop();
-                document.getElementById('player').innerHTML = `<iframe src="https://www.youtube.com/embed/${id}?autoplay=1" style="width:100%;height:100%;border:none;"></iframe>`;
-            },
-            thumb(u) { const id = u.includes('v=') ? u.split('v=')[1] : u.split('/').pop(); return `https://img.youtube.com/vi/${id}/mqdefault.jpg`; },
-            layer(id) { document.getElementById(id).style.display = 'flex'; },
-            close(id) { document.getElementById(id).style.display = 'none'; },
-            sidebar() { document.getElementById('sidebar').classList.toggle('active'); },
-            login() {
-                if(document.getElementById('u').value === this.db.auth.user && document.getElementById('p').value === this.db.auth.pass) {
-                    this.close('auth-layer'); this.layer('admin-panel');
-                } else { alert('خطأ'); }
-            },
-            saveAll() { localStorage.setItem('MAHER_DB', JSON.stringify(this.db)); location.reload(); }
-        };
-        window.onload = () => App.init();
-    </script>
+<h3 style="text-align:center">إدارة المحتوى</h3>
+
+<div class="grid">
+<div class="card" onclick="openAddVideo()"><i class="fas fa-video"></i><br>إضافة فيديو</div>
+<div class="card" onclick="openAddImage()"><i class="fas fa-image"></i><br>إضافة صورة</div>
+</div>
+
+<hr>
+<h4>الفيديوهات</h4>
+<div id="adminVideos"></div>
+
+<hr>
+<h4>الصور</h4>
+<div id="adminImages"></div>
+
+<button class="btn" style="background:#333" onclick="closeAll()">إغلاق</button>
+
+</div>
+</div>
+
+<!-- ADD VIDEO -->
+<div class="full" id="addVideo">
+<div class="box">
+<h3>إضافة / تعديل فيديو</h3>
+<input id="v_url" placeholder="رابط الفيديو">
+<input id="v_title" placeholder="العنوان">
+<textarea id="v_desc" placeholder="الوصف"></textarea>
+<button class="btn" onclick="saveVideo()">حفظ</button>
+<button class="btn" style="background:#333" onclick="closeAll()">إلغاء</button>
+</div>
+</div>
+
+<!-- ADD IMAGE -->
+<div class="full" id="addImage">
+<div class="box">
+<h3>إضافة / تعديل صورة</h3>
+<input id="i_url" placeholder="رابط الصورة">
+<input id="i_title" placeholder="العنوان">
+<textarea id="i_desc" placeholder="الوصف"></textarea>
+<button class="btn" onclick="saveImage()">حفظ</button>
+<button class="btn" style="background:#333" onclick="closeAll()">إلغاء</button>
+</div>
+</div>
+
+<script>
+let DB=JSON.parse(localStorage.getItem("DB"))||{
+auth:{u:"maher",p:"1234"},
+videos:[],images:[]
+}
+let editIndex=null,editType=null
+
+function save(){localStorage.setItem("DB",JSON.stringify(DB))}
+function openLogin(){login.style.display="flex"}
+function closeAll(){document.querySelectorAll(".full").forEach(x=>x.style.display="none")}
+function login(){
+if(u.value==DB.auth.u && p.value==DB.auth.p){
+closeAll();admin.style.display="flex"
+}else alert("خطأ")
+}
+
+function openAddVideo(i=null){
+editIndex=i;editType="video"
+if(i!=null){
+let v=DB.videos[i]
+v_url.value=v.u;v_title.value=v.t;v_desc.value=v.d
+}else v_url.value=v_title.value=v_desc.value=""
+addVideo.style.display="flex"
+}
+
+function saveVideo(){
+let o={u:v_url.value,t:v_title.value,d:v_desc.value}
+if(editIndex!=null)DB.videos[editIndex]=o
+else DB.videos.push(o)
+save();render();closeAll()
+}
+
+function openAddImage(i=null){
+editIndex=i;editType="image"
+if(i!=null){
+let v=DB.images[i]
+i_url.value=v.u;i_title.value=v.t;i_desc.value=v.d
+}else i_url.value=i_title.value=i_desc.value=""
+addImage.style.display="flex"
+}
+
+function saveImage(){
+let o={u:i_url.value,t:i_title.value,d:i_desc.value}
+if(editIndex!=null)DB.images[editIndex]=o
+else DB.images.push(o)
+save();render();closeAll()
+}
+
+function del(type,i){
+if(type=="v")DB.videos.splice(i,1)
+else DB.images.splice(i,1)
+save();render()
+}
+
+function render(){
+adminVideos.innerHTML=""
+DB.videos.forEach((v,i)=>{
+adminVideos.innerHTML+=`
+<div class="list-item">
+<b>${v.t}</b>
+<span>${v.u}</span>
+<button onclick="openAddVideo(${i})">تعديل</button>
+<button onclick="del('v',${i})">حذف</button>
+</div>`
+})
+adminImages.innerHTML=""
+DB.images.forEach((v,i)=>{
+adminImages.innerHTML+=`
+<div class="list-item">
+<b>${v.t}</b>
+<span>${v.u}</span>
+<button onclick="openAddImage(${i})">تعديل</button>
+<button onclick="del('i',${i})">حذف</button>
+</div>`
+})
+if(DB.videos[0]){
+player.innerHTML=`<iframe width="100%" height="100%" src="${DB.videos[0].u.replace("watch?v=","embed/")}" allowfullscreen></iframe>`
+title.innerText=DB.videos[0].t
+desc.innerText=DB.videos[0].d
+}
+}
+render()
+</script>
+
 </body>
 </html>
