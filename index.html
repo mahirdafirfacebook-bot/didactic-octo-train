@@ -2,186 +2,253 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>MAHER PLATFORM PRO</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>MAHER PLATFORM</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
 
 <style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:Cairo}
-body{background:#0a0a0a;color:#fff;overflow:hidden}
-button{cursor:pointer}
-.full{position:fixed;inset:0;background:rgba(0,0,0,.95);display:none;align-items:center;justify-content:center;z-index:999}
-.box{background:#161616;border-radius:15px;padding:20px;width:100%;max-width:900px;max-height:90vh;overflow:auto}
-input,textarea{width:100%;padding:12px;background:#222;border:1px solid #444;color:#fff;border-radius:10px;margin:8px 0}
-.btn{background:#bc202b;border:none;color:#fff;padding:12px;border-radius:10px;font-weight:900}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.card{background:#1a1a1a;border:1px solid #333;padding:15px;border-radius:12px;text-align:center}
-.list-item{border-bottom:1px solid #333;padding:10px}
-.list-item span{display:block;color:#aaa;font-size:13px}
-header{height:60px;background:#161616;display:flex;align-items:center;justify-content:space-between;padding:0 15px}
-main{padding:15px;overflow:auto;height:calc(100vh - 60px)}
-.video{background:#000;border-radius:15px;aspect-ratio:16/9;margin-bottom:15px}
+*{box-sizing:border-box;font-family:'Cairo',sans-serif;margin:0;padding:0}
+body{background:#0a0a0a;color:#fff;overflow-x:hidden}
+
+header{
+height:60px;background:#161616;
+display:flex;align-items:center;justify-content:space-between;
+padding:0 15px;position:sticky;top:0;z-index:10
+}
+header i{font-size:20px;cursor:pointer}
+
+main{max-width:1100px;margin:auto;padding:15px}
+
+.video-main{
+width:100%;aspect-ratio:16/9;background:#000;border-radius:15px;
+overflow:hidden;margin-bottom:10px
+}
+.video-main iframe,.video-main video{width:100%;height:100%}
+
+.video-title{
+background:#161616;padding:15px;border-radius:15px;
+font-weight:900;cursor:pointer
+}
+.video-desc{display:none;color:#aaa;margin-top:10px}
+
+.grid{
+display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
+gap:15px;margin-top:20px
+}
+.card{cursor:pointer}
+.card img{width:100%;border-radius:12px}
+.card div{margin-top:8px;font-weight:700}
+
+/* overlays */
+.overlay{
+position:fixed;inset:0;background:rgba(0,0,0,.95);
+display:none;align-items:center;justify-content:center;z-index:1000
+}
+.box{
+background:#161616;padding:20px;border-radius:20px;
+width:100%;max-width:500px;max-height:90vh;overflow:auto
+}
+.box h2{text-align:center;margin-bottom:15px}
+
+input,textarea{
+width:100%;padding:12px;margin-bottom:10px;
+background:#222;border:1px solid #444;color:#fff;border-radius:10px
+}
+button{
+width:100%;padding:12px;border:none;border-radius:10px;
+background:#bc202b;color:#fff;font-weight:900;cursor:pointer
+}
+button.alt{background:#333;margin-top:10px}
+
+.admin-menu{
+display:grid;grid-template-columns:1fr 1fr;gap:10px
+}
+.admin-item{
+background:#222;padding:20px;border-radius:15px;
+text-align:center;cursor:pointer
+}
+.admin-item i{font-size:30px;margin-bottom:10px}
+.list-item{
+background:#222;padding:10px;border-radius:10px;
+margin-bottom:8px;cursor:pointer
+}
+.list-item small{color:#aaa}
 </style>
 </head>
 
 <body>
 
 <header>
-<b>MAHER PLATFORM</b>
-<i class="fas fa-user-cog" onclick="openLogin()"></i>
+<i class="fas fa-bars" onclick="UI.openLogin()"></i>
+<strong>MAHER PLATFORM</strong>
+<i class="fas fa-moon"></i>
 </header>
 
 <main>
-<div class="video" id="player"></div>
-<h2 id="title"></h2>
-<p id="desc" style="color:#aaa"></p>
-<hr>
-<div id="videos"></div>
+<div class="video-main" id="player"></div>
+
+<div class="video-title" onclick="UI.toggleDesc()">
+<span id="activeTitle">لا يوجد فيديو</span>
+<div class="video-desc" id="activeDesc"></div>
+</div>
+
+<div class="grid" id="videos"></div>
 </main>
 
 <!-- LOGIN -->
-<div class="full" id="login">
+<div class="overlay" id="loginBox">
 <div class="box">
-<h3>دخول الإدارة</h3>
-<input id="u" placeholder="اسم المستخدم">
-<input id="p" type="password" placeholder="كلمة المرور">
-<button class="btn" onclick="login()">دخول</button>
+<h2>دخول الإدارة</h2>
+<input id="user" placeholder="اسم المستخدم">
+<input id="pass" type="password" placeholder="كلمة المرور">
+<button onclick="Admin.login()">دخول</button>
+<button class="alt" onclick="UI.closeAll()">إلغاء</button>
 </div>
 </div>
 
 <!-- ADMIN -->
-<div class="full" id="admin">
+<div class="overlay" id="adminBox">
 <div class="box">
+<h2>لوحة الإدارة</h2>
 
-<h3 style="text-align:center">إدارة المحتوى</h3>
-
-<div class="grid">
-<div class="card" onclick="openAddVideo()"><i class="fas fa-video"></i><br>إضافة فيديو</div>
-<div class="card" onclick="openAddImage()"><i class="fas fa-image"></i><br>إضافة صورة</div>
+<div class="admin-menu">
+<div class="admin-item" onclick="Admin.openAddVideo()">
+<i class="fas fa-video"></i><br>إضافة فيديو
+</div>
+<div class="admin-item" onclick="Admin.openAddImage()">
+<i class="fas fa-image"></i><br>إضافة صورة
+</div>
 </div>
 
-<hr>
-<h4>الفيديوهات</h4>
-<div id="adminVideos"></div>
+<hr style="margin:15px 0;opacity:.2">
 
-<hr>
-<h4>الصور</h4>
-<div id="adminImages"></div>
+<div id="adminList"></div>
 
-<button class="btn" style="background:#333" onclick="closeAll()">إغلاق</button>
-
+<button class="alt" onclick="UI.closeAll()">إغلاق</button>
 </div>
 </div>
 
 <!-- ADD VIDEO -->
-<div class="full" id="addVideo">
+<div class="overlay" id="videoBox">
 <div class="box">
-<h3>إضافة / تعديل فيديو</h3>
-<input id="v_url" placeholder="رابط الفيديو">
-<input id="v_title" placeholder="العنوان">
-<textarea id="v_desc" placeholder="الوصف"></textarea>
-<button class="btn" onclick="saveVideo()">حفظ</button>
-<button class="btn" style="background:#333" onclick="closeAll()">إلغاء</button>
+<h2 id="videoBoxTitle">إضافة فيديو</h2>
+<input id="vUrl" placeholder="رابط الفيديو">
+<input id="vTitle" placeholder="عنوان الفيديو">
+<textarea id="vDesc" placeholder="الوصف"></textarea>
+<button onclick="Admin.saveVideo()">حفظ</button>
+<button class="alt" onclick="UI.closeAll()">إلغاء</button>
 </div>
 </div>
 
 <!-- ADD IMAGE -->
-<div class="full" id="addImage">
+<div class="overlay" id="imageBox">
 <div class="box">
-<h3>إضافة / تعديل صورة</h3>
-<input id="i_url" placeholder="رابط الصورة">
-<input id="i_title" placeholder="العنوان">
-<textarea id="i_desc" placeholder="الوصف"></textarea>
-<button class="btn" onclick="saveImage()">حفظ</button>
-<button class="btn" style="background:#333" onclick="closeAll()">إلغاء</button>
+<h2 id="imageBoxTitle">إضافة صورة</h2>
+<input id="iUrl" placeholder="رابط الصورة">
+<input id="iTitle" placeholder="عنوان الصورة">
+<textarea id="iDesc" placeholder="الوصف"></textarea>
+<button onclick="Admin.saveImage()">حفظ</button>
+<button class="alt" onclick="UI.closeAll()">إلغاء</button>
 </div>
 </div>
 
 <script>
-let DB=JSON.parse(localStorage.getItem("DB"))||{
-auth:{u:"maher",p:"1234"},
-videos:[],images:[]
-}
-let editIndex=null,editType=null
+const DB={
+user:"admin",
+pass:"1234",
+videos:JSON.parse(localStorage.getItem("VIDEOS")||"[]"),
+images:JSON.parse(localStorage.getItem("IMAGES")||"[]")
+};
 
-function save(){localStorage.setItem("DB",JSON.stringify(DB))}
-function openLogin(){login.style.display="flex"}
-function closeAll(){document.querySelectorAll(".full").forEach(x=>x.style.display="none")}
-function login(){
-if(u.value==DB.auth.u && p.value==DB.auth.p){
-closeAll();admin.style.display="flex"
-}else alert("خطأ")
+const UI={
+openLogin(){document.getElementById("loginBox").style.display="flex"},
+closeAll(){document.querySelectorAll(".overlay").forEach(o=>o.style.display="none")},
+toggleDesc(){
+const d=document.getElementById("activeDesc");
+d.style.display=d.style.display==="block"?"none":"block";
 }
+};
 
-function openAddVideo(i=null){
-editIndex=i;editType="video"
-if(i!=null){
-let v=DB.videos[i]
-v_url.value=v.u;v_title.value=v.t;v_desc.value=v.d
-}else v_url.value=v_title.value=v_desc.value=""
-addVideo.style.display="flex"
+const Player={
+load(v){
+document.getElementById("activeTitle").innerText=v.title;
+document.getElementById("activeDesc").innerText=v.desc;
+document.getElementById("player").innerHTML=
+v.url.includes("youtube")?
+`<iframe src="https://www.youtube.com/embed/${v.url.split("v=")[1]}" allowfullscreen></iframe>`:
+`<video controls src="${v.url}"></video>`;
 }
+};
 
-function saveVideo(){
-let o={u:v_url.value,t:v_title.value,d:v_desc.value}
-if(editIndex!=null)DB.videos[editIndex]=o
-else DB.videos.push(o)
-save();render();closeAll()
-}
-
-function openAddImage(i=null){
-editIndex=i;editType="image"
-if(i!=null){
-let v=DB.images[i]
-i_url.value=v.u;i_title.value=v.t;i_desc.value=v.d
-}else i_url.value=i_title.value=i_desc.value=""
-addImage.style.display="flex"
-}
-
-function saveImage(){
-let o={u:i_url.value,t:i_title.value,d:i_desc.value}
-if(editIndex!=null)DB.images[editIndex]=o
-else DB.images.push(o)
-save();render();closeAll()
-}
-
-function del(type,i){
-if(type=="v")DB.videos.splice(i,1)
-else DB.images.splice(i,1)
-save();render()
-}
-
-function render(){
-adminVideos.innerHTML=""
+const Render={
+videos(){
+const g=document.getElementById("videos");
+g.innerHTML="";
 DB.videos.forEach((v,i)=>{
-adminVideos.innerHTML+=`
-<div class="list-item">
-<b>${v.t}</b>
-<span>${v.u}</span>
-<button onclick="openAddVideo(${i})">تعديل</button>
-<button onclick="del('v',${i})">حذف</button>
-</div>`
-})
-adminImages.innerHTML=""
-DB.images.forEach((v,i)=>{
-adminImages.innerHTML+=`
-<div class="list-item">
-<b>${v.t}</b>
-<span>${v.u}</span>
-<button onclick="openAddImage(${i})">تعديل</button>
-<button onclick="del('i',${i})">حذف</button>
-</div>`
-})
-if(DB.videos[0]){
-player.innerHTML=`<iframe width="100%" height="100%" src="${DB.videos[0].u.replace("watch?v=","embed/")}" allowfullscreen></iframe>`
-title.innerText=DB.videos[0].t
-desc.innerText=DB.videos[0].d
+const d=document.createElement("div");
+d.className="card";
+d.innerHTML=`
+<img src="https://img.youtube.com/vi/${v.url.split("v=")[1]}/mqdefault.jpg">
+<div>${v.title}</div>`;
+d.onclick=()=>Player.load(v);
+g.appendChild(d);
+});
 }
+};
+
+const Admin={
+editIndex:null,
+login(){
+if(user.value===DB.user && pass.value===DB.pass){
+UI.closeAll();
+Admin.openPanel();
+}else alert("بيانات خاطئة");
+},
+openPanel(){
+document.getElementById("adminBox").style.display="flex";
+Admin.renderList();
+},
+renderList(){
+const l=document.getElementById("adminList");
+l.innerHTML="<h3>الفيديوهات</h3>";
+DB.videos.forEach((v,i)=>{
+l.innerHTML+=`
+<div class="list-item" onclick="Admin.editVideo(${i})">
+${v.title}<br><small>${v.url}</small>
+</div>`;
+});
+},
+openAddVideo(){
+Admin.editIndex=null;
+videoBoxTitle.innerText="إضافة فيديو";
+vUrl.value=vTitle.value=vDesc.value="";
+document.getElementById("videoBox").style.display="flex";
+},
+editVideo(i){
+const v=DB.videos[i];
+Admin.editIndex=i;
+vUrl.value=v.url;
+vTitle.value=v.title;
+vDesc.value=v.desc;
+videoBoxTitle.innerText="تعديل فيديو";
+document.getElementById("videoBox").style.display="flex";
+},
+saveVideo(){
+const v={url:vUrl.value,title:vTitle.value,desc:vDesc.value};
+if(Admin.editIndex===null) DB.videos.push(v);
+else DB.videos[Admin.editIndex]=v;
+localStorage.setItem("VIDEOS",JSON.stringify(DB.videos));
+UI.closeAll();Admin.openPanel();Render.videos();
+},
+openAddImage(){
+alert("الصور مفعلة في المرحلة التالية");
 }
-render()
+};
+
+Render.videos();
 </script>
 
 </body>
-</html>
+  </html>
