@@ -3,255 +3,736 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>MAHER PLATFORM PRO - ULTIMATE EDITION</title>
+    <title>إدارة المحتوى الاحترافية | MAHER PRO</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <style id="dynamic-styles">
-        /* الأساسيات الثابتة لضمان استقرار العرض على الهاتف */
+    <style>
+        /* المتغيرات الأساسية القابلة للتغيير من الإدارة */
         :root {
-            --primary: #bc202b; --bg: #0a0a0a; --surface: #161616;
-            --text: #ffffff; --sub: #b1b1b1; --radius: 15px;
-            --header-h: 70px;
+            --primary-color: #bc202b;
+            --bg-color: #0a0a0a;
+            --surface-color: #161616;
+            --text-color: #ffffff;
+            --sub-text: #b1b1b1;
+            --header-bg: #161616;
+            --sidebar-bg: #161616;
+            --radius: 15px;
+            --ticker-bg: #bc202b;
+            --ticker-text: #ffffff;
         }
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Cairo', sans-serif; -webkit-tap-highlight-color: transparent; }
-        html, body { width: 100%; overflow-x: hidden; background: var(--bg); color: var(--text); touch-action: manipulation; }
-        
-        /* منع التكبير والتصغير */
-        body { position: fixed; inset: 0; overflow-y: auto; }
 
+        * { 
+            margin: 0; padding: 0; box-sizing: border-box; 
+            font-family: 'Cairo', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body { 
+            background: var(--bg-color); 
+            color: var(--text-color); 
+            transition: 0.5s; 
+            overflow-x: hidden;
+            width: 100%;
+            height: 100vh;
+            position: fixed; /* لمنع التكبير والتصغير المتصفح */
+        }
+
+        /* نظام الطبقات */
+        .page-layer {
+            position: fixed;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--bg-color);
+            z-index: 10;
+            overflow-y: auto;
+            display: none;
+            transition: transform 0.4s cubic-bezier(0.7, 0, 0.3, 1);
+        }
+
+        .active-layer { display: block; }
+
+        /* الطبقة 1: الصفحة الرئيسية */
         header {
-            height: var(--header-h); background: var(--surface); display: flex; align-items: center;
-            justify-content: space-between; padding: 0 5%; position: sticky; top: 0; z-index: 1000;
-            border-bottom: 2px solid var(--primary);
+            height: 70px; background: var(--header-bg); display: flex; align-items: center;
+            justify-content: space-between; padding: 0 5%; position: sticky; top: 0; z-index: 100;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.5);
         }
 
-        .header-brand { display: flex; align-items: center; gap: 12px; }
-        #header-video-box { width: 80px; height: 45px; border-radius: 8px; overflow: hidden; display: none; border: 1px solid var(--primary); }
-
-        .sidebar-mask { position: fixed; inset: 0; background: rgba(0,0,0,0.7); display: none; z-index: 1900; backdrop-filter: blur(4px); }
-        .sidebar {
-            position: fixed; top: 0; bottom: 0; width: 300px;
-            background: var(--surface); z-index: 2000; transition: 0.4s cubic-bezier(0.7, 0, 0.3, 1);
-            padding: 25px; box-shadow: 0 0 30px rgba(0,0,0,1);
-        }
-        [dir="rtl"] .sidebar { right: -320px; }
-        [dir="rtl"] .sidebar.active { right: 0; }
-
-        /* الأنظمة المتداخلة (Layers) */
-        .layer { position: fixed; inset: 0; background: var(--bg); z-index: 3000; display: none; flex-direction: column; animation: slideUp 0.4s ease; }
-        @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
-        .layer-header { padding: 20px; background: var(--surface); display: flex; align-items: center; justify-content: space-between; border-bottom: 2px solid var(--primary); }
-        .layer-body { flex: 1; padding: 20px; overflow-y: auto; }
-
-        /* أزرار لوحة الإدارة */
-        .admin-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
-        .admin-btn { background: var(--surface); border: 1px solid #333; padding: 25px 10px; border-radius: 20px; text-align: center; cursor: pointer; transition: 0.3s; }
-        .admin-btn i { font-size: 2rem; color: var(--primary); margin-bottom: 10px; }
-        .admin-btn:hover { border-color: var(--primary); transform: translateY(-5px); }
-
-        /* مشغل الفيديو الرئيسي */
-        .main-player-area { padding: 15px; max-width: 1200px; margin: 0 auto; }
-        .video-wrapper { width: 100%; aspect-ratio: 16/9; background: #000; border-radius: var(--radius); overflow: hidden; box-shadow: 0 10px 40px rgba(0,0,0,0.8); }
+        .header-tools { display: flex; align-items: center; gap: 15px; }
+        .tool-icon { cursor: pointer; font-size: 1.2rem; transition: 0.3s; color: var(--text-color); }
         
         /* شريط الخبر العاجل */
-        .marquee-container { height: 40px; background: var(--primary); display: none; align-items: center; overflow: hidden; margin-bottom: 15px; border-radius: 8px; cursor: pointer; }
-        .marquee-content { white-space: nowrap; animation: marquee-anim 15s linear infinite; font-weight: 900; }
-        @keyframes marquee-anim { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
+        .ticker-wrapper {
+            width: 100%;
+            background: var(--ticker-bg);
+            color: var(--ticker-text);
+            padding: 10px 0;
+            overflow: hidden;
+            white-space: nowrap;
+            display: none;
+            position: relative;
+        }
+        .ticker-text {
+            display: inline-block;
+            padding-right: 100%;
+            animation: ticker-anim 20s linear infinite;
+            font-weight: bold;
+        }
+        @keyframes ticker-anim {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
 
-        /* قائمة الفيديوهات */
-        .v-grid { display: flex; flex-direction: column; gap: 15px; padding: 15px; }
-        .v-item { display: flex; gap: 15px; background: var(--surface); padding: 10px; border-radius: 12px; cursor: pointer; }
-        .v-thumb { width: 140px; aspect-ratio: 16/9; border-radius: 8px; object-fit: cover; }
-        .v-meta { flex: 1; }
-        .v-title { font-weight: 900; font-size: 0.95rem; }
+        /* المحتوى الرئيسي */
+        .main-content { padding: 15px; max-width: 1000px; margin: 0 auto; }
+        
+        .main-title-container { text-align: center; margin-bottom: 20px; }
+        #display-main-title { font-size: 1.5rem; font-weight: 900; color: var(--primary-color); }
+        #title-video-frame { width: 100%; max-width: 400px; aspect-ratio: 16/9; margin: 10px auto; display: none; border-radius: 10px; overflow: hidden; }
 
-        /* نماذج الإدخال */
-        .input-box { margin-bottom: 15px; }
-        .input-box label { display: block; margin-bottom: 8px; font-weight: 700; color: var(--primary); }
-        input, textarea, select { width: 100%; padding: 14px; background: #1a1a1a; border: 1px solid #333; color: #fff; border-radius: 12px; font-size: 1rem; }
-        .save-btn { background: var(--primary); color: #fff; border: none; padding: 18px; border-radius: 12px; width: 100%; font-weight: 900; font-size: 1.1rem; cursor: pointer; margin-top: 10px; }
+        .big-player-container { width: 100%; aspect-ratio: 16/9; background: #000; border-radius: var(--radius); overflow: hidden; margin-bottom: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        iframe, video { width: 100%; height: 100%; border: none; }
+
+        .video-list-container { display: flex; flex-direction: column; gap: 10px; }
+        .video-card { 
+            display: flex; background: var(--surface-color); border-radius: 12px; 
+            overflow: hidden; cursor: pointer; transition: 0.2s;
+        }
+        .video-card img { width: 140px; aspect-ratio: 16/9; object-fit: cover; }
+        .video-card-info { padding: 10px; flex: 1; }
+        .video-card-title { font-weight: 700; font-size: 0.9rem; margin-bottom: 5px; }
+        .video-card-desc { font-size: 0.8rem; color: var(--sub-text); display: none; padding-top: 5px; border-top: 1px solid #333; }
+
+        /* القائمة الجانبية */
+        .sidebar {
+            position: fixed; top: 0; bottom: 0; width: 280px;
+            background: var(--sidebar-bg); z-index: 2000; transition: 0.4s;
+            padding: 25px; box-shadow: 0 0 30px rgba(0,0,0,0.8);
+            right: -100%;
+        }
+        .sidebar.active { right: 0; }
+        .sidebar-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 1999; display: none; }
+
+        .sidebar-profile-box { 
+            background: #222; padding: 15px; border-radius: 12px; text-align: center; margin-bottom: 20px;
+            position: relative; overflow: hidden;
+        }
+        .sidebar-img { width: 100px; height: 100px; border-radius: 10px; object-fit: cover; margin-bottom: 10px; cursor: pointer; }
+        .sidebar-img-title { font-weight: 900; color: var(--primary-color); cursor: pointer; }
+        .sidebar-img-desc { font-size: 0.8rem; color: var(--sub-text); display: none; margin-top: 10px; }
+
+        /* الطبقة 2: تسجيل الدخول */
+        #login-layer { z-index: 50; display: none; align-items: center; justify-content: center; background: rgba(0,0,0,0.9); backdrop-filter: blur(10px); }
+        .login-box { background: var(--surface-color); padding: 30px; border-radius: 20px; width: 90%; max-width: 400px; }
+        
+        /* الطبقة 3: لوحة الإدارة */
+        #admin-layer { z-index: 100; }
+        .admin-header { 
+            display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 20px;
+            border-bottom: 1px solid #333;
+        }
+        .admin-btn-main { 
+            background: var(--surface-color); border: 1px solid var(--primary-color); 
+            padding: 20px; border-radius: 15px; text-align: center; cursor: pointer;
+        }
+        .admin-btn-main i { font-size: 1.5rem; color: var(--primary-color); margin-bottom: 10px; display: block; }
+
+        .admin-list { padding: 20px; }
+        .admin-item { 
+            background: var(--surface-color); padding: 15px; border-radius: 10px; 
+            margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between;
+            cursor: pointer;
+        }
+
+        /* الطبقة 4: نافذة الإضافة والتعديل */
+        #editor-layer { z-index: 200; background: var(--surface-color); }
+        .editor-container { padding: 25px; }
+        .editor-header { font-weight: 900; font-size: 1.2rem; margin-bottom: 20px; border-bottom: 2px solid var(--primary-color); padding-bottom: 10px; }
+
+        /* العناصر العامة */
+        input, textarea, select {
+            width: 100%; padding: 12px; background: #222; border: 1px solid #444;
+            color: #fff; border-radius: 10px; margin-bottom: 15px; outline: none;
+        }
+        .btn-save { background: var(--primary-color); color: #fff; padding: 15px; border: none; border-radius: 10px; width: 100%; font-weight: 900; cursor: pointer; margin-top: 10px; }
+        .btn-cancel { background: #333; color: #fff; padding: 12px; border: none; border-radius: 10px; width: 100%; margin-top: 10px; cursor: pointer; }
+        .btn-delete { background: #500; color: #fff; padding: 12px; border: none; border-radius: 10px; width: 100%; margin-top: 5px; cursor: pointer; }
+
+        /* تخصيص الألوان */
+        .color-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .color-input-box { display: flex; flex-direction: column; gap: 5px; font-size: 0.8rem; }
+        
+        /* روابط التواصل */
+        .social-admin-item { display: flex; align-items: center; gap: 10px; background: #222; padding: 10px; border-radius: 10px; margin-bottom: 10px; }
+        .social-admin-item i { width: 30px; text-align: center; font-size: 1.2rem; }
+
+        /* الانتقال (3 ثواني) */
+        #redirect-layer { position: fixed; inset: 0; background: #000; z-index: 9999; display: none; flex-direction: column; align-items: center; justify-content: center; }
+        .timer-circle { width: 80px; height: 80px; border-radius: 50%; border: 4px solid var(--primary-color); display: flex; align-items: center; justify-content: center; font-size: 2rem; font-weight: 900; margin-top: 20px; }
+
     </style>
 </head>
-<body data-theme="dark">
+<body>
 
-    <div class="sidebar-mask" id="mask" onclick="App.toggleSidebar()"></div>
+    <div id="redirect-layer">
+        <h2 id="redir-text">جاري الانتقال...</h2>
+        <div class="timer-circle" id="redir-timer">3</div>
+    </div>
 
-    <header>
-        <div class="header-brand">
-            <i class="fas fa-bars" style="font-size:24px; cursor:pointer" onclick="App.toggleSidebar()"></i>
-            <div id="header-video-box"></div>
-            <span id="ui-header-title" style="font-weight:900; font-size:1.2rem;">MAHER PLATFORM</span>
+    <div id="layer-main" class="page-layer active-layer">
+        <header id="main-header">
+            <div style="display:flex; align-items:center; gap:12px">
+                <i class="fas fa-bars tool-icon" onclick="App.toggleSidebar(true)"></i>
+                <span id="ui-brand-name" style="font-weight:900;">MAHER PLATFORM</span>
+            </div>
+            <div class="header-tools">
+                <i class="fas fa-search tool-icon" id="btn-search-ui" onclick="App.toggleSearch()"></i>
+                <i class="fas fa-globe tool-icon" id="btn-lang-ui" onclick="App.showLangSwitcher()"></i>
+                <i class="fas fa-moon tool-icon" id="btn-theme-ui" onclick="App.toggleTheme()"></i>
+            </div>
+        </header>
+
+        <div id="ticker-top" class="ticker-wrapper"><div class="ticker-text" id="ui-ticker-text-top"></div></div>
+
+        <div class="main-content">
+            <div class="main-title-container" id="ui-title-container">
+                <h1 id="display-main-title">العنوان الترحيبي</h1>
+                <div id="title-video-frame"></div>
+            </div>
+
+            <div class="big-player-container" id="main-player-box">
+                </div>
+
+            <div id="ticker-mid" class="ticker-wrapper" style="margin-bottom:15px; border-radius:10px;"><div class="ticker-text" id="ui-ticker-text-mid"></div></div>
+
+            <div class="video-list-container" id="ui-video-list">
+                </div>
         </div>
-        <div class="header-tools">
-            <i class="fas fa-search tool-icon" id="tool-search" onclick="App.openLayer('search-layer')"></i>
-            <i class="fas fa-globe tool-icon" id="tool-lang" onclick="App.openLayer('lang-layer')"></i>
-            <i class="fas fa-adjust tool-icon" id="tool-theme" onclick="App.toggleTheme()"></i>
-        </div>
-    </header>
 
+        <div id="ticker-bottom" class="ticker-wrapper" style="position:fixed; bottom:0;"><div class="ticker-text" id="ui-ticker-text-bottom"></div></div>
+    </div>
+
+    <div class="sidebar-overlay" id="sidebar-overlay" onclick="App.toggleSidebar(false)"></div>
     <nav class="sidebar" id="sidebar">
-        <h3 style="border-bottom:1px solid #333; padding-bottom:10px; margin-bottom:20px;">القائمة</h3>
-        <div class="nav-btn" onclick="App.openLayer('gallery-layer')"><i class="fas fa-images"></i> معرض الصور</div>
-        <div class="nav-btn" onclick="App.openLayer('auth-layer')"><i class="fas fa-user-shield"></i> لوحة الإدارة</div>
+        <div class="sidebar-profile-box">
+            <img src="https://via.placeholder.com/100" id="ui-sidebar-img" class="sidebar-img" onclick="App.toggleSidebarDesc()">
+            <div id="ui-sidebar-img-title" class="sidebar-img-title" onclick="App.toggleSidebarDesc()">معلومات العرض</div>
+            <div id="ui-sidebar-img-desc" class="sidebar-img-desc"></div>
+        </div>
         
-        <div id="side-avatar-container" style="margin-top:auto; text-align:center;">
-            <img id="side-avatar" src="" style="width:120px; height:120px; border-radius:20px; border:3px solid var(--primary); cursor:pointer;" onclick="App.toggleAvatarInfo()">
-            <h4 id="side-avatar-name" style="margin-top:10px; font-weight:900;"></h4>
-            <div id="side-avatar-desc" style="display:none; font-size:0.8rem; color:var(--sub); margin-top:10px;"></div>
+        <div style="display:flex; flex-direction:column; gap:10px;">
+            <div class="admin-item" style="background:#222" onclick="App.socialRedirect('whatsapp')"><i class="fab fa-whatsapp" style="color:#25D366"></i> واتساب</div>
+            <div class="admin-item" style="background:#222" onclick="App.socialRedirect('facebook')"><i class="fab fa-facebook" style="color:#1877F2"></i> فيسبوك</div>
+            <div class="admin-item" style="background:#222" onclick="App.socialRedirect('tiktok')"><i class="fab fa-tiktok"></i> تيك توك</div>
+            <div class="admin-item" style="background:#222" onclick="App.socialRedirect('instagram')"><i class="fab fa-instagram" style="color:#E1306C"></i> انستغرام</div>
+            <hr style="opacity:0.1; margin:10px 0">
+            <div class="admin-item" onclick="App.showLogin()"><i class="fas fa-user-cog"></i> إدارة المحتوى</div>
         </div>
     </nav>
 
-    <main class="main-player-area">
-        <div id="top-marquee" class="marquee-container"><div class="marquee-content" id="top-marquee-text"></div></div>
-        
-        <div class="video-wrapper" id="main-video-display"></div>
-        
-        <div id="bottom-marquee" class="marquee-container" style="margin-top:15px;"><div class="marquee-content" id="bottom-marquee-text"></div></div>
-
-        <div class="video-details" style="margin-top:20px; background:var(--surface); padding:20px; border-radius:20px;">
-            <h1 id="active-video-title" style="font-weight:900; font-size:1.3rem; cursor:pointer;" onclick="App.toggleDescription()"></h1>
-            <div id="active-video-desc" style="display:none; margin-top:15px; border-top:1px solid #333; padding-top:15px; color:var(--sub);"></div>
-        </div>
-
-        <h2 style="margin:25px 15px 10px; font-weight:900;">المقترحات</h2>
-        <div class="v-grid" id="suggestion-grid"></div>
-    </main>
-
-    <div id="auth-layer" class="layer">
-        <div class="layer-header"><h2>الأمان الرباعي</h2><i class="fas fa-times" onclick="App.closeLayer('auth-layer')"></i></div>
-        <div class="layer-body">
-            <div class="input-box"><label>اسم المستخدم</label><input type="text" id="login-u"></div>
-            <div class="input-box"><label>كلمة المرور</label><input type="password" id="login-p"></div>
-            <div class="admin-grid">
-                <div class="input-box"><label>كود أمان 1</label><input type="password" id="login-c1"></div>
-                <div class="input-box"><label>كود أمان 2</label><input type="password" id="login-c2"></div>
-            </div>
-            <button class="save-btn" onclick="App.checkAuth()">تأكيد الدخول</button>
+    <div id="login-layer" class="page-layer" style="display:none; flex-direction:column; justify-content:center; align-items:center;">
+        <div class="login-box">
+            <h2 style="text-align:center; margin-bottom:20px; color:var(--primary-color)">دخول المسؤول</h2>
+            <div id="login-inputs-container">
+                </div>
+            <button class="btn-save" onclick="App.verifyLogin()">دخول</button>
+            <button class="btn-cancel" onclick="App.hideLayer('login-layer')">إلغاء</button>
         </div>
     </div>
 
-    <div id="admin-main-layer" class="layer">
-        <div class="layer-header"><h2>لوحة التحكم الشاملة</h2><i class="fas fa-times" onclick="App.closeLayer('admin-main-layer')"></i></div>
-        <div class="layer-body">
-            <div class="admin-grid">
-                <div class="admin-btn" onclick="App.openLayer('add-video-layer')"><i class="fas fa-video"></i><br>إضافة فيديو</div>
-                <div class="admin-btn" onclick="App.openLayer('add-image-layer')"><i class="fas fa-camera"></i><br>إضافة صورة</div>
-                <div class="admin-btn" onclick="App.openLayer('theme-layer')"><i class="fas fa-palette"></i><br>الألوان والخطوط</div>
-                <div class="admin-btn" onclick="App.openLayer('social-layer')"><i class="fas fa-share-alt"></i><br>روابط التواصل</div>
-                <div class="admin-btn" onclick="App.openLayer('news-layer')"><i class="fas fa-bullhorn"></i><br>خبر عاجل</div>
-                <div class="admin-btn" onclick="App.openLayer('avatar-layer')"><i class="fas fa-user-circle"></i><br>صورة العرض</div>
+    <div id="admin-layer" class="page-layer">
+        <div class="admin-header">
+            <div class="admin-btn-main" onclick="App.openEditor('add-video')">
+                <i class="fas fa-video"></i> إضافة فيديو جديد
             </div>
-            <button class="save-btn" style="background:#333;" onclick="App.finalSave()">حفظ الإعدادات النهائية</button>
+            <div class="admin-btn-main" onclick="App.openEditor('add-image')">
+                <i class="fas fa-image"></i> إضافة صورة جديدة
+            </div>
         </div>
+
+        <div class="admin-list">
+            <div class="admin-item" onclick="App.openEditor('theme')"><span>تغيير لون وخطوط الصفحة</span> <i class="fas fa-palette"></i></div>
+            <div class="admin-item" onclick="App.openEditor('social')"><span>روابط التواصل الاجتماعي</span> <i class="fas fa-share-alt"></i></div>
+            <div class="admin-item" onclick="App.openEditor('lang')"><span>تغيير لغة الصفحة</span> <i class="fas fa-language"></i></div>
+            <div class="admin-item" onclick="App.openEditor('ticker')"><span>خبر عاجل</span> <i class="fas fa-bolt"></i></div>
+            <div class="admin-item" onclick="App.openEditor('avatar')"><span>تغيير صورة العرض</span> <i class="fas fa-id-badge"></i></div>
+            <div class="admin-item" onclick="App.openEditor('title-config')"><span>تغيير العنوان العلوي</span> <i class="fas fa-heading"></i></div>
+            <div class="admin-item" onclick="App.openEditor('security')"><span>تغيير الدخول</span> <i class="fas fa-lock"></i></div>
+            
+            <div style="margin-top:20px; padding:10px; border-top:1px solid #333;">
+                <h4 style="margin-bottom:10px;">إدارة المحتوى المضاف:</h4>
+                <div id="admin-media-list"></div>
+            </div>
+            
+            <button class="btn-save" style="background:#060; margin-bottom:50px;" onclick="App.finalSaveAll()">حفظ الإعدادات النهائية</button>
+        </div>
+    </div>
+
+    <div id="editor-layer" class="page-layer">
+        <div class="editor-container" id="editor-content">
+            </div>
     </div>
 
     <script>
         const App = {
+            // قاعدة البيانات الافتراضية
             db: {
-                auth: { u: 'maher', p: '1234', c1: '0000', c2: '1111' },
-                config: { title: 'MAHER PLATFORM', headerMode: 'text', headerV: '', mainColor: '#bc202b', bgColor: '#0a0a0a' },
-                social: { fb: '', tk: '', ig: '', wa: '' },
-                news: { 
-                    top: { active: false, text: '', link: '', color: '#bc202b' },
-                    bot: { active: false, text: '', link: '', color: '#bc202b' }
+                config: {
+                    siteName: "MAHER PLATFORM PRO",
+                    mainTitle: "مرحباً بك في المنصة الخاصة بنا",
+                    titleMode: "text", // text or video
+                    titleVideoUrl: "",
+                    primaryColor: "#bc202b",
+                    bgColor: "#0a0a0a",
+                    surfaceColor: "#161616",
+                    textColor: "#ffffff",
+                    showSearch: true,
+                    showTheme: true,
+                    showLang: true
                 },
-                avatar: { url: '', title: '', desc: '' },
-                videos: [], images: []
+                auth: {
+                    keys: ["1234"] // مصفوفة الرموز (تدعم حتى 4 خانات)
+                },
+                ticker: {
+                    active: true,
+                    position: "top", // top, bottom, over-video
+                    text: "هذا شريط خبر عاجل يمكن تخصيصه بالكامل من لوحة الإدارة...",
+                    link: "",
+                    duration: 0, // 0 يعني دائم
+                    color: "#bc202b",
+                    textColor: "#ffffff"
+                },
+                social: {
+                    whatsapp: "",
+                    facebook: "",
+                    tiktok: "",
+                    instagram: ""
+                },
+                sidebar: {
+                    img: "https://via.placeholder.com/150",
+                    title: "عرض الصورة",
+                    desc: "وصف طويل جداً يظهر عند النقر على الصورة أو العنوان في القائمة الجانبية."
+                },
+                videos: [
+                    { id: 1, t: "فيديو تجريبي", d: "هذا وصف للفيديو التجريبي", u: "https://www.youtube.com/watch?v=dQw4w9WgXcQ" }
+                ],
+                images: [],
+                lang: "ar"
             },
 
             init() {
-                const data = localStorage.getItem('MAHER_PRO_DATA');
-                if(data) this.db = JSON.parse(data);
-                this.applyStyles();
-                this.renderSuggestions();
-                if(this.db.videos.length > 0) this.loadVideo(0);
-                this.generateMassiveCode(); // تضخيم الكود
+                const saved = localStorage.getItem('MAHER_PRO_DATA');
+                if(saved) this.db = JSON.parse(saved);
+                this.applyConfig();
+                this.renderVideos();
+                if(this.db.videos.length > 0) this.playVideo(this.db.videos[0].u);
             },
 
-            applyStyles() {
-                const root = document.documentElement.style;
-                root.setProperty('--primary', this.db.config.mainColor);
-                root.setProperty('--bg', this.db.config.bgColor);
-                document.getElementById('ui-header-title').innerText = this.db.config.title;
+            // تطبيق الإعدادات على الواجهة
+            applyConfig() {
+                const r = document.documentElement.style;
+                const c = this.db.config;
+                r.setProperty('--primary-color', c.primaryColor);
+                r.setProperty('--bg-color', c.bgColor);
+                r.setProperty('--surface-color', c.surfaceColor);
+                r.setProperty('--text-color', c.textColor);
                 
-                // تحديث صورة العرض
-                document.getElementById('side-avatar').src = this.db.avatar.url || 'https://via.placeholder.com/150';
-                document.getElementById('side-avatar-name').innerText = this.db.avatar.title || 'ADMIN';
-                document.getElementById('side-avatar-desc').innerText = this.db.avatar.desc;
-            },
+                document.getElementById('ui-brand-name').innerText = c.siteName;
+                document.getElementById('display-main-title').innerText = c.mainTitle;
+                
+                // البحث والثيم واللغة
+                document.getElementById('btn-search-ui').style.display = c.showSearch ? 'block' : 'none';
+                document.getElementById('btn-theme-ui').style.display = c.showTheme ? 'block' : 'none';
+                document.getElementById('btn-lang-ui').style.display = c.showLang ? 'block' : 'none';
 
-            checkAuth() {
-                const u = document.getElementById('login-u').value;
-                const p = document.getElementById('login-p').value;
-                const c1 = document.getElementById('login-c1').value;
-                const c2 = document.getElementById('login-c2').value;
-
-                if(u === this.db.auth.u && p === this.db.auth.p && c1 === this.db.auth.c1 && c2 === this.db.auth.c2) {
-                    this.closeLayer('auth-layer');
-                    this.openLayer('admin-main-layer');
+                // العنوان (فيديو أو نص)
+                if(c.titleMode === 'video' && c.titleVideoUrl) {
+                    document.getElementById('display-main-title').style.display = 'none';
+                    const frame = document.getElementById('title-video-frame');
+                    frame.style.display = 'block';
+                    frame.innerHTML = `<iframe src="${this.formatYoutube(c.titleVideoUrl)}"></iframe>`;
                 } else {
-                    alert("بيانات الدخول غير صحيحة!");
+                    document.getElementById('display-main-title').style.display = 'block';
+                    document.getElementById('title-video-frame').style.display = 'none';
+                }
+
+                // شريط الخبر
+                this.updateTickerUI();
+
+                // القائمة الجانبية
+                document.getElementById('ui-sidebar-img').src = this.db.sidebar.img;
+                document.getElementById('ui-sidebar-img-title').innerText = this.db.sidebar.title;
+                document.getElementById('ui-sidebar-img-desc').innerText = this.db.sidebar.desc;
+            },
+
+            updateTickerUI() {
+                const t = this.db.ticker;
+                ['top', 'mid', 'bottom'].forEach(p => {
+                    document.getElementById(`ticker-${p}`).style.display = 'none';
+                });
+
+                if(t.active) {
+                    let target = 'top';
+                    if(t.position === 'bottom') target = 'bottom';
+                    if(t.position === 'over-video') target = 'mid';
+
+                    const el = document.getElementById(`ticker-${target}`);
+                    el.style.display = 'block';
+                    el.style.setProperty('--ticker-bg', t.color);
+                    el.style.setProperty('--ticker-text', t.textColor);
+                    const txt = document.getElementById(`ui-ticker-text-${target}`);
+                    txt.innerText = t.text;
+                    if(t.link) {
+                        el.onclick = () => window.open(t.link, '_blank');
+                        el.style.cursor = 'pointer';
+                    }
                 }
             },
 
-            // وظيفة تضخيم الكود للوصول لـ 8000 سطر
-            generateMassiveCode() {
-                let extraStyles = "/* MASSIVE GENERATED STYLES FOR SIZE AND DETAIL */\n";
-                for(let i=0; i<500; i++) {
-                    extraStyles += `.gen-style-${i} { transition: all ${i/100}s; opacity: 1; }\n`;
-                }
-                document.getElementById('dynamic-styles').append(extraStyles);
-                console.log("System: 8000 lines generated in memory.");
-            },
-
-            loadVideo(idx) {
-                const v = this.db.videos[idx];
-                const player = document.getElementById('main-video-display');
-                document.getElementById('active-video-title').innerText = v.t;
-                document.getElementById('active-video-desc').innerText = v.d;
-
-                if(v.u.includes('youtube') || v.u.includes('youtu.be')) {
-                    const id = v.u.split('v=')[1] || v.u.split('/').pop();
-                    player.innerHTML = `<iframe src="https://www.youtube.com/embed/${id}?autoplay=1" allowfullscreen></iframe>`;
-                } else {
-                    player.innerHTML = `<video src="${v.u}" controls autoplay style="width:100%; height:100%;"></video>`;
-                }
-            },
-
-            renderSuggestions() {
-                const grid = document.getElementById('suggestion-grid');
-                grid.innerHTML = this.db.videos.map((v, i) => `
-                    <div class="v-item" onclick="App.loadVideo(${i})">
-                        <img src="https://img.youtube.com/vi/${v.u.split('v=')[1]}/mqdefault.jpg" class="v-thumb">
-                        <div class="v-meta">
-                            <div class="v-title">${v.t}</div>
+            renderVideos() {
+                const container = document.getElementById('ui-video-list');
+                container.innerHTML = this.db.videos.map((v, i) => `
+                    <div class="video-card" onclick="App.playVideo('${v.u}', ${i})">
+                        <img src="https://img.youtube.com/vi/${this.extractID(v.u)}/mqdefault.jpg">
+                        <div class="video-card-info">
+                            <div class="video-card-title">${v.t}</div>
+                            <div class="video-card-desc" id="desc-${i}">${v.d}</div>
                         </div>
                     </div>
                 `).join('');
             },
 
-            openLayer(id) { document.getElementById(id).style.display = 'flex'; },
-            closeLayer(id) { document.getElementById(id).style.display = 'none'; },
-            toggleSidebar() { 
-                const s = document.getElementById('sidebar');
-                const m = document.getElementById('mask');
-                s.classList.toggle('active');
-                m.style.display = s.classList.contains('active') ? 'block' : 'none';
+            playVideo(url, idx = -1) {
+                const id = this.extractID(url);
+                const player = document.getElementById('main-player-box');
+                if(url.includes('youtube.com') || url.includes('youtu.be')) {
+                    player.innerHTML = `<iframe src="https://www.youtube.com/embed/${id}?autoplay=1" allowfullscreen></iframe>`;
+                } else {
+                    player.innerHTML = `<video controls autoplay><source src="${url}"></video>`;
+                }
+
+                // إظهار الوصف عند النقر
+                if(idx !== -1) {
+                    const desc = document.getElementById(`desc-${idx}`);
+                    const isVisible = desc.style.display === 'block';
+                    document.querySelectorAll('.video-card-desc').forEach(d => d.style.display = 'none');
+                    if(!isVisible) desc.style.display = 'block';
+                }
+                window.scrollTo({top: 0, behavior: 'smooth'});
             },
-            toggleDescription() { 
-                const d = document.getElementById('active-video-desc');
-                d.style.display = d.style.display === 'none' ? 'block' : 'none';
+
+            extractID(url) {
+                const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+                const match = url.match(regExp);
+                return (match && match[2].length === 11) ? match[2] : null;
             },
-            finalSave() {
+
+            formatYoutube(url) {
+                const id = this.extractID(url);
+                return id ? `https://www.youtube.com/embed/${id}` : url;
+            },
+
+            // نظام الطبقات
+            showLayer(id) {
+                document.querySelectorAll('.page-layer').forEach(l => l.style.display = 'none');
+                document.getElementById(id).style.display = 'block';
+            },
+
+            hideLayer(id) {
+                document.getElementById(id).style.display = 'none';
+                if(id === 'admin-layer' || id === 'login-layer') this.showLayer('layer-main');
+                if(id === 'editor-layer') this.showLayer('admin-layer');
+            },
+
+            // تسجيل الدخول
+            showLogin() {
+                this.toggleSidebar(false);
+                const container = document.getElementById('login-inputs-container');
+                container.innerHTML = this.db.auth.keys.map((_, i) => `
+                    <input type="password" class="login-input" placeholder="الرمز ${i+1}">
+                `).join('');
+                this.showLayer('login-layer');
+            },
+
+            verifyLogin() {
+                const inputs = document.querySelectorAll('.login-input');
+                let valid = true;
+                inputs.forEach((inp, i) => {
+                    if(inp.value !== this.db.auth.keys[i]) valid = false;
+                });
+
+                if(valid) {
+                    this.showLayer('admin-layer');
+                    this.updateAdminMediaList();
+                } else {
+                    alert("الرموز غير صحيحة!");
+                }
+            },
+
+            // المحرر (Editor)
+            openEditor(type, data = null) {
+                const content = document.getElementById('editor-content');
+                this.showLayer('editor-layer');
+                
+                let html = `<div class="editor-header">${this.getEditorTitle(type)}</div>`;
+
+                switch(type) {
+                    case 'add-video':
+                        html += `
+                            <input type="text" id="ed-v-url" placeholder="رابط الفيديو (يوتيوب أو مباشر)">
+                            <input type="text" id="ed-v-title" placeholder="عنوان الفيديو">
+                            <textarea id="ed-v-desc" rows="4" placeholder="صندوق الوصف"></textarea>
+                            <button class="btn-save" onclick="App.saveMedia('video')">حفظ وحفظ</button>
+                        `;
+                        break;
+                    case 'theme':
+                        html += `
+                            <div class="color-grid">
+                                <div class="color-input-box">لون الأساس<input type="color" id="ed-c-primary" value="${this.db.config.primaryColor}"></div>
+                                <div class="color-input-box">لون الخلفية<input type="color" id="ed-c-bg" value="${this.db.config.bgColor}"></div>
+                                <div class="color-input-box">لون الأسطح<input type="color" id="ed-c-surface" value="${this.db.config.surfaceColor}"></div>
+                                <div class="color-input-box">لون النصوص<input type="color" id="ed-c-text" value="${this.db.config.textColor}"></div>
+                            </div>
+                            <button class="btn-save" onclick="App.saveTheme()">حفظ الألوان</button>
+                        `;
+                        break;
+                    case 'ticker':
+                        html += `
+                            <select id="ed-t-pos">
+                                <option value="top" ${this.db.ticker.position==='top'?'selected':''}>أعلى الصفحة</option>
+                                <option value="mid" ${this.db.ticker.position==='over-video'?'selected':''}>فوق الفيديو</option>
+                                <option value="bottom" ${this.db.ticker.position==='bottom'?'selected':''}>أسفل الصفحة</option>
+                            </select>
+                            <input type="text" id="ed-t-text" placeholder="نص الخبر" value="${this.db.ticker.text}">
+                            <input type="text" id="ed-t-link" placeholder="رابط (اختياري)" value="${this.db.ticker.link}">
+                            <div class="color-grid">
+                                <div class="color-input-box">لون الشريط<input type="color" id="ed-t-bg" value="${this.db.ticker.color}"></div>
+                                <div class="color-input-box">لون النص<input type="color" id="ed-t-txt" value="${this.db.ticker.textColor}"></div>
+                            </div>
+                            <select id="ed-t-active">
+                                <option value="true" ${this.db.ticker.active?'selected':''}>تفعيل</option>
+                                <option value="false" ${!this.db.ticker.active?'selected':''}>إيقاف</option>
+                            </select>
+                            <button class="btn-save" onclick="App.saveTicker()">حفظ الشريط</button>
+                        `;
+                        break;
+                    case 'avatar':
+                        html += `
+                            <input type="text" id="ed-s-img" placeholder="رابط الصورة المباشر" value="${this.db.sidebar.img}">
+                            <input type="text" id="ed-s-title" placeholder="العنوان الظاهر" value="${this.db.sidebar.title}">
+                            <textarea id="ed-s-desc" rows="5" placeholder="الوصف الذي يظهر عند النقر" value="">${this.db.sidebar.desc}</textarea>
+                            <button class="btn-save" onclick="App.saveSidebar()">حفظ التغييرات</button>
+                        `;
+                        break;
+                    case 'title-config':
+                        html += `
+                            <input type="text" id="ed-site-name" placeholder="اسم الموقع في الأعلى" value="${this.db.config.siteName}">
+                            <input type="text" id="ed-main-title" placeholder="العنوان الترحيبي" value="${this.db.config.mainTitle}">
+                            <select id="ed-title-mode" onchange="document.getElementById('ed-v-title-box').style.display = this.value==='video'?'block':'none'">
+                                <option value="text" ${this.db.config.titleMode==='text'?'selected':''}>نص فقط</option>
+                                <option value="video" ${this.db.config.titleMode==='video'?'selected':''}>عرض فيديو بدل النص</option>
+                            </select>
+                            <div id="ed-v-title-box" style="display:${this.db.config.titleMode==='video'?'block':'none'}">
+                                <input type="text" id="ed-title-v-url" placeholder="رابط الفيديو الصغير" value="${this.db.config.titleVideoUrl}">
+                            </div>
+                            <button class="btn-save" onclick="App.saveSiteTitle()">حفظ هيبة الموقع</button>
+                        `;
+                        break;
+                    case 'social':
+                        html += `
+                            <div class="social-admin-item"><i class="fab fa-whatsapp"></i> <input type="text" id="ed-soc-wa" value="${this.db.social.whatsapp}" placeholder="رابط أو رقم واتساب"></div>
+                            <div class="social-admin-item"><i class="fab fa-facebook"></i> <input type="text" id="ed-soc-fb" value="${this.db.social.facebook}" placeholder="رابط فيسبوك"></div>
+                            <div class="social-admin-item"><i class="fab fa-tiktok"></i> <input type="text" id="ed-soc-tk" value="${this.db.social.tiktok}" placeholder="رابط تيك توك"></div>
+                            <div class="social-admin-item"><i class="fab fa-instagram"></i> <input type="text" id="ed-soc-ig" value="${this.db.social.instagram}" placeholder="رابط انستغرام"></div>
+                            <button class="btn-save" onclick="App.saveSocial()">حفظ الروابط</button>
+                        `;
+                        break;
+                    case 'security':
+                        html += `
+                            <p style="font-size:0.8rem; margin-bottom:10px;">يمكنك إضافة حتى 4 رموز دخول لزيادة الأمان</p>
+                            <div id="ed-auth-container">
+                                ${[0,1,2,3].map(i => `<input type="text" class="ed-auth-key" placeholder="الرمز ${i+1}" value="${this.db.auth.keys[i] || ''}">`).join('')}
+                            </div>
+                            <button class="btn-save" onclick="App.saveSecurity()">تحديث الأمان</button>
+                        `;
+                        break;
+                }
+
+                html += `<button class="btn-cancel" onclick="App.hideLayer('editor-layer')">خروج بدون حفظ</button>`;
+                content.innerHTML = html;
+            },
+
+            getEditorTitle(type) {
+                const titles = {
+                    'add-video': 'إضافة فيديو جديد',
+                    'theme': 'تخصيص الألوان',
+                    'ticker': 'إعدادات الخبر العاجل',
+                    'avatar': 'تغيير صورة وصندوق العرض',
+                    'title-config': 'العنوان والهوية',
+                    'social': 'روابط التواصل الاجتماعي',
+                    'security': 'إعدادات الوصول'
+                };
+                return titles[type] || 'تعديل';
+            },
+
+            // وظائف الحفظ الفرعية
+            saveMedia(type) {
+                if(type === 'video') {
+                    const v = {
+                        id: Date.now(),
+                        u: document.getElementById('ed-v-url').value,
+                        t: document.getElementById('ed-v-title').value,
+                        d: document.getElementById('ed-v-desc').value
+                    };
+                    if(!v.u) return alert("الرابط مطلوب!");
+                    this.db.videos.push(v);
+                }
+                this.hideLayer('editor-layer');
+                this.updateAdminMediaList();
+            },
+
+            saveTheme() {
+                this.db.config.primaryColor = document.getElementById('ed-c-primary').value;
+                this.db.config.bgColor = document.getElementById('ed-c-bg').value;
+                this.db.config.surfaceColor = document.getElementById('ed-c-surface').value;
+                this.db.config.textColor = document.getElementById('ed-c-text').value;
+                this.hideLayer('editor-layer');
+            },
+
+            saveTicker() {
+                this.db.ticker.active = document.getElementById('ed-t-active').value === 'true';
+                this.db.ticker.position = document.getElementById('ed-t-pos').value === 'mid' ? 'over-video' : document.getElementById('ed-t-pos').value;
+                this.db.ticker.text = document.getElementById('ed-t-text').value;
+                this.db.ticker.link = document.getElementById('ed-t-link').value;
+                this.db.ticker.color = document.getElementById('ed-t-bg').value;
+                this.db.ticker.textColor = document.getElementById('ed-t-txt').value;
+                this.hideLayer('editor-layer');
+            },
+
+            saveSidebar() {
+                this.db.sidebar.img = document.getElementById('ed-s-img').value;
+                this.db.sidebar.title = document.getElementById('ed-s-title').value;
+                this.db.sidebar.desc = document.getElementById('ed-s-desc').value;
+                this.hideLayer('editor-layer');
+            },
+
+            saveSiteTitle() {
+                this.db.config.siteName = document.getElementById('ed-site-name').value;
+                this.db.config.mainTitle = document.getElementById('ed-main-title').value;
+                this.db.config.titleMode = document.getElementById('ed-title-mode').value;
+                this.db.config.titleVideoUrl = document.getElementById('ed-title-v-url').value;
+                this.hideLayer('editor-layer');
+            },
+
+            saveSocial() {
+                this.db.social.whatsapp = document.getElementById('ed-soc-wa').value;
+                this.db.social.facebook = document.getElementById('ed-soc-fb').value;
+                this.db.social.tiktok = document.getElementById('ed-soc-tk').value;
+                this.db.social.instagram = document.getElementById('ed-soc-ig').value;
+                this.hideLayer('editor-layer');
+            },
+
+            saveSecurity() {
+                const keys = Array.from(document.querySelectorAll('.ed-auth-key')).map(i => i.value).filter(v => v !== "");
+                if(keys.length === 0) return alert("يجب وجود رمز واحد على الأقل!");
+                this.db.auth.keys = keys;
+                this.hideLayer('editor-layer');
+            },
+
+            deleteVideo(id) {
+                this.db.videos = this.db.videos.filter(v => v.id !== id);
+                this.updateAdminMediaList();
+            },
+
+            updateAdminMediaList() {
+                const container = document.getElementById('admin-media-list');
+                container.innerHTML = this.db.videos.map(v => `
+                    <div class="admin-item" style="font-size:0.8rem">
+                        <span>${v.t}</span>
+                        <button class="btn-delete" style="width:auto; padding:5px 10px;" onclick="App.deleteVideo(${v.id})">حذف</button>
+                    </div>
+                `).join('');
+            },
+
+            // الحفظ النهائي
+            finalSaveAll() {
                 localStorage.setItem('MAHER_PRO_DATA', JSON.stringify(this.db));
+                this.applyConfig();
+                this.renderVideos();
+                this.hideLayer('admin-layer');
                 alert("تم حفظ جميع الإعدادات وتطبيقها!");
-                location.reload();
+            },
+
+            // واجهة المستخدم التفاعلية
+            toggleSidebar(show) {
+                document.getElementById('sidebar').classList.toggle('active', show);
+                document.getElementById('sidebar-overlay').style.display = show ? 'block' : 'none';
+            },
+
+            toggleSidebarDesc() {
+                const desc = document.getElementById('ui-sidebar-img-desc');
+                desc.style.display = desc.style.display === 'block' ? 'none' : 'block';
+            },
+
+            toggleSearch() {
+                const q = prompt("ابحث عن فيديو:");
+                if(q) {
+                    const results = this.db.videos.filter(v => v.t.includes(q));
+                    alert("وجدنا " + results.length + " فيديو");
+                }
+            },
+
+            toggleTheme() {
+                const isDark = this.db.config.bgColor === '#0a0a0a';
+                this.db.config.bgColor = isDark ? '#ffffff' : '#0a0a0a';
+                this.db.config.surfaceColor = isDark ? '#f0f0f0' : '#161616';
+                this.db.config.textColor = isDark ? '#1a1a1a' : '#ffffff';
+                this.applyConfig();
+            },
+
+            showLangSwitcher() {
+                const l = prompt("اختر اللغة (ar, en, fr, he):");
+                if(l) {
+                    this.db.lang = l;
+                    alert("تم تحويل اللغة إلى " + l);
+                }
+            },
+
+            socialRedirect(platform) {
+                const url = this.db.social[platform];
+                if(!url) return alert("الرابط غير مضاف!");
+                
+                this.toggleSidebar(false);
+                const layer = document.getElementById('redirect-layer');
+                const timerEl = document.getElementById('redir-timer');
+                layer.style.display = 'flex';
+                
+                let count = 3;
+                timerEl.innerText = count;
+                const interval = setInterval(() => {
+                    count--;
+                    timerEl.innerText = count;
+                    if(count <= 0) {
+                        clearInterval(interval);
+                        layer.style.display = 'none';
+                        window.open(url.startsWith('http') ? url : 'https://wa.me/' + url, '_blank');
+                    }
+                }, 1000);
             }
         };
 
+        // تشغيل التطبيق
         window.onload = () => App.init();
+
+        // منع التكبير اليدوي
+        document.addEventListener('touchstart', function (event) {
+            if (event.touches.length > 1) {
+                event.preventDefault();
+            }
+        }, { passive: false });
     </script>
 </body>
-  </html>
+</html>
