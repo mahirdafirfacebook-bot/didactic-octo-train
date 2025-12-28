@@ -28,29 +28,11 @@
         .tool-icon { cursor: pointer; font-size: 1.2rem; transition: 0.3s; color: var(--text); }
         .tool-icon:hover { color: var(--primary); }
 
-        .search-container { position: relative; display: flex; align-items: center; }
-        .search-input-wrapper { 
-            position: absolute; top: 50%; transform: translateY(-50%);
-            width: 0; overflow: hidden; transition: 0.4s; background: var(--surface);
-        }
-        /* تعديل البحث ليتناسب مع الاتجاه */
-        [dir="rtl"] .search-input-wrapper { right: 0; }
-        [dir="ltr"] .search-input-wrapper { left: 0; }
-        
-        [dir="rtl"] .search-container.active .search-input-wrapper { width: 180px; right: 30px; }
-        [dir="ltr"] .search-container.active .search-input-wrapper { width: 180px; left: 30px; }
-
-        .search-input-wrapper input {
-            width: 100%; padding: 8px 15px; background: #222; border: 1px solid #444;
-            color: white; border-radius: 20px; outline: none;
-        }
-
         .sidebar {
             position: fixed; top: 0; bottom: 0; width: 280px;
-            background: var(--surface); z-index: 2000; transition: 0.4s cubic-bezier(0.7, 0, 0.3, 1);
+            background: var(--surface); z-index: 2000; transition: 0.4s;
             padding: 25px; box-shadow: 0 0 30px rgba(0,0,0,0.8);
         }
-        /* اتجاه القائمة الجانبية */
         [dir="rtl"] .sidebar { right: -100%; }
         [dir="rtl"] .sidebar.active { right: 0; }
         [dir="ltr"] .sidebar { left: -100%; }
@@ -59,262 +41,190 @@
         .nav-link { padding: 12px; border-radius: 10px; display: flex; align-items: center; gap: 12px; cursor: pointer; margin-bottom: 5px; font-weight: 700; transition: 0.2s; }
         .nav-link:hover { background: rgba(255,255,255,0.05); }
 
-        #news-container {
-            background: var(--primary); color: #fff; padding: 12px 0; overflow: hidden;
-            white-space: nowrap; display: none; cursor: pointer; font-weight: bold;
-        }
-        .marquee { display: inline-block; padding-right: 100%; animation: marquee 20s linear infinite; }
-        @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(100%); } }
+        #news-container { background: var(--primary); color: #fff; padding: 10px 0; overflow: hidden; white-space: nowrap; display: none; }
+        .marquee { display: inline-block; animation: marquee 20s linear infinite; }
+        @keyframes marquee { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
 
         .main-container { max-width: 1100px; margin: 10px auto; padding: 0 15px; }
-        .theater-mode { position: sticky; top: 80px; z-index: 900; background: var(--bg); padding-bottom: 15px; }
-        .video-box { width: 100%; aspect-ratio: 16/9; background: #000; border-radius: var(--radius); overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        iframe, video { width: 100%; height: 100%; object-fit: contain; border: none; }
+        .video-box { width: 100%; aspect-ratio: 16/9; background: #000; border-radius: var(--radius); overflow: hidden; }
+        iframe, video { width: 100%; height: 100%; border: none; }
 
-        .video-info { margin-top: 15px; cursor: pointer; background: var(--surface); padding: 15px; border-radius: var(--radius); }
-        .video-title { font-size: 1.2rem; font-weight: 900; }
-        #desc-panel { margin-top: 12px; color: var(--sub); display: none; border-top: 1px solid #333; padding-top: 10px; word-wrap: break-word; }
+        .suggestions { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 15px; margin-top: 20px; }
+        .thumb-item { cursor: pointer; }
+        .thumb-img { width: 100%; aspect-ratio: 16/9; border-radius: 12px; object-fit: cover; background: #222; }
 
-        .section-label { margin: 25px 0 15px; font-weight: 900; font-size: 1.3rem; display: flex; align-items: center; gap: 10px; }
-        .section-label::before { content: ''; width: 5px; height: 25px; background: var(--primary); border-radius: 10px; }
+        .full-modal { position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 5000; display: none; align-items: center; justify-content: center; padding: 20px; overflow-y: auto; }
+        .modal-content { background: var(--surface); width: 100%; max-width: 500px; border-radius: 20px; padding: 25px; }
         
-        .suggestions { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 15px; padding-bottom: 50px; }
-        .thumb-item { cursor: pointer; transition: 0.3s; }
-        .thumb-img-wrapper { width: 100%; aspect-ratio: 16/9; border-radius: 12px; overflow: hidden; background: #1a1a1a; border: 1px solid #333; position: relative; }
-        .thumb-img { width: 100%; height: 100%; object-fit: cover; }
-        .thumb-text { margin-top: 10px; font-weight: 700; font-size: 0.9rem; }
-
-        .full-modal { position: fixed; inset: 0; background: rgba(0,0,0,0.95); backdrop-filter: blur(10px); z-index: 5000; display: none; align-items: center; justify-content: center; padding: 20px; }
-        .modal-content { background: var(--surface); width: 100%; max-width: 650px; border-radius: 20px; padding: 30px; max-height: 90vh; overflow-y: auto; }
+        input, textarea { width: 100%; padding: 12px; background: #222; border: 1px solid #444; color: #fff; border-radius: 10px; margin-bottom: 10px; }
+        .btn-action { background: var(--primary); color: #fff; padding: 12px; border: none; border-radius: 10px; width: 100%; cursor: pointer; font-weight: bold; }
         
-        input, textarea, select { width: 100%; padding: 12px; background: #222; border: 1px solid #444; color: #fff; border-radius: 10px; margin-bottom: 15px; }
-        .btn-action { background: var(--primary); color: #fff; padding: 14px; border: none; border-radius: 10px; width: 100%; font-weight: 900; cursor: pointer; margin-bottom: 10px; }
-        
-        .admin-btns-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
-        .btn-manage-box { background: #1a1a1a; border: 1px solid #333; padding: 15px; border-radius: 15px; text-align: center; cursor: pointer; }
-        .admin-banner { width: 160px; height: 160px; border-radius: 20px; object-fit: cover; border: 3px solid var(--primary); margin: 20px auto; display: block; }
-        
-        .lang-list { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .lang-item { padding: 15px; background: #222; border-radius: 10px; text-align: center; cursor: pointer; border: 1px solid #333; transition: 0.3s; font-weight: bold; }
-        .lang-item:hover { border-color: var(--primary); background: var(--primary); }
+        /* تصميم لوحة التحكم */
+        #admin-panel { display: none; }
+        .admin-item { background: #222; padding: 10px; border-radius: 10px; margin-bottom: 10px; display: flex; justify-content: space-between; }
     </style>
 </head>
 <body data-theme="dark">
 
-    <div id="redir-layer" style="position:fixed; inset:0; background:#000; z-index:9999; display:none; flex-direction:column; align-items:center; justify-content:center;">
-        <h2 id="lang-redir-text" style="color:var(--primary)">جاري الانتقال...</h2>
-        <div style="font-size:60px; font-weight:900; margin-top:20px" id="timer">3</div>
-    </div>
-
-    <div id="lang-screen" class="full-modal">
-        <div class="modal-content">
-            <h2 id="lang-modal-title" style="text-align:center; color:var(--primary); margin-bottom:20px">اختر اللغة / Select Language</h2>
-            <div class="lang-list">
-                <div class="lang-item" onclick="App.setLang('ar')">العربية</div>
-                <div class="lang-item" onclick="App.setLang('en')">English</div>
-                <div class="lang-item" onclick="App.setLang('he')">עברית</div>
-                <div class="lang-item" onclick="App.setLang('fr')">Français</div>
-                <div class="lang-item" onclick="App.setLang('de')">Deutsch</div>
-                <div class="lang-item" onclick="App.setLang('es')">Español</div>
-                <div class="lang-item" onclick="App.setLang('tr')">Türkçe</div>
-                <div class="lang-item" onclick="App.setLang('ru')">Русский</div>
-            </div>
-            <button class="btn-action lang-close-btn" style="background:#333; margin-top:20px" onclick="App.closeModals()">إغلاق</button>
-        </div>
-    </div>
-
-    <div id="gallery-screen" class="full-modal">
-        <div class="modal-content" style="max-width: 850px;">
-            <h2 id="lang-gallery-title" style="text-align:center; color:var(--primary); margin-bottom:20px">معرض الصور والمنشورات</h2>
-            <div id="gallery-container"></div>
-            <button class="btn-action lang-close-btn" style="background:#333" onclick="App.closeModals()">إغلاق</button>
-        </div>
-    </div>
-
     <div id="auth-screen" class="full-modal">
         <div class="modal-content">
-            <h2 id="lang-auth-title" style="text-align:center; margin-bottom:20px;">مدخل المسؤول</h2>
-            <input type="text" id="login-user" placeholder="اسم المستخدم">
-            <input type="password" id="login-pass" placeholder="الرمز السري">
-            <button id="lang-login-btn" class="btn-action" onclick="App.checkAuth()">دخول</button>
-            <p id="lang-cancel-btn" onclick="App.closeModals()" style="text-align:center; cursor:pointer; color:gray">إلغاء</p>
+            <h2 style="text-align:center; margin-bottom:20px;">مدخل المسؤول</h2>
+            <input type="text" id="login-user" placeholder="اسم المستخدم (maher)">
+            <input type="password" id="login-pass" placeholder="الرمز السري (1234)">
+            <button class="btn-action" onclick="App.checkAuth()">دخول</button>
+            <p onclick="App.closeModals()" style="text-align:center; cursor:pointer; margin-top:10px; color:gray">إلغاء</p>
+        </div>
+    </div>
+
+    <div id="admin-screen" class="full-modal">
+        <div class="modal-content" style="max-width: 700px;">
+            <h2>إدارة المحتوى</h2>
+            <hr style="margin: 15px 0; opacity: 0.2;">
+            
+            <h4>إضافة فيديو جديد:</h4>
+            <input type="text" id="new-v-title" placeholder="عنوان الفيديو">
+            <input type="text" id="new-v-url" placeholder="رابط اليوتيوب أو رابط مباشر">
+            <textarea id="new-v-desc" placeholder="وصف الفيديو"></textarea>
+            <button class="btn-action" onclick="App.addItem()">إضافة الفيديو للمنصة</button>
+            
+            <hr style="margin: 20px 0; opacity: 0.2;">
+            <h4>الفيديوهات الحالية:</h4>
+            <div id="admin-items-list" style="max-height: 200px; overflow-y: auto; margin-top: 10px;"></div>
+            
+            <button class="btn-action" style="background:#444; margin-top:20px" onclick="App.closeModals()">إغلاق اللوحة</button>
         </div>
     </div>
 
     <header>
         <div style="display:flex; align-items:center; gap:12px">
-            <i class="fas fa-bars" style="font-size:22px; cursor:pointer;" onclick="App.toggleMenu()"></i>
-            <span id="ui-site-name" style="font-weight:900;">...</span>
+            <i class="fas fa-bars tool-icon" onclick="App.toggleMenu()"></i>
+            <span id="ui-site-name" style="font-weight:900;">MAHER PLATFORM</span>
         </div>
-
         <div class="header-tools">
-            <div class="search-container" id="search-container">
-                <i class="fas fa-search tool-icon" onclick="App.toggleSearch()"></i>
-                <div class="search-input-wrapper">
-                    <input type="text" id="search-input" placeholder="بحث..." oninput="App.search(this.value)">
-                </div>
-            </div>
-            <i class="fas fa-globe tool-icon" onclick="App.showLang()"></i>
+            <i class="fas fa-user-cog tool-icon" onclick="App.showAuth()"></i>
             <i class="fas fa-adjust tool-icon" onclick="App.toggleTheme()"></i>
         </div>
     </header>
 
-    <div id="news-container" onclick="App.newsClick()">
-        <div class="marquee" id="ui-news-text"></div>
+    <div id="news-container">
+        <div class="marquee" id="ui-news-text">أهلاً بكم في منصة ماهر برو..</div>
     </div>
 
     <nav class="sidebar" id="sidebar">
-        <h3 id="lang-menu-title" style="margin-bottom:20px; border-bottom:1px solid #333">القائمة</h3>
-        <div class="nav-link" onclick="App.openGallery()"><i class="fas fa-images"></i> <span id="lang-nav-gallery">معرض الصور</span></div>
-        <hr style="opacity:0.1; margin:15px 0">
-        <div class="nav-link" onclick="App.social('facebook')"><i class="fab fa-facebook" style="color:#1877F2"></i> Facebook</div>
-        <div class="nav-link" onclick="App.social('tiktok')"><i class="fab fa-tiktok"></i> TikTok</div>
-        <div class="nav-link" onclick="App.social('instagram')"><i class="fab fa-instagram" style="color:#E1306C"></i> Instagram</div>
-        <div class="nav-link" onclick="App.social('whatsapp')"><i class="fab fa-whatsapp" style="color:#25D366"></i> WhatsApp</div>
-        <hr style="opacity:0.1; margin:15px 0">
-        <div class="nav-link" onclick="App.showAuth()"><i class="fas fa-user-cog"></i> <span id="lang-nav-admin">لوحة الإدارة</span></div>
-        <img src="" id="ui-avatar" class="admin-banner">
+        <h3 style="margin-bottom:20px;">القائمة</h3>
+        <div class="nav-link" onclick="App.showAuth()"><i class="fas fa-lock"></i> لوحة الإدارة</div>
+        <div class="nav-link" onclick="location.reload()"><i class="fas fa-sync"></i> تحديث الصفحة</div>
     </nav>
 
     <main class="main-container">
-        <section class="theater-mode">
-            <div class="video-box" id="main-player"></div>
-            <div class="video-info" onclick="App.toggleDesc()">
-                <h1 class="video-title" id="active-title">...</h1>
-                <div id="desc-panel"></div>
-            </div>
-        </section>
-        <h2 class="section-label" id="lang-suggestions-label">المقترحات</h2>
+        <div class="video-box" id="main-player">
+            <div style="height:100%; display:flex; align-items:center; justify-content:center; color:#555">اختر فيديو للبدء</div>
+        </div>
+        <div style="padding: 15px 0;">
+            <h1 id="active-title" style="font-size: 1.4rem;">مرحباً بك</h1>
+            <p id="active-desc" style="color:var(--sub); margin-top:5px;">اختر من الفيديوهات المقترحة في الأسفل</p>
+        </div>
+
+        <h3 style="margin: 20px 0 10px;">المقترحات</h3>
         <div class="suggestions" id="video-grid"></div>
     </main>
 
     <script>
-        // قاموس اللغات
-        const Languages = {
-            ar: {
-                dir: 'rtl',
-                redir: 'جاري الانتقال...',
-                modalTitle: 'اختر اللغة',
-                close: 'إغلاق',
-                galleryTitle: 'معرض الصور والمنشورات',
-                authTitle: 'مدخل المسؤول',
-                userPlaceholder: 'اسم المستخدم',
-                passPlaceholder: 'الرمز السري',
-                login: 'دخول',
-                cancel: 'إلغاء',
-                menu: 'القائمة',
-                navGallery: 'معرض الصور',
-                navAdmin: 'لوحة الإدارة',
-                suggestions: 'المقترحات',
-                search: 'بحث...'
-            },
-            en: {
-                dir: 'ltr',
-                redir: 'Redirecting...',
-                modalTitle: 'Select Language',
-                close: 'Close',
-                galleryTitle: 'Photo Gallery & Posts',
-                authTitle: 'Admin Login',
-                userPlaceholder: 'Username',
-                passPlaceholder: 'Password',
-                login: 'Login',
-                cancel: 'Cancel',
-                menu: 'Menu',
-                navGallery: 'Gallery',
-                navAdmin: 'Admin Panel',
-                suggestions: 'Suggestions',
-                search: 'Search...'
-            },
-            he: {
-                dir: 'rtl',
-                redir: 'מעביר...',
-                modalTitle: 'בחר שפה',
-                close: 'סגור',
-                galleryTitle: 'גלריית תמונות ופוסטים',
-                authTitle: 'כניסת מנהל',
-                userPlaceholder: 'שם משתמש',
-                passPlaceholder: 'סיסמה',
-                login: 'כניסה',
-                cancel: 'ביטול',
-                menu: 'תפריט',
-                navGallery: 'גלריה',
-                navAdmin: 'לוח בקרה',
-                suggestions: 'הצעות',
-                search: 'חיפוש...'
-            },
-            fr: {
-                dir: 'ltr',
-                redir: 'Redirection...',
-                modalTitle: 'Choisir la langue',
-                close: 'Fermer',
-                galleryTitle: 'Galerie Photos',
-                authTitle: 'Connexion Admin',
-                userPlaceholder: 'Utilisateur',
-                passPlaceholder: 'Mot de passe',
-                login: 'Entrer',
-                cancel: 'Annuler',
-                menu: 'Menu',
-                navGallery: 'Galerie',
-                navAdmin: 'Admin',
-                suggestions: 'Suggestions',
-                search: 'Chercher...'
-            }
-            // يمكن إضافة باقي اللغات بنفس الطريقة
-        };
-
         const App = {
-            mode: 'video',
-            currentLang: 'ar',
             db: {
                 auth: { user: 'maher', pass: '1234' },
-                siteName: 'MAHER PLATFORM',
-                avatar: '',
-                news: { active: true, text: 'مرحباً بكم', link: '#' },
-                social: { facebook: '#', tiktok: '#', instagram: '#', whatsapp: '#' },
-                items: [],
-                gallery: []
+                siteName: 'MAHER PLATFORM PRO',
+                items: [
+                    { t: 'فيديو ترحيبي', u: 'https://www.youtube.com/watch?v=ScMzIvxBSi4', d: 'وصف الفيديو التجريبي الأول' }
+                ]
             },
 
             init() {
-                const s = localStorage.getItem('MAHER_FINAL_V8');
-                if(s) this.db = JSON.parse(s);
-                
-                // استعادة اللغة المحفوظة
-                const savedLang = localStorage.getItem('MAHER_LANG') || 'ar';
-                this.setLang(savedLang, false); // false لعدم إظهار تنبيه عند التحميل
-
+                const saved = localStorage.getItem('MAHER_DATA');
+                if(saved) this.db = JSON.parse(saved);
                 this.render();
-                if(this.db.items.length > 0) this.load(0);
             },
 
-            setLang(code, notify = true) {
-                const lang = Languages[code] || Languages['en'];
-                this.currentLang = code;
-                localStorage.setItem('MAHER_LANG', code);
+            // إصلاح دالة التحقق والدخول
+            checkAuth() {
+                const u = document.getElementById('login-user').value;
+                const p = document.getElementById('login-pass').value;
 
-                // تطبيق الاتجاه واللغة
-                const html = document.getElementById('main-html');
-                html.dir = lang.dir;
-                html.lang = code;
+                if(u === this.db.auth.user && p === this.db.auth.pass) {
+                    this.closeModals();
+                    this.openAdminPanel();
+                } else {
+                    alert("بيانات الدخول غير صحيحة!");
+                }
+            },
 
-                // تحديث النصوص في الواجهة
-                document.getElementById('lang-redir-text').innerText = lang.redir;
-                document.getElementById('lang-modal-title').innerText = lang.modalTitle;
-                document.querySelectorAll('.lang-close-btn').forEach(b => b.innerText = lang.close);
-                document.getElementById('lang-gallery-title').innerText = lang.galleryTitle;
-                document.getElementById('lang-auth-title').innerText = lang.authTitle;
-                document.getElementById('login-user').placeholder = lang.userPlaceholder;
-                document.getElementById('login-pass').placeholder = lang.passPlaceholder;
-                document.getElementById('lang-login-btn').innerText = lang.login;
-                document.getElementById('lang-cancel-btn').innerText = lang.cancel;
-                document.getElementById('lang-menu-title').innerText = lang.menu;
-                document.getElementById('lang-nav-gallery').innerText = lang.navGallery;
-                document.getElementById('lang-nav-admin').innerText = lang.navAdmin;
-                document.getElementById('lang-suggestions-label').innerText = lang.suggestions;
-                document.getElementById('search-input').placeholder = lang.search;
+            openAdminPanel() {
+                document.getElementById('admin-screen').style.display = 'flex';
+                this.renderAdminList();
+            },
 
-                this.closeModals();
-                if(notify) console.log("Language switched to " + code);
+            addItem() {
+                const title = document.getElementById('new-v-title').value;
+                const url = document.getElementById('new-v-url').value;
+                const desc = document.getElementById('new-v-desc').value;
+
+                if(!title || !url) return alert("يرجى ملء البيانات");
+
+                this.db.items.push({ t: title, u: url, d: desc });
+                this.save();
+                this.render();
+                this.renderAdminList();
+                
+                // تنظيف الحقول
+                document.getElementById('new-v-title').value = '';
+                document.getElementById('new-v-url').value = '';
+                document.getElementById('new-v-desc').value = '';
+                alert("تمت إضافة الفيديو بنجاح!");
+            },
+
+            deleteItem(index) {
+                if(confirm("هل تريد حذف هذا الفيديو؟")) {
+                    this.db.items.splice(index, 1);
+                    this.save();
+                    this.render();
+                    this.renderAdminList();
+                }
+            },
+
+            render() {
+                document.getElementById('ui-site-name').innerText = this.db.siteName;
+                const grid = document.getElementById('video-grid');
+                grid.innerHTML = this.db.items.map((it, i) => `
+                    <div class="thumb-item" onclick="App.loadVideo(${i})">
+                        <img src="${this.getThumb(it.u)}" class="thumb-img">
+                        <div style="margin-top:8px; font-weight:bold; font-size:0.9rem">${it.t}</div>
+                    </div>
+                `).join('');
+            },
+
+            renderAdminList() {
+                const list = document.getElementById('admin-items-list');
+                list.innerHTML = this.db.items.map((it, i) => `
+                    <div class="admin-item">
+                        <span>${it.t}</span>
+                        <button onclick="App.deleteItem(${i})" style="color:red; background:none; border:none; cursor:pointer">حذف</button>
+                    </div>
+                `).join('');
+            },
+
+            loadVideo(i) {
+                const it = this.db.items[i];
+                const player = document.getElementById('main-player');
+                document.getElementById('active-title').innerText = it.t;
+                document.getElementById('active-desc').innerText = it.d;
+
+                if(it.u.includes('youtube.com') || it.u.includes('youtu.be')) {
+                    const id = it.u.includes('v=') ? it.u.split('v=')[1].split('&')[0] : it.u.split('/').pop();
+                    player.innerHTML = `<iframe src="https://www.youtube.com/embed/${id}?autoplay=1" allowfullscreen></iframe>`;
+                } else {
+                    player.innerHTML = `<video controls autoplay src="${it.u}"></video>`;
+                }
+                window.scrollTo({top: 0, behavior: 'smooth'});
             },
 
             getThumb(url) {
@@ -322,85 +232,16 @@
                     const id = url.includes('v=') ? url.split('v=')[1].split('&')[0] : url.split('/').pop();
                     return `https://img.youtube.com/vi/${id}/mqdefault.jpg`;
                 }
-                return 'https://via.placeholder.com/400x225/222/fff?text=VIDEO';
+                return 'https://via.placeholder.com/400x225/222/fff?text=Video';
             },
 
-            render() {
-                document.getElementById('ui-site-name').innerText = this.db.siteName;
-                document.getElementById('ui-avatar').src = this.db.avatar;
-                const nc = document.getElementById('news-container');
-                nc.style.display = this.db.news.active ? 'block' : 'none';
-                document.getElementById('ui-news-text').innerText = this.db.news.text;
-                this.renderGrid(this.db.items);
-            },
-
-            renderGrid(list) {
-                document.getElementById('video-grid').innerHTML = list.map((it, i) => `
-                    <div class="thumb-item" onclick="App.load(${i})">
-                        <div class="thumb-img-wrapper"><img src="${this.getThumb(it.u)}" class="thumb-img"></div>
-                        <div class="thumb-text">${it.t}</div>
-                    </div>`).join('');
-            },
-
-            load(idx) {
-                const it = this.db.items[idx];
-                if(!it) return;
-                document.getElementById('active-title').innerText = it.t;
-                document.getElementById('desc-panel').innerText = it.d;
-                const p = document.getElementById('main-player');
-                if(it.u.includes('youtube.com') || it.u.includes('youtu.be')) {
-                    const id = it.u.includes('v=') ? it.u.split('v=')[1].split('&')[0] : it.u.split('/').pop();
-                    p.innerHTML = `<iframe src="https://www.youtube.com/embed/${id}?autoplay=1" allowfullscreen></iframe>`;
-                } else {
-                    p.innerHTML = `<video controls autoplay><source src="${it.u}"></video>`;
-                }
-                window.scrollTo({top:0, behavior:'smooth'});
-            },
-
-            toggleSearch() { document.getElementById('search-container').classList.toggle('active'); },
-            showLang() { document.getElementById('lang-screen').style.display = 'flex'; },
-            
-            search(v) {
-                const f = this.db.items.filter(it => it.t.toLowerCase().includes(v.toLowerCase()));
-                this.renderGrid(f);
-            },
-
-            openGallery() {
-                this.toggleMenu();
-                document.getElementById('gallery-screen').style.display = 'flex';
-                document.getElementById('gallery-container').innerHTML = this.db.gallery.map(img => `
-                    <div class="gallery-item">
-                        <img src="${img.u}" class="gallery-img">
-                        <h3 style="color:var(--primary); margin:10px 0">${img.t}</h3>
-                        <p style="color:var(--sub)">${img.d}</p>
-                    </div>`).join('');
-            },
-
-            social(p) {
-                this.toggleMenu();
-                const l = document.getElementById('redir-layer');
-                const t = document.getElementById('timer');
-                let c = 3; t.innerText = c; l.style.display = 'flex';
-                let targetUrl = this.db.social[p];
-                if(p === 'whatsapp' && !targetUrl.startsWith('http')) targetUrl = `https://wa.me/${targetUrl}`;
-                const i = setInterval(() => {
-                    c--; t.innerText = c;
-                    if(c <= 0) { clearInterval(i); window.location.href = targetUrl; }
-                }, 1000);
-            },
-
-            showAuth() { this.toggleMenu(); document.getElementById('auth-screen').style.display = 'flex'; },
-            checkAuth() {
-                if(document.getElementById('login-user').value === this.db.auth.user && document.getElementById('login-pass').value === this.db.auth.pass) {
-                    alert("Admin access granted (Simulation)");
-                    this.closeModals();
-                } else alert("Error");
-            },
-            toggleMenu() { document.getElementById('sidebar').classList.toggle('active'); },
+            save() { localStorage.setItem('MAHER_DATA', JSON.stringify(this.db)); },
+            showAuth() { document.getElementById('auth-screen').style.display = 'flex'; },
             closeModals() { document.querySelectorAll('.full-modal').forEach(m => m.style.display = 'none'); },
-            toggleDesc() { const d = document.getElementById('desc-panel'); d.style.display = d.style.display==='block' ? 'none' : 'block'; },
+            toggleMenu() { document.getElementById('sidebar').classList.toggle('active'); },
             toggleTheme() { document.body.setAttribute('data-theme', document.body.getAttribute('data-theme')==='dark'?'light':'dark'); }
         };
+
         window.onload = () => App.init();
     </script>
 </body>
