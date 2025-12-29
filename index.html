@@ -36,10 +36,9 @@
             overflow-x: hidden;
             width: 100%;
             height: 100vh;
-            position: fixed; /* لمنع التكبير والتصغير المتصفح */
+            position: fixed; 
         }
 
-        /* نظام الطبقات */
         .page-layer {
             position: fixed;
             inset: 0;
@@ -54,7 +53,6 @@
 
         .active-layer { display: block; }
 
-        /* الطبقة 1: الصفحة الرئيسية */
         header {
             height: 70px; background: var(--header-bg); display: flex; align-items: center;
             justify-content: space-between; padding: 0 5%; position: sticky; top: 0; z-index: 100;
@@ -64,7 +62,6 @@
         .header-tools { display: flex; align-items: center; gap: 15px; }
         .tool-icon { cursor: pointer; font-size: 1.2rem; transition: 0.3s; color: var(--text-color); }
         
-        /* شريط الخبر العاجل */
         .ticker-wrapper {
             width: 100%;
             background: var(--ticker-bg);
@@ -86,7 +83,6 @@
             100% { transform: translateX(100%); }
         }
 
-        /* المحتوى الرئيسي */
         .main-content { padding: 15px; max-width: 1000px; margin: 0 auto; }
         
         .main-title-container { text-align: center; margin-bottom: 20px; }
@@ -106,7 +102,6 @@
         .video-card-title { font-weight: 700; font-size: 0.9rem; margin-bottom: 5px; }
         .video-card-desc { font-size: 0.8rem; color: var(--sub-text); display: none; padding-top: 5px; border-top: 1px solid #333; }
 
-        /* القائمة الجانبية */
         .sidebar {
             position: fixed; top: 0; bottom: 0; width: 280px;
             background: var(--sidebar-bg); z-index: 2000; transition: 0.4s;
@@ -124,11 +119,9 @@
         .sidebar-img-title { font-weight: 900; color: var(--primary-color); cursor: pointer; }
         .sidebar-img-desc { font-size: 0.8rem; color: var(--sub-text); display: none; margin-top: 10px; }
 
-        /* الطبقة 2: تسجيل الدخول */
         #login-layer { z-index: 50; display: none; align-items: center; justify-content: center; background: rgba(0,0,0,0.9); backdrop-filter: blur(10px); }
         .login-box { background: var(--surface-color); padding: 30px; border-radius: 20px; width: 90%; max-width: 400px; }
         
-        /* الطبقة 3: لوحة الإدارة */
         #admin-layer { z-index: 100; }
         .admin-header { 
             display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 20px;
@@ -147,12 +140,10 @@
             cursor: pointer;
         }
 
-        /* الطبقة 4: نافذة الإضافة والتعديل */
         #editor-layer { z-index: 200; background: var(--surface-color); }
         .editor-container { padding: 25px; }
         .editor-header { font-weight: 900; font-size: 1.2rem; margin-bottom: 20px; border-bottom: 2px solid var(--primary-color); padding-bottom: 10px; }
 
-        /* العناصر العامة */
         input, textarea, select {
             width: 100%; padding: 12px; background: #222; border: 1px solid #444;
             color: #fff; border-radius: 10px; margin-bottom: 15px; outline: none;
@@ -161,15 +152,12 @@
         .btn-cancel { background: #333; color: #fff; padding: 12px; border: none; border-radius: 10px; width: 100%; margin-top: 10px; cursor: pointer; }
         .btn-delete { background: #500; color: #fff; padding: 12px; border: none; border-radius: 10px; width: 100%; margin-top: 5px; cursor: pointer; }
 
-        /* تخصيص الألوان */
         .color-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
         .color-input-box { display: flex; flex-direction: column; gap: 5px; font-size: 0.8rem; }
         
-        /* روابط التواصل */
         .social-admin-item { display: flex; align-items: center; gap: 10px; background: #222; padding: 10px; border-radius: 10px; margin-bottom: 10px; }
         .social-admin-item i { width: 30px; text-align: center; font-size: 1.2rem; }
 
-        /* الانتقال (3 ثواني) */
         #redirect-layer { position: fixed; inset: 0; background: #000; z-index: 9999; display: none; flex-direction: column; align-items: center; justify-content: center; }
         .timer-circle { width: 80px; height: 80px; border-radius: 50%; border: 4px solid var(--primary-color); display: flex; align-items: center; justify-content: center; font-size: 2rem; font-weight: 900; margin-top: 20px; }
 
@@ -190,7 +178,6 @@
             </div>
             <div class="header-tools">
                 <i class="fas fa-search tool-icon" id="btn-search-ui" onclick="App.toggleSearch()"></i>
-                <i class="fas fa-globe tool-icon" id="btn-lang-ui" onclick="App.showLangSwitcher()"></i>
                 <i class="fas fa-moon tool-icon" id="btn-theme-ui" onclick="App.toggleTheme()"></i>
             </div>
         </header>
@@ -203,13 +190,11 @@
                 <div id="title-video-frame"></div>
             </div>
 
-            <div class="big-player-container" id="main-player-box">
-                </div>
+            <div class="big-player-container" id="main-player-box"></div>
 
             <div id="ticker-mid" class="ticker-wrapper" style="margin-bottom:15px; border-radius:10px;"><div class="ticker-text" id="ui-ticker-text-mid"></div></div>
 
-            <div class="video-list-container" id="ui-video-list">
-                </div>
+            <div class="video-list-container" id="ui-video-list"></div>
         </div>
 
         <div id="ticker-bottom" class="ticker-wrapper" style="position:fixed; bottom:0;"><div class="ticker-text" id="ui-ticker-text-bottom"></div></div>
@@ -236,8 +221,7 @@
     <div id="login-layer" class="page-layer" style="display:none; flex-direction:column; justify-content:center; align-items:center;">
         <div class="login-box">
             <h2 style="text-align:center; margin-bottom:20px; color:var(--primary-color)">دخول المسؤول</h2>
-            <div id="login-inputs-container">
-                </div>
+            <div id="login-inputs-container"></div>
             <button class="btn-save" onclick="App.verifyLogin()">دخول</button>
             <button class="btn-cancel" onclick="App.hideLayer('login-layer')">إلغاء</button>
         </div>
@@ -256,7 +240,6 @@
         <div class="admin-list">
             <div class="admin-item" onclick="App.openEditor('theme')"><span>تغيير لون وخطوط الصفحة</span> <i class="fas fa-palette"></i></div>
             <div class="admin-item" onclick="App.openEditor('social')"><span>روابط التواصل الاجتماعي</span> <i class="fas fa-share-alt"></i></div>
-            <div class="admin-item" onclick="App.openEditor('lang')"><span>تغيير لغة الصفحة</span> <i class="fas fa-language"></i></div>
             <div class="admin-item" onclick="App.openEditor('ticker')"><span>خبر عاجل</span> <i class="fas fa-bolt"></i></div>
             <div class="admin-item" onclick="App.openEditor('avatar')"><span>تغيير صورة العرض</span> <i class="fas fa-id-badge"></i></div>
             <div class="admin-item" onclick="App.openEditor('title-config')"><span>تغيير العنوان العلوي</span> <i class="fas fa-heading"></i></div>
@@ -272,36 +255,33 @@
     </div>
 
     <div id="editor-layer" class="page-layer">
-        <div class="editor-container" id="editor-content">
-            </div>
+        <div class="editor-container" id="editor-content"></div>
     </div>
 
     <script>
         const App = {
-            // قاعدة البيانات الافتراضية
             db: {
                 config: {
                     siteName: "MAHER PLATFORM PRO",
                     mainTitle: "مرحباً بك في المنصة الخاصة بنا",
-                    titleMode: "text", // text or video
+                    titleMode: "text", 
                     titleVideoUrl: "",
                     primaryColor: "#bc202b",
                     bgColor: "#0a0a0a",
                     surfaceColor: "#161616",
                     textColor: "#ffffff",
                     showSearch: true,
-                    showTheme: true,
-                    showLang: true
+                    showTheme: true
                 },
                 auth: {
-                    keys: ["1234"] // مصفوفة الرموز (تدعم حتى 4 خانات)
+                    keys: ["1234"]
                 },
                 ticker: {
                     active: true,
-                    position: "top", // top, bottom, over-video
+                    position: "top",
                     text: "هذا شريط خبر عاجل يمكن تخصيصه بالكامل من لوحة الإدارة...",
                     link: "",
-                    duration: 0, // 0 يعني دائم
+                    duration: 0,
                     color: "#bc202b",
                     textColor: "#ffffff"
                 },
@@ -331,7 +311,6 @@
                 if(this.db.videos.length > 0) this.playVideo(this.db.videos[0].u);
             },
 
-            // تطبيق الإعدادات على الواجهة
             applyConfig() {
                 const r = document.documentElement.style;
                 const c = this.db.config;
@@ -343,12 +322,9 @@
                 document.getElementById('ui-brand-name').innerText = c.siteName;
                 document.getElementById('display-main-title').innerText = c.mainTitle;
                 
-                // البحث والثيم واللغة
                 document.getElementById('btn-search-ui').style.display = c.showSearch ? 'block' : 'none';
                 document.getElementById('btn-theme-ui').style.display = c.showTheme ? 'block' : 'none';
-                document.getElementById('btn-lang-ui').style.display = c.showLang ? 'block' : 'none';
 
-                // العنوان (فيديو أو نص)
                 if(c.titleMode === 'video' && c.titleVideoUrl) {
                     document.getElementById('display-main-title').style.display = 'none';
                     const frame = document.getElementById('title-video-frame');
@@ -359,10 +335,8 @@
                     document.getElementById('title-video-frame').style.display = 'none';
                 }
 
-                // شريط الخبر
                 this.updateTickerUI();
 
-                // القائمة الجانبية
                 document.getElementById('ui-sidebar-img').src = this.db.sidebar.img;
                 document.getElementById('ui-sidebar-img-title').innerText = this.db.sidebar.title;
                 document.getElementById('ui-sidebar-img-desc').innerText = this.db.sidebar.desc;
@@ -414,7 +388,6 @@
                     player.innerHTML = `<video controls autoplay><source src="${url}"></video>`;
                 }
 
-                // إظهار الوصف عند النقر
                 if(idx !== -1) {
                     const desc = document.getElementById(`desc-${idx}`);
                     const isVisible = desc.style.display === 'block';
@@ -435,7 +408,6 @@
                 return id ? `https://www.youtube.com/embed/${id}` : url;
             },
 
-            // نظام الطبقات
             showLayer(id) {
                 document.querySelectorAll('.page-layer').forEach(l => l.style.display = 'none');
                 document.getElementById(id).style.display = 'block';
@@ -447,7 +419,6 @@
                 if(id === 'editor-layer') this.showLayer('admin-layer');
             },
 
-            // تسجيل الدخول
             showLogin() {
                 this.toggleSidebar(false);
                 const container = document.getElementById('login-inputs-container');
@@ -472,7 +443,6 @@
                 }
             },
 
-            // المحرر (Editor)
             openEditor(type, data = null) {
                 const content = document.getElementById('editor-content');
                 this.showLayer('editor-layer');
@@ -578,7 +548,6 @@
                 return titles[type] || 'تعديل';
             },
 
-            // وظائف الحفظ الفرعية
             saveMedia(type) {
                 if(type === 'video') {
                     const v = {
@@ -657,7 +626,6 @@
                 `).join('');
             },
 
-            // الحفظ النهائي
             finalSaveAll() {
                 localStorage.setItem('MAHER_PRO_DATA', JSON.stringify(this.db));
                 this.applyConfig();
@@ -666,7 +634,6 @@
                 alert("تم حفظ جميع الإعدادات وتطبيقها!");
             },
 
-            // واجهة المستخدم التفاعلية
             toggleSidebar(show) {
                 document.getElementById('sidebar').classList.toggle('active', show);
                 document.getElementById('sidebar-overlay').style.display = show ? 'block' : 'none';
@@ -693,14 +660,6 @@
                 this.applyConfig();
             },
 
-            showLangSwitcher() {
-                const l = prompt("اختر اللغة (ar, en, fr, he):");
-                if(l) {
-                    this.db.lang = l;
-                    alert("تم تحويل اللغة إلى " + l);
-                }
-            },
-
             socialRedirect(platform) {
                 const url = this.db.social[platform];
                 if(!url) return alert("الرابط غير مضاف!");
@@ -724,10 +683,8 @@
             }
         };
 
-        // تشغيل التطبيق
         window.onload = () => App.init();
 
-        // منع التكبير اليدوي
         document.addEventListener('touchstart', function (event) {
             if (event.touches.length > 1) {
                 event.preventDefault();
@@ -735,4 +692,4 @@
         }, { passive: false });
     </script>
 </body>
-                                                                                                                   </html>
+</html>
